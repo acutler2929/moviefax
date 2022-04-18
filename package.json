@@ -9,6 +9,7 @@
   "author": "Alice Cutler",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.17.3",
     "sass": "^1.50.0"
   }
 }
