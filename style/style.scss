@@ -1,0 +1,71 @@
+$color-primary: #2f2fa2;
+$color-secondary: #f64c72;
+$color-tertiary: #99738e;
+$color-accent: #553d67;
+$color-bright-accent: gold;
+
+$bright-border: 3px solid $color-bright-accent;
+
+body {
+	background-color: $color-primary;
+	display: flex;
+	flex-direction: column;
+}
+
+nav {
+	border: $bright-border;
+	color: $color-secondary;
+}
+
+// h1 {
+// 	color: $color-secondary;
+// }
+
+// h2 {
+// 	color: $color-secondary;
+// }
+
+div {
+	border: $bright-border;
+	color: $color-secondary;
+}
+
+#content-wrapper {
+	padding: 5%;
+}
+
+#movie-wrapper {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+#movie-poster {
+	text-decoration: underline;
+}
+
+#description-data {
+	display: flex;
+	flex-direction: column;
+}
+
+#title-year {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#description {
+	display: flex;
+	justify-content: flex-start;
+}
+
+#popularity {
+	display: flex;
+	justify-content: center;
+}
+
+.offers {
+	display: flex;
+	flex-direction: row;
+}
