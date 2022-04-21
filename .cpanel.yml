@@ -1,0 +1,8 @@
+---
+deployment:
+    tasks:
+        - export DEPLOYPATH=/home/alicqplp/moviefax.alicecutler.dev/
+        - /bin/cp index.html $DEPLOYPATH
+        - /bin/cp style.css $DEPLOYPATH
+        - /bin/cp app.js $DEPLOYPATH
+        - /bin/cp package.json $DEPLOYPATH
