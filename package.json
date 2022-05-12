@@ -1,18 +1,21 @@
 {
-  "name": "moviefax",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Alice Cutler",
-  "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.20.0",
-    "dotenv": "^16.0.1",
-    "express": "^4.17.3",
-    "request": "^2.88.2",
-    "sass": "^1.50.0"
-  }
+	"name": "moviefax",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "nodemon server.js"
+	},
+	"author": "Alice Cutler",
+	"license": "ISC",
+	"dependencies": {
+		"body-parser": "^1.20.0",
+		"dotenv": "^16.0.1",
+		"express": "^4.17.3",
+		"request": "^2.88.2",
+		"sass": "^1.50.0"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.16"
+	}
 }
