@@ -22,12 +22,25 @@
 					</button>
 				</form>
 			</nav>
-			<div id="search-results-wrapper">
-				<!-- <div class="search-result">
-					<h2>${title[i]}</h2>
-					<img class="search-images" src="${image[i]}" />
-					<p>${description[i]}</p>
-				</div> -->
+			<div id="movie-wrapper">
+				<div id="movie-poster">
+					<h2>{%MOVIEPOSTER%}</h2>
+				</div>
+				<div id="description-data">
+					<div id="title-year">
+						<h2>{%TITLE%}</h2>
+						<p>{%YEAR%}</p>
+					</div>
+					<div id="description">
+						<p>{%DESCRIPTION%}</p>
+					</div>
+					<div id="popularity">
+						<p>{%POPULARITY%}</p>
+					</div>
+					<div class="offers">
+						<p>{%OFFERS%}</p>
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>

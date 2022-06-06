@@ -4,15 +4,23 @@ const submitButton = document.getElementById('search-button');
 
 async function searchMovies() {
 	let movieData;
+
 	const query = document.getElementById('search-query').value;
-	console.log(`search button clicked with entry ${query}`);
+	// console.log(`search button clicked with entry ${query}`);
+
 	let response = await fetch('/getQuery', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ query }),
 	});
 	movieData = await response.json();
-	console.log(movieData);
+	// console.log(movieData);
+
+	movieData.forEach((entry) => {
+		document
+			.getElementById('search-results-wrapper')
+			.insertAdjacentHTML('afterbegin', `${entry}`);
+	});
 }
 
 // async function searchMovies() {
