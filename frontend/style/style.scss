@@ -1,3 +1,5 @@
+/////////////////////////////////// UNIVERSALS
+
 $color-primary: #2f2fa2;
 $color-secondary: #f64c72;
 $color-tertiary: #99738e;
@@ -12,9 +14,30 @@ body {
 	flex-direction: column;
 }
 
+header {
+	display: flex;
+	justify-content: center;
+}
+
 nav {
 	border: $bright-border;
 	color: $color-secondary;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+
+	> * {
+		padding: 1vw;
+	}
+}
+
+form {
+	display: flex;
+	align-items: center;
+
+	> * {
+		margin: 1vw;
+	}
 }
 
 // h1 {
@@ -30,6 +53,29 @@ div {
 	color: $color-secondary;
 }
 
+////////////////////////// INDEX.HTML
+
+#search-results-wrapper {
+	display: flex;
+	flex-direction: row;
+	align-items: space-around;
+	overflow: auto;
+	// width: 95vw;
+}
+
+.search-results {
+	padding: 1vw;
+
+	> * {
+		justify-content: center;
+	}
+}
+
+.search-images {
+	max-width: 20vw;
+}
+
+////////////////////////// MOVIE-DATA.HTML
 #content-wrapper {
 	padding: 5%;
 }
