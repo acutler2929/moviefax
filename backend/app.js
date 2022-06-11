@@ -2,6 +2,8 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const url = require('url');
+const fs = require('fs');
 
 const apiHandler = require('./modules/apiHandler.js');
 const dataHandler = require('./modules/dataHandler');
@@ -11,6 +13,8 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
+
+// const router = ;
 
 app.use(express.static('frontend'));
 
@@ -28,8 +32,8 @@ app.post('/getQuery', async (req, res) => {
 	res.send(htmlSearchData);
 });
 
-// app.get('/', (req, res) => {
-// 	fs.readFile('../frontend/index.html', (err, data) => {
+// app.get('/movie-data', (req, res) => {
+// 	fs.readFile('frontend/movie-data.html', (err, data) => {
 // 		res.writeHead(200, { 'Content-Type': 'text/html' });
 // 		res.write(data);
 // 		return res.end();
