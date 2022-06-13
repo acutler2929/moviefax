@@ -9,61 +9,49 @@ exports.insertSearchResults = async function (apiResponse) {
 	let searchTitle = [];
 	let searchImage = [];
 	let searchDescription = [];
-	let searchMarkup = [];
+	let description = [];
+	let popularity = [];
+	let offers = [];
+	let markup = [];
 
 	await apiResponse.forEach((entry, i) => {
 		console.log(entry.title);
 		searchTitle.push(entry.title);
 		searchImage.push(entry.image);
 		searchDescription.push(entry.description);
-		searchMarkup.push(`
-            <div class="search-results" id="preview-${searchTitle[i]}">
-				<h2>${searchTitle[i]}</h2>
-				<img class="search-images" src="${searchImage[i]}" />
-				<p>${searchDescription[i]}</p>
-            </div>
+		markup.push(`
+			<div class="movie-wrapper">
+				<div id="${searchTitle[i]}" class="search-results">
+					<h2>${searchTitle[i]}</h2>
+					<img class="search-images" src="${searchImage[i]}" />
+					<p>${searchDescription[i]}</p>
+				</div>
+				<div id="data-${searchTitle[i]}" class="hidden">
+					<div id="description">
+						<p>{%DESCRIPTION%}</p>
+					</div>
+					<div id="popularity">
+						<p>{%POPULARITY%}</p>
+					</div>
+					<div class="offers">
+						<p>{%OFFERS%}</p>
+					</div>
+				</div>
+			</div>
         `);
 
-		return searchMarkup;
+		return markup;
 	});
 
-	// console.log(searchMarkup);
-	return searchMarkup;
+	// console.log(markup);
+	return markup;
 };
 
 /////////////// data to display selected movie:
-exports.insertSelectedMovie = async function (apiResponse) {
-	console.log(apiResponse);
+// exports.insertSelectedMovie = async function (apiResponse) {
+// 	console.log(apiResponse);
 
-	const moviePoster = '',
-		title = '',
-		year = '',
-		description = '',
-		popularity = '',
-		markup = `
-			<div id="movie-poster">
-				<h2>{%MOVIEPOSTER%}</h2>
-			</div>
-			<div id="description-data">
-				<div id="title-year">
-					<h2>{%TITLE%}</h2>
-					<p>{%YEAR%}</p>
-				</div>
-				<div id="description">
-					<p>{%DESCRIPTION%}</p>
-				</div>
-				<div id="popularity">
-					<p>{%POPULARITY%}</p>
-				</div>
-				<div class="offers">
-					<p>{%OFFERS%}</p>
-				</div>
-			</div>
-		`;
-
-	let offers = [];
-
-	await apiResponse.forEach((entry, i) => {
-		offers.push(entry[i]);
-	});
-};
+// 	await apiResponse.forEach((entry, i) => {
+// 		offers.push(entry[i]);
+// 	});
+// };

@@ -53,46 +53,21 @@ div {
 	color: $color-secondary;
 }
 
-////////////////////////// INDEX.HTML
-
 #movie-data-wrapper {
 	display: flex;
 	flex-direction: row;
 	align-items: space-around;
 	overflow: auto;
+	scroll-behavior: smooth;
 	// width: 95vw;
 }
 
-.search-results {
-	padding: 1vw;
-
-	> * {
-		justify-content: center;
-	}
-}
-
-.search-images {
-	max-width: 20vw;
-}
-
-////////////////////////// MOVIE-DATA.HTML
 #content-wrapper {
 	padding: 5%;
 }
 
-#movie-wrapper {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-}
-
 #movie-poster {
 	text-decoration: underline;
-}
-
-#description-data {
-	display: flex;
-	flex-direction: column;
 }
 
 #title-year {
@@ -111,7 +86,34 @@ div {
 	justify-content: center;
 }
 
+.movie-wrapper {
+	display: flex;
+	flex-direction: row;
+}
+
+// .description-data {
+// display: flex;
+// flex-direction: column;
+// }
+
+.search-results {
+	padding: 1vw;
+
+	> * {
+		justify-content: center;
+	}
+}
+
+.search-images {
+	max-width: 20vw;
+}
+
 .offers {
 	display: flex;
 	flex-direction: row;
+}
+
+.hidden {
+	// visibility: collapse;
+	display: none;
 }
