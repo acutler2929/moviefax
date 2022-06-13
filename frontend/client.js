@@ -24,10 +24,18 @@ async function searchMovies() {
 			.getElementById('movie-data-wrapper')
 			.insertAdjacentHTML('afterbegin', `${entry}`);
 	});
+
+	let title = '';
+	const searchResult = document.getElementById(`preview-${title}`);
+
+	//////////// doesn't work for some reason:
+	searchResult.onclick = () => {
+		console.log('search result clicked');
+	};
 }
 
-async function getMovie() {
-	console.log('getMovie() fired');
+async function selectMovie() {
+	console.log('selectMovie() fired');
 
 	////////////// First, clear the content wrapper before inserting anything else:
 	document.getElementById('movie-data-wrapper').innerHTML = '';
@@ -52,6 +60,4 @@ async function getMovie() {
 		.insertAdjacentHTML('afterbegin', `${movieDataResults}`);
 }
 
-//////////// doesn't work for some reason:
-document.getElementsByClassName('search-results').onclick = getMovie;
 submitButton.onclick = searchMovies;

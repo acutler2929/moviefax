@@ -17,7 +17,7 @@ exports.insertSearchResults = async function (apiResponse) {
 		searchImage.push(entry.image);
 		searchDescription.push(entry.description);
 		searchMarkup.push(`
-            <div class="search-results">
+            <div class="search-results" id="preview-${searchTitle[i]}">
 				<h2>${searchTitle[i]}</h2>
 				<img class="search-images" src="${searchImage[i]}" />
 				<p>${searchDescription[i]}</p>

@@ -2,8 +2,8 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const url = require('url');
-const fs = require('fs');
+// const url = require('url');
+// const fs = require('fs');
 
 const apiHandler = require('./modules/apiHandler.js');
 const dataHandler = require('./modules/dataHandler');
