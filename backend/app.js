@@ -20,17 +20,17 @@ app.use(express.static('frontend'));
 
 app.post('/getQuery', async (req, res) => {
 	const query = req.body.query;
-	console.log(`receiving query for movie name ${query}`);
+	console.log(`app.js: receiving query for movie name ${query}`);
 
 	// apiResponse comes back from api Handler...
 	const apiResponse = await apiHandler.searchMovieData(query);
-	// console.log(apiResponse);
-	console.log(`received apiResponse for movie ${apiResponse[0].title}`);
+	console.log(apiResponse);
+	// console.log(`app.js: received apiResponse for movie ${apiResponse[0].title}`);
 
-	const htmlSearchData = await dataHandler.insertSearchResults(apiResponse);
-	// console.log(htmlSearchData[0]);
+	// const htmlSearchData = await dataHandler.insertSearchResults(apiResponse);
+	// // console.log(htmlSearchData[0]);
 
-	res.send(htmlSearchData);
+	// res.send(htmlSearchData);
 });
 
 // app.get('/movie-data', (req, res) => {

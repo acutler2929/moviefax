@@ -8,9 +8,11 @@ const apiKey = process.env.API_KEY;
 let searchResults;
 
 exports.searchMovieData = async function (query) {
-	console.log(`searching query ${query}`);
+	console.log(`apiHandler.js: searching query ${query}`);
 	await axios
-		.get(`https://imdb-api.com/en/API/SearchMovie/${apiKey}/${query}`)
+		.get(
+			`https://api.watchmode.com/v1/search/?apiKey=${apiKey}&search_field=name&search_value=${query}&types=movie`
+		)
 		.then((res) => {
 			// handle success
 			searchResults = res.data.results;
