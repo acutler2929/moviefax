@@ -26,17 +26,20 @@ async function searchMovies() {
 			.insertAdjacentHTML('afterbegin', `${entry}`);
 	});
 
-	const moviePreview = document.querySelectorAll('.search-results');
+	const moviePreview = document.querySelectorAll('.movie-wrapper');
 
 	moviePreview.forEach((element) => {
 		element.addEventListener('click', function showMovieData() {
 			console.log(`showMovieData() fired at ${element.id}`);
 
-			document.getElementById('movie-data-wrapper').scrollLeft += 500;
-
-			const movieData = document.getElementById(`data-${element.id}`);
+			// const movieData = document.getElementById(`data-${element.id}`);
+			const movieData = element.children[1];
+			// console.log(movieData);
+			// console.log(element.childNodes);
+			// console.log(element.children);
 
 			movieData.classList.remove('hidden');
+			element.scrollIntoView({ behavior: 'smooth', inline: 'center' });
 		});
 	});
 }

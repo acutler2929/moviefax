@@ -24,6 +24,7 @@ app.post('/getQuery', async (req, res) => {
 
 	// apiResponse comes back from api Handler...
 	const apiResponse = await apiHandler.searchMovieData(query);
+	// console.log(apiResponse);
 	console.log(`received apiResponse for movie ${apiResponse[0].title}`);
 
 	const htmlSearchData = await dataHandler.insertSearchResults(apiResponse);

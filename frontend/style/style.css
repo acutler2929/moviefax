@@ -67,7 +67,6 @@ div {
       -ms-flex-align: space-around;
           align-items: space-around;
   overflow: auto;
-  scroll-behavior: smooth;
 }
 
 #content-wrapper {
