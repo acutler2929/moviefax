@@ -15,7 +15,7 @@ exports.searchMovieData = async function (query) {
 		)
 		.then((res) => {
 			// handle success
-			searchResults = res.data.results;
+			searchResults = res.data.title_results[0];
 			return searchResults;
 		})
 		.catch((err) => {
