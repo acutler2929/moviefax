@@ -7,6 +7,7 @@ const watchmodeApiKey = process.env.WATCHMODE_API_KEY;
 // console.log('hello from apiHandler');
 
 let searchResults;
+let movieResults;
 
 exports.searchMovieData = async function (query) {
 	console.log(`apiHandler.js: searching query ${query}`);
@@ -14,7 +15,8 @@ exports.searchMovieData = async function (query) {
 		.get(`https://imdb-api.com/en/API/SearchMovie/${imdbApiKey}/${query}`)
 		.then((res) => {
 			// handle success
-			searchResults = JSON.stringify(res.data);
+			// searchResults = JSON.stringify(res.data.results);
+			searchResults = res.data.results;
 			return searchResults;
 		})
 		.catch((err) => {

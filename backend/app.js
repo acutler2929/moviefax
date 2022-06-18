@@ -22,23 +22,38 @@ app.post('/getQuery', async (req, res) => {
 	const query = req.body.query;
 	console.log(`app.js: receiving query for movie name ${query}`);
 
-	// apiResponse comes back from api Handler...
-	const apiResponse = await apiHandler.searchMovieData(query);
-	console.log(`app.js: ${apiResponse}`);
-	// console.log(`app.js: received apiResponse for movie ${apiResponse[0].title}`);
+	// imdbResponse comes back from api Handler...
+	const imdbResponse = await apiHandler.searchMovieData(query);
+	// console.log(`app.js: ${imdbResponse}`);
+	// console.log(
+	// 	`this is the first one: ${
+	// 		imdbResponse[0]
+	// 	}, it is a ${typeof imdbResponse}`
+	// );
+	console.log(
+		`app.js: received imdbResponse for movie ${imdbResponse[0].title}`
+	);
 
-	// const htmlSearchData = await dataHandler.insertSearchResults(apiResponse);
-	// // console.log(htmlSearchData[0]);
+	const htmlSearchData = await dataHandler.insertSearchResults(imdbResponse);
+	// console.log(htmlSearchData[0]);
 
-	// res.send(htmlSearchData);
+	// res.send(imdbResponse);
+	res.send(htmlSearchData);
 });
 
-// app.get('/movie-data', (req, res) => {
-// 	fs.readFile('frontend/movie-data.html', (err, data) => {
-// 		res.writeHead(200, { 'Content-Type': 'text/html' });
-// 		res.write(data);
-// 		return res.end();
-// 	});
-// });
+app.post('/movieData', async (req, res) => {
+	const imdbID = req.body.imdbID;
+	console.log(`receiving query for imdbID ${imdbID}`);
+
+	// watchmodeResponse comes back from api Handler...
+	const watchmodeResponse = await apiHandler.selectedMovieData(imdbID);
+	console.log(`app.js watchmodeResponse: ${watchmodeResponse}`);
+
+	const htmlMovieData = await dataHandler.insertSelectedMovie(
+		watchmodeResponse
+	);
+
+	res.send(htmlMovieData);
+});
 
 module.exports = app;
