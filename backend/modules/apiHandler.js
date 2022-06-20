@@ -32,19 +32,24 @@ exports.searchMovieData = async function (query) {
 };
 
 exports.selectedMovieData = async function (imdbID) {
-	await axios
-		.get(
-			`https://api.watchmode.com/v1/search/?apiKey=${watchmodeApiKey}&search_field=name&search_value=${imdbID}&types=movie`
-		)
-		.then((res) => {
-			// handle success
-			movieResults = JSON.stringify(res.data);
-			return movieResults;
-		})
-		.catch((err) => {
-			// handle error
-			console.log(err);
-		});
+	///////// temporarily turned off so I don't burn through my api call limit with watchmode...
+	// await axios
+	// 	.get(
+	// 		`https://api.watchmode.com/v1/title/${imdbID}/details/?apiKey=${watchmodeApiKey}`
+	// 	)
+	// 	.then((res) => {
+	// 		// handle success
+	// 		movieResults = res.data;
+	// 		return movieResults;
+	// 	})
+	// 	.catch((err) => {
+	// 		// handle error
+	// 		console.log(err);
+	// 	});
+
+	/////////// let's use THIS data instead:
+
+	// movieDataResults = ;
 
 	return movieResults;
 };

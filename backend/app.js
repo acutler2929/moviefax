@@ -24,12 +24,6 @@ app.post('/getQuery', async (req, res) => {
 
 	// imdbResponse comes back from api Handler...
 	const imdbResponse = await apiHandler.searchMovieData(query);
-	// console.log(`app.js: ${imdbResponse}`);
-	// console.log(
-	// 	`this is the first one: ${
-	// 		imdbResponse[0]
-	// 	}, it is a ${typeof imdbResponse}`
-	// );
 	console.log(
 		`app.js: received imdbResponse for movie ${imdbResponse[0].title}`
 	);
@@ -45,12 +39,25 @@ app.post('/movieData', async (req, res) => {
 	const imdbID = req.body.imdbID;
 	console.log(`receiving query for imdbID ${imdbID}`);
 
-	// watchmodeResponse comes back from api Handler...
-	const watchmodeResponse = await apiHandler.selectedMovieData(imdbID);
-	console.log(`app.js watchmodeResponse: ${watchmodeResponse}`);
+	// movieDataResponse comes back from api Handler...
+	// const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
+	// console.log(`app.js movieDataResponse: ${movieDataResponse}`);
+
+	///////// using sample data for now:
+	const imdbTitleData = require('./templates/imdb-title-sample.json');
+	const watchmodeSourcesData = require('./templates/watchmode-sources-sample.json');
+
+	const fullSampleData = {
+		imdbTitleData,
+		watchmodeSourcesData,
+	};
+
+	const movieDataResponse = await dataHandler.insertSelectedMovie(
+		fullSampleData
+	);
 
 	const htmlMovieData = await dataHandler.insertSelectedMovie(
-		watchmodeResponse
+		movieDataResponse
 	);
 
 	res.send(htmlMovieData);

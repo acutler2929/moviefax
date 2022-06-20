@@ -10,10 +10,7 @@ exports.insertSearchResults = async function (apiResponse) {
 	let searchImage = [];
 	let searchDescription = [];
 	let imdbID = [];
-	let description = [];
-	let popularity = [];
-	let offers = [];
-	let markup = [];
+	let movieSearchMarkup = [];
 
 	await apiResponse.forEach((entry, i) => {
 		// console.log(entry.title);
@@ -21,7 +18,7 @@ exports.insertSearchResults = async function (apiResponse) {
 		searchImage.push(entry.image);
 		searchDescription.push(entry.description);
 		imdbID.push(entry.id);
-		markup.push(`
+		movieSearchMarkup.push(`
 			<div class="movie-wrapper">
 				<div id="${imdbID[i]}" class="search-results">
 					<h2>${searchTitle[i]}</h2>
@@ -29,31 +26,50 @@ exports.insertSearchResults = async function (apiResponse) {
 					<p>${searchDescription[i]}</p>
 				</div>
 				<div id="data-${searchTitle[i]}" class="hidden">
-					<div id="description">
-						<p>{%DESCRIPTION%}</p>
-					</div>
-					<div id="popularity">
-						<p>{%POPULARITY%}</p>
-					</div>
-					<div class="offers">
-						<p>{%OFFERS%}</p>
-					</div>
+					
+					
 				</div>
 			</div>
         `);
 
-		return markup;
+		return movieSearchMarkup;
 	});
 
-	// console.log(markup);
-	return markup;
+	// console.log(movieSearchMarkup);
+	return movieSearchMarkup;
 };
 
 /////////////// data to display selected movie:
 exports.insertSelectedMovie = async function (apiResponse) {
 	console.log(apiResponse);
 
-	await apiResponse.forEach((entry, i) => {
-		offers.push(entry[i]);
+	let offers = [];
+	let movieOffersMarkup = [];
+
+	const summary = apiResponse.imdbTitleData.plot;
+	const popularity = apiResponse.imdbTitleData.metacriticRating;
+	const movieDataMarkup = `
+		<div class="movie-data-wrapper">
+			<div class="movie-summary">
+				<p>${summary}</p>
+			</div>
+			<div class="popularity">
+				<p>${popularity}</p>
+			</div>
+		</div>
+	`;
+
+	await apiResponse.watchmodeSourcesData.forEach((entry, i) => {
+		console.log(`WATCHMODE ENTRY: ${entry[i]}`);
+		offers.push(entry[i].name);
+		movieOffersMarkup.push(`
+			<div id="${searchTitle[i]}-offers">		
+				<p>${offers[i]}</p>
+			</div>	
+		`);
 	});
+
+	const fullMarkup = movieDataMarkup.concat(movieOffersMarkup);
+
+	return fullMarkup;
 };

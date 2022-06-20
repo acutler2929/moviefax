@@ -1,0 +1,42 @@
+{
+	"searchType": "Movie",
+	"expression": "star wars",
+	"results": [
+		{
+			"id": "tt0076759",
+			"resultType": "Title",
+			"image": "https://imdb-api.com/images/original/MV5BNzg4MjQxNTQtZmI5My00YjMwLWJlMjUtMmJlY2U2ZWFlNzY1XkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_Ratio0.7273_AL_.jpg",
+			"title": "Star Wars",
+			"description": "(1977)"
+		},
+		{
+			"id": "tt8466564",
+			"resultType": "Title",
+			"image": "https://imdb-api.com/images/original/MV5BOTAxOTlmOTAtMjA0Yy00YjVjLWE3OTQtYjAzMWMxOTAwZTY1XkEyXkFqcGdeQXVyMTM1MTE1NDMx._V1_Ratio0.7273_AL_.jpg",
+			"title": "Obi-Wan Kenobi",
+			"description": "(2022) (TV Mini Series) aka \"Star Wars: Obi-Wan Kenobi\""
+		},
+		{
+			"id": "tt0120915",
+			"resultType": "Title",
+			"image": "https://imdb-api.com/images/original/MV5BYTRhNjcwNWQtMGJmMi00NmQyLWE2YzItODVmMTdjNWI0ZDA2XkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_Ratio0.7273_AL_.jpg",
+			"title": "Star Wars: Episode I - The Phantom Menace",
+			"description": "(1999)"
+		},
+		{
+			"id": "tt0121766",
+			"resultType": "Title",
+			"image": "https://imdb-api.com/images/original/MV5BNTc4MTc3NTQ5OF5BMl5BanBnXkFtZTcwOTg0NjI4NA@@._V1_Ratio0.7273_AL_.jpg",
+			"title": "Star Wars: Episode III - Revenge of the Sith",
+			"description": "(2005)"
+		},
+		{
+			"id": "tt3778644",
+			"resultType": "Title",
+			"image": "https://imdb-api.com/images/original/MV5BOTM2NTI3NTc3Nl5BMl5BanBnXkFtZTgwNzM1OTQyNTM@._V1_Ratio0.7273_AL_.jpg",
+			"title": "Solo: A Star Wars Story",
+			"description": "(2018)"
+		}
+	],
+	"errorMessage": ""
+}
