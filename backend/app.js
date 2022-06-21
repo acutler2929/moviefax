@@ -23,12 +23,19 @@ app.post('/getQuery', async (req, res) => {
 	console.log(`app.js: receiving query for movie name ${query}`);
 
 	// imdbResponse comes back from api Handler...
-	const imdbResponse = await apiHandler.searchMovieData(query);
-	console.log(
-		`app.js: received imdbResponse for movie ${imdbResponse[0].title}`
+	// const imdbResponse = await apiHandler.searchMovieData(query);
+	// console.log(
+	// 	`app.js: received imdbResponse for movie ${imdbResponse[0].title}`
+	// );
+
+	// using sample data for now...
+	const imdbSearchData = require('./templates/imdb-search-sample.json');
+
+	const htmlSearchData = await dataHandler.insertSearchResults(
+		imdbSearchData
 	);
 
-	const htmlSearchData = await dataHandler.insertSearchResults(imdbResponse);
+	// const htmlSearchData = await dataHandler.insertSearchResults(imdbResponse);
 	// console.log(htmlSearchData[0]);
 
 	// res.send(imdbResponse);
@@ -37,7 +44,9 @@ app.post('/getQuery', async (req, res) => {
 
 app.post('/movieData', async (req, res) => {
 	const imdbID = req.body.imdbID;
-	console.log(`receiving query for imdbID ${imdbID}`);
+	console.log(
+		`receiving query for imdbID ${imdbID}- but is actually Star Wars test data...`
+	);
 
 	// movieDataResponse comes back from api Handler...
 	// const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
@@ -47,10 +56,18 @@ app.post('/movieData', async (req, res) => {
 	const imdbTitleData = require('./templates/imdb-title-sample.json');
 	const watchmodeSourcesData = require('./templates/watchmode-sources-sample.json');
 
-	const fullSampleData = {
+	const fullSampleData = JSON.stringify({
 		imdbTitleData,
 		watchmodeSourcesData,
-	};
+	});
+
+	console.log(`app.js: fullSampleData is a ${typeof fullSampleData}`);
+
+	console.log(
+		`app.js: this is the sample data: ${
+			JSON.parse(fullSampleData).imdbTitleData.fullTitle
+		}`
+	);
 
 	const movieDataResponse = await dataHandler.insertSelectedMovie(
 		fullSampleData

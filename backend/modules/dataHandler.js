@@ -12,7 +12,7 @@ exports.insertSearchResults = async function (apiResponse) {
 	let imdbID = [];
 	let movieSearchMarkup = [];
 
-	await apiResponse.forEach((entry, i) => {
+	await apiResponse.results.forEach((entry, i) => {
 		// console.log(entry.title);
 		searchTitle.push(entry.title);
 		searchImage.push(entry.image);
@@ -40,15 +40,25 @@ exports.insertSearchResults = async function (apiResponse) {
 };
 
 /////////////// data to display selected movie:
-exports.insertSelectedMovie = async function (apiResponse) {
-	console.log(apiResponse);
+exports.insertSelectedMovie = async function (data) {
+	// console.log(`dataHandler.js: ${JSON.stringify(data, null, 2)}`);
+	const apiResponse = JSON.parse(data);
+	console.log(`dataHandler.js: apiResponse is a ${typeof apiResponse}`);
 
 	let offers = [];
 	let movieOffersMarkup = [];
 
-	const summary = apiResponse.imdbTitleData.plot;
-	const popularity = apiResponse.imdbTitleData.metacriticRating;
-	const movieDataMarkup = `
+	const insertImdbData = async function (JSONObj) {
+		const summary = JSONObj.imdbTitleData.plot;
+		const popularity = JSONObj.imdbTitleData.metacriticRating;
+		// console.log(`dataHandler.js: plot: ${summary}`);
+		// console.log(typeof summary);
+		// console.log(`dataHandler.js: metacritic rating: ${popularity}`);
+		// console.log(typeof popularity);
+		// console.log(JSONObj.watchmodeSourcesData[0]);
+		console.log(`sourcesArray is a ${typeof sourcesArray}`);
+
+		const movieDataMarkup = `
 		<div class="movie-data-wrapper">
 			<div class="movie-summary">
 				<p>${summary}</p>
@@ -57,19 +67,35 @@ exports.insertSelectedMovie = async function (apiResponse) {
 				<p>${popularity}</p>
 			</div>
 		</div>
-	`;
+		`;
 
-	await apiResponse.watchmodeSourcesData.forEach((entry, i) => {
-		console.log(`WATCHMODE ENTRY: ${entry[i]}`);
-		offers.push(entry[i].name);
-		movieOffersMarkup.push(`
-			<div id="${searchTitle[i]}-offers">		
-				<p>${offers[i]}</p>
+		return movieDataMarkup;
+	};
+
+	const insertWatchmodeData = async function (JSONObj) {
+		const sourcesArray = Object.entries(JSONObj.watchmodeSourcesData);
+		sourcesArray.map((entry, i) => {
+			// console.log(entry[1]);
+			console.log(`WATCHMODE ENTRY: ${entry[1].name}`);
+			offers.push(entry[1].name);
+			movieOffersMarkup.push(`
+			<div class="source-offers">		
+			<span>${offers[i]}</span>
 			</div>	
-		`);
-	});
+			`);
 
-	const fullMarkup = movieDataMarkup.concat(movieOffersMarkup);
+			return movieOffersMarkup;
+		});
+
+		return movieOffersMarkup;
+	};
+
+	const dataMarkup = await insertImdbData(data);
+	const offersMarkup = await insertWatchmodeData(data);
+
+	const fullMarkup = JSON.stringify(dataMarkup.concat(offersMarkup));
+
+	console.log(`dataHandler.js: fullMarkup: ${fullMarkup}`);
 
 	return fullMarkup;
 };
