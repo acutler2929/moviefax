@@ -54,10 +54,8 @@ async function searchMovies() {
 			console.log(`client.js: markup received: ${movieDataResults}`);
 
 			movieData.classList.remove('hidden');
+			movieData.insertAdjacentHTML('afterbegin', `${movieDataResults}`);
 			element.scrollIntoView({ behavior: 'smooth', inline: 'center' });
-			document
-				.getElementById('movie-data-wrapper')
-				.insertAdjacentHTML('afterbegin', `${movieDataResults}`);
 		});
 	});
 }

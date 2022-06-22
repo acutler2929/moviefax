@@ -22,9 +22,9 @@ exports.insertSearchResults = async function (apiResponse) {
 		movieSearchMarkup.push(`
 			<div class="movie-wrapper">
 				<div id="${imdbID[i]}" class="search-results">
-					<h2>${searchTitle[i]}</h2>
+					<h2 class="search-title">${searchTitle[i]}</h2>
 					<img class="search-images" src="${searchImage[i]}" />
-					<p>${searchDescription[i]}</p>
+					<p class="search-description">${searchDescription[i]}</p>
 				</div>
 				<div id="data-${searchTitle[i]}" class="hidden">
 					
@@ -55,12 +55,12 @@ exports.insertSelectedMovie = async function (data) {
 	const insertImdbData = async function (JSONObj) {
 		const summary = JSONObj.imdbTitleData.plot;
 		const popularity = JSONObj.imdbTitleData.metacriticRating;
-		console.log(`dataHandler.js: plot: ${summary}`);
-		console.log(typeof summary);
-		console.log(`dataHandler.js: metacritic rating: ${popularity}`);
-		console.log(typeof popularity);
-		console.log(JSONObj.watchmodeSourcesData[0]);
-		console.log(`sourcesArray is a ${typeof sourcesArray}`);
+		// console.log(`dataHandler.js: plot: ${summary}`);
+		// console.log(typeof summary);
+		// console.log(`dataHandler.js: metacritic rating: ${popularity}`);
+		// console.log(typeof popularity);
+		// console.log(JSONObj.watchmodeSourcesData[0]);
+		// console.log(`sourcesArray is a ${typeof sourcesArray}`);
 
 		const movieDataMarkup = `
 		<div class="movie-data-wrapper">
@@ -80,7 +80,7 @@ exports.insertSelectedMovie = async function (data) {
 		const sourcesArray = Object.entries(JSONObj.watchmodeSourcesData);
 		sourcesArray.map((entry, i) => {
 			// console.log(entry[1]);
-			console.log(`WATCHMODE ENTRY: ${entry[1].name}`);
+			// console.log(`WATCHMODE ENTRY: ${entry[1].name}`);
 			offers.push(entry[1].name);
 			movieOffersMarkup.push(`
 			<div class="source-offers">		

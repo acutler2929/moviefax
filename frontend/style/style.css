@@ -57,6 +57,24 @@ div {
   color: #f64c72;
 }
 
+h1 {
+  font-size: 2em;
+  color: #f64c72;
+}
+
+h2 {
+  color: #f64c72;
+}
+
+p {
+  color: #f64c72;
+}
+
+a {
+  font-size: 1em;
+  color: gold;
+}
+
 #movie-data-wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -121,17 +139,37 @@ div {
 }
 
 .search-results {
-  padding: 1vw;
+  padding: 0.2vw;
+  max-height: 100vh;
+  max-width: 20vw;
+}
+
+.search-results .search-title {
+  font-size: 1em;
+  max-height: 10vh;
+  text-align: center;
+}
+
+.search-results .search-images {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  height: 100%;
+  width: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+
+.search-results .search-description {
+  font-size: 0.75em;
+  max-height: 10vh;
+  text-align: center;
 }
 
 .search-results > * {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-}
-
-.search-images {
-  max-width: 20vw;
 }
 
 .offers {
