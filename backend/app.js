@@ -64,18 +64,12 @@ app.post('/movieData', async (req, res) => {
 	console.log(`app.js: fullSampleData is a ${typeof fullSampleData}`);
 
 	console.log(
-		`app.js: this is the sample data: ${
+		`app.js: this is the sample data after parsing: ${
 			JSON.parse(fullSampleData).imdbTitleData.fullTitle
 		}`
 	);
 
-	const movieDataResponse = await dataHandler.insertSelectedMovie(
-		fullSampleData
-	);
-
-	const htmlMovieData = await dataHandler.insertSelectedMovie(
-		movieDataResponse
-	);
+	const htmlMovieData = await dataHandler.insertSelectedMovie(fullSampleData);
 
 	res.send(htmlMovieData);
 });

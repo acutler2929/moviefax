@@ -4,6 +4,7 @@
 
 ///////////// data to display Search Results:
 exports.insertSearchResults = async function (apiResponse) {
+	console.log('dataHandler.js insertSearchResults() fired...');
 	// console.log(`dataHandler.js: ${apiResponse}`);
 
 	let searchTitle = [];
@@ -41,9 +42,12 @@ exports.insertSearchResults = async function (apiResponse) {
 
 /////////////// data to display selected movie:
 exports.insertSelectedMovie = async function (data) {
+	console.log('dataHandler.js: insertSelectedMovie() fired....');
 	// console.log(`dataHandler.js: ${JSON.stringify(data, null, 2)}`);
 	const apiResponse = JSON.parse(data);
-	console.log(`dataHandler.js: apiResponse is a ${typeof apiResponse}`);
+	console.log(
+		`dataHandler.js: apiResponse is a ${typeof apiResponse} after parsing`
+	);
 
 	let offers = [];
 	let movieOffersMarkup = [];
@@ -51,11 +55,11 @@ exports.insertSelectedMovie = async function (data) {
 	const insertImdbData = async function (JSONObj) {
 		const summary = JSONObj.imdbTitleData.plot;
 		const popularity = JSONObj.imdbTitleData.metacriticRating;
-		// console.log(`dataHandler.js: plot: ${summary}`);
-		// console.log(typeof summary);
-		// console.log(`dataHandler.js: metacritic rating: ${popularity}`);
-		// console.log(typeof popularity);
-		// console.log(JSONObj.watchmodeSourcesData[0]);
+		console.log(`dataHandler.js: plot: ${summary}`);
+		console.log(typeof summary);
+		console.log(`dataHandler.js: metacritic rating: ${popularity}`);
+		console.log(typeof popularity);
+		console.log(JSONObj.watchmodeSourcesData[0]);
 		console.log(`sourcesArray is a ${typeof sourcesArray}`);
 
 		const movieDataMarkup = `
@@ -90,12 +94,12 @@ exports.insertSelectedMovie = async function (data) {
 		return movieOffersMarkup;
 	};
 
-	const dataMarkup = await insertImdbData(data);
-	const offersMarkup = await insertWatchmodeData(data);
+	const dataMarkup = await insertImdbData(apiResponse);
+	const offersMarkup = await insertWatchmodeData(apiResponse);
 
 	const fullMarkup = JSON.stringify(dataMarkup.concat(offersMarkup));
 
-	console.log(`dataHandler.js: fullMarkup: ${fullMarkup}`);
+	// console.log(`dataHandler.js: fullMarkup: ${fullMarkup}`);
 
 	return fullMarkup;
 };
