@@ -20,13 +20,13 @@ exports.insertSearchResults = async function (apiResponse) {
 		searchDescription.push(entry.description);
 		imdbID.push(entry.id);
 		movieSearchMarkup.push(`
-			<div class="movie-wrapper">
-				<div id="${imdbID[i]}" class="search-results">
-					<h2 class="search-title">${searchTitle[i]}</h2>
+			<div class="container-lg movie-wrapper">
+				<div id="${imdbID[i]}" class="preview-wrapper container-lg text-center">
+					<h6 class="search-title">${searchTitle[i]}</h6>
 					<img class="search-images" src="${searchImage[i]}" />
-					<p class="search-description">${searchDescription[i]}</p>
+					<p class="search-description"><small>${searchDescription[i]}</small></p>
 				</div>
-				<div id="data-${searchTitle[i]}" class="hidden">
+				<div id="data-${searchTitle[i]}" class="movie-data-wrapper container-lg hidden">
 					
 					
 				</div>
@@ -63,11 +63,11 @@ exports.insertSelectedMovie = async function (data) {
 		// console.log(`sourcesArray is a ${typeof sourcesArray}`);
 
 		const movieDataMarkup = `
-		<div class="movie-data-wrapper">
-			<div class="movie-summary">
-				<p>${summary}</p>
+		<div class="container-lg summary-pop-wrapper">
+			<div class="container-sm text-left movie-summary">
+				<p><small>${summary}</small></p>
 			</div>
-			<div class="popularity">
+			<div class="container-sm popularity">
 				<p>${popularity}</p>
 			</div>
 		</div>

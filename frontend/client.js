@@ -4,7 +4,7 @@ const submitButton = document.getElementById('search-button');
 
 async function searchMovies() {
 	////////////// First, clear the content wrapper before inserting anything else:
-	document.getElementById('movie-data-wrapper').innerHTML = '';
+	document.getElementById('search-results-wrapper').innerHTML = '';
 
 	let movieSearchResults;
 
@@ -22,7 +22,7 @@ async function searchMovies() {
 
 	movieSearchResults.forEach((entry) => {
 		document
-			.getElementById('movie-data-wrapper')
+			.getElementById('search-results-wrapper')
 			.insertAdjacentHTML('afterbegin', `${entry}`);
 	});
 
@@ -32,6 +32,7 @@ async function searchMovies() {
 		element.addEventListener('click', async function showMovieData() {
 			// console.log(element);
 
+			const movieSearchItem = element.children[0];
 			const imdbID = element.children[0].id;
 			const movieData = element.children[1];
 			console.log(
@@ -51,9 +52,11 @@ async function searchMovies() {
 			});
 
 			const movieDataResults = await response.json();
-			console.log(`client.js: markup received: ${movieDataResults}`);
+			// console.log(`client.js: markup received: ${movieDataResults}`);
 
 			movieData.classList.remove('hidden');
+			movieSearchItem.classList.add('col-6');
+			movieData.classList.add('col-6');
 			movieData.insertAdjacentHTML('afterbegin', `${movieDataResults}`);
 			element.scrollIntoView({ behavior: 'smooth', inline: 'center' });
 		});

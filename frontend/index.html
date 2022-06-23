@@ -5,12 +5,20 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 		<title>MovieFax</title>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+		/>
 		<link rel="stylesheet" href="./style/style.css" />
+		<script
+			defer
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+		></script>
 		<script defer src="client.js"></script>
 	</head>
 	<body>
-		<div id="content-wrapper">
-			<header>
+		<div class="container-lg" id="content-wrapper">
+			<header class="container-sm text-center">
 				<h1>Welcome to MovieFax!</h1>
 				<i
 					>~ Powered by <a href="https://wwww.imdb.com">IMDB.com</a> &
@@ -18,31 +26,34 @@
 					~</i
 				>
 			</header>
-			<nav>
+			<nav class="container-sm">
 				<p>Search for a movie to get started...</p>
 				<form onsubmit="return false">
 					<input type="text" id="search-query" />
-					<button type="button" id="search-button">
+					<button
+						type="button"
+						id="search-button"
+						class="btn btn-secondary"
+					>
 						Search Movies
 					</button>
 				</form>
 			</nav>
-			<div id="movie-data-wrapper">
+			<div class="container-lg" id="search-results-wrapper">
 				<!--<div class="movie-wrapper">
 					<div class="search-results">
-					<h2>${title[i]}</h2>
+					<h6>${title[i]}</h6>
 					<img class="search-images" src="${image[i]}" />
-					<p>${description[i]}</p>
+					<p><small>${description[i]}</small></p>
 				</div>
-				<div id="description-data" class="hidden">
-					<div id="description">
-						<p>{%DESCRIPTION%}</p>
-					</div>
-					<div id="popularity">
-						<p>{%POPULARITY%}</p>
-					</div>
-					<div class="offers">
-						<p>{%OFFERS%}</p>
+				<div id="data-${searchTitle[i]}" class="hidden">
+					<div class="movie-data-wrapper">
+						<div class="movie-summary">
+							<p>${summary}</p>
+						</div>
+						<div class="popularity">
+							<p>${popularity}</p>
+						</div>
 					</div>
 				</div>
 			</div> -->
