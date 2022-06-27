@@ -32,7 +32,7 @@ async function searchMovies() {
 		element.addEventListener('click', async function showMovieData() {
 			// console.log(element);
 
-			const movieSearchItem = element.children[0];
+			// const movieSearchItem = element.children[0];
 			const imdbID = element.children[0].id;
 			const movieData = element.children[1];
 			console.log(
@@ -52,11 +52,10 @@ async function searchMovies() {
 			});
 
 			const movieDataResults = await response.json();
-			// console.log(`client.js: markup received: ${movieDataResults}`);
+			console.log(`client.js: markup received: ${movieDataResults}`);
 
-			movieData.classList.remove('hidden');
-			movieSearchItem.classList.add('col-6');
-			movieData.classList.add('col-6');
+			movieData.classList.toggle('hidden');
+			movieData.classList.toggle('data-wrapper');
 			movieData.insertAdjacentHTML('afterbegin', `${movieDataResults}`);
 			element.scrollIntoView({ behavior: 'smooth', inline: 'center' });
 		});

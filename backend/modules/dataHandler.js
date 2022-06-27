@@ -20,17 +20,17 @@ exports.insertSearchResults = async function (apiResponse) {
 		searchDescription.push(entry.description);
 		imdbID.push(entry.id);
 		movieSearchMarkup.push(`
-			<div class="container-lg movie-wrapper">
-				<div id="${imdbID[i]}" class="preview-wrapper container-lg text-center">
-					<h6 class="search-title">${searchTitle[i]}</h6>
+			<li class="container-fluid movie-wrapper">
+				<div id="${imdbID[i]}" class="data-wrapper container-fluid text-center">
+					<h6 class="search-title align-middle">${searchTitle[i]}</h6>
 					<img class="search-images" src="${searchImage[i]}" />
-					<p class="search-description"><small>${searchDescription[i]}</small></p>
+					<p class="search-description align-middle"><small>${searchDescription[i]}</small></p>
 				</div>
-				<div id="data-${searchTitle[i]}" class="movie-data-wrapper container-lg hidden">
+				<div id="data-${searchTitle[i]}" class="container-fluid hidden">
 					
 					
 				</div>
-			</div>
+			</li>
         `);
 
 		return movieSearchMarkup;
@@ -49,8 +49,10 @@ exports.insertSelectedMovie = async function (data) {
 		`dataHandler.js: apiResponse is a ${typeof apiResponse} after parsing`
 	);
 
-	let offers = [];
-	let movieOffersMarkup = [];
+	let offersName = [];
+	let offersURL = [];
+	let offersFormat = [];
+	let movieOffersMarkup = ``;
 
 	const insertImdbData = async function (JSONObj) {
 		const summary = JSONObj.imdbTitleData.plot;
@@ -64,10 +66,10 @@ exports.insertSelectedMovie = async function (data) {
 
 		const movieDataMarkup = `
 		<div class="container-lg summary-pop-wrapper">
-			<div class="container-sm text-left movie-summary">
+			<div class="container-lg text-left movie-summary">
 				<p><small>${summary}</small></p>
 			</div>
-			<div class="container-sm popularity">
+			<div class="container-lg popularity">
 				<p>${popularity}</p>
 			</div>
 		</div>
@@ -78,19 +80,21 @@ exports.insertSelectedMovie = async function (data) {
 
 	const insertWatchmodeData = async function (JSONObj) {
 		const sourcesArray = Object.entries(JSONObj.watchmodeSourcesData);
-		sourcesArray.map((entry, i) => {
+		sourcesArray.forEach((entry, i) => {
 			// console.log(entry[1]);
 			// console.log(`WATCHMODE ENTRY: ${entry[1].name}`);
-			offers.push(entry[1].name);
-			movieOffersMarkup.push(`
-			<div class="source-offers">		
-			<span>${offers[i]}</span>
-			</div>	
-			`);
+			offersName.push(entry[1].name);
+			offersURL.push(entry[1].web_url);
+			offersFormat.push(entry[1].format);
+			movieOffersMarkup += `
+				<div class="source-offers">		
+					<a href="${offersURL}">${offersName[i]} ${offersFormat[i]}</a>
+				</div>	
+			`;
 
 			return movieOffersMarkup;
 		});
-
+		// console.log(`dataHandler.js movie offers: ${movieOffersMarkup}`);
 		return movieOffersMarkup;
 	};
 
