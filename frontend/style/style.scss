@@ -130,6 +130,34 @@ body {
 	}
 }
 
+#movie-data-wrapper {
+	// max-height: 80vh;
+
+	#movie-data-left {
+		display: flex;
+		flex-direction: column;
+		max-height: 100vh;
+		// object-fit: contain;
+
+		#movie-data-poster {
+			object-fit: contain;
+		}
+	}
+
+	#movie-data-right {
+		display: flex;
+		flex-direction: column;
+		max-height: 100vh;
+
+		#data-summary-wrapper {
+		}
+		#data-rating-wrapper {
+		}
+		#data-sources-wrapper {
+		}
+	}
+}
+
 .hidden {
 	display: none;
 }

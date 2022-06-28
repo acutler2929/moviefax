@@ -28,38 +28,38 @@ async function searchMovies() {
 
 	const moviePreview = document.querySelectorAll('.movie-wrapper');
 
-	moviePreview.forEach((element) => {
-		element.addEventListener('click', async function showMovieData() {
-			// console.log(element);
+	// moviePreview.forEach((element) => {
+	// 	element.addEventListener('click', async function showMovieData() {
+	// 		// console.log(element);
 
-			// const movieSearchItem = element.children[0];
-			const imdbID = element.children[0].id;
-			const movieData = element.children[1];
-			console.log(
-				`showMovieData() fired at ${element.children[0].children[0].textContent}, imdb id: ${imdbID}`
-			);
+	// 		// const movieSearchItem = element.children[0];
+	// 		const imdbID = element.children[0].id;
+	// 		const movieData = element.children[1];
+	// 		console.log(
+	// 			`showMovieData() fired at ${element.children[0].children[0].textContent}, imdb id: ${imdbID}`
+	// 		);
 
-			// const movieData = document.getElementById(`data-${element.id}`);
-			// console.log(movieData);
-			// console.log(element.childNodes);
-			// console.log(element.children);
+	// const movieData = document.getElementById(`data-${element.id}`);
+	// console.log(movieData);
+	// console.log(element.childNodes);
+	// console.log(element.children);
 
-			/////////// Sending the movie name to the apiHandler through app.js...
-			let response = await fetch('/movieData', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ imdbID }),
-			});
+	/////////// Sending the movie name to the apiHandler through app.js...
+	// let response = await fetch('/movieData', {
+	// 	method: 'POST',
+	// 	headers: { 'Content-Type': 'application/json' },
+	// 	body: JSON.stringify({ imdbID }),
+	// });
 
-			const movieDataResults = await response.json();
-			console.log(`client.js: markup received: ${movieDataResults}`);
+	// const movieDataResults = await response.json();
+	// console.log(`client.js: markup received: ${movieDataResults}`);
 
-			movieData.classList.toggle('hidden');
-			movieData.classList.toggle('data-wrapper');
-			movieData.insertAdjacentHTML('afterbegin', `${movieDataResults}`);
-			element.scrollIntoView({ behavior: 'smooth', inline: 'center' });
-		});
-	});
+	// movieData.classList.toggle('hidden');
+	// movieData.classList.toggle('data-wrapper');
+	// movieData.insertAdjacentHTML('afterbegin', `${movieDataResults}`);
+	// element.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+	// 	});
+	// });
 }
 
 submitButton.onclick = searchMovies;

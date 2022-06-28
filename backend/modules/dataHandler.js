@@ -21,6 +21,7 @@ exports.insertSearchResults = async function (apiResponse) {
 		imdbID.push(entry.id);
 		movieSearchMarkup.push(`
 			<li class="container-fluid movie-wrapper">
+				<a href="/details?id=${imdbID[i]}">
 				<div id="${imdbID[i]}" class="data-wrapper container-fluid text-center">
 					<h6 class="search-title align-middle">${searchTitle[i]}</h6>
 					<img class="search-images" src="${searchImage[i]}" />
@@ -30,6 +31,7 @@ exports.insertSearchResults = async function (apiResponse) {
 					
 					
 				</div>
+				</a>
 			</li>
         `);
 
@@ -106,4 +108,23 @@ exports.insertSelectedMovie = async function (data) {
 	// console.log(`dataHandler.js: fullMarkup: ${fullMarkup}`);
 
 	return fullMarkup;
+};
+
+exports.replaceData = function (html, data) {
+	const input = JSON.parse(data);
+
+	let output = html.replace(/{%MOVIETITLE%}/g, input.imdbTitleData.title);
+	output = output.replace(/{%MOVIEPOSTER%}/g, input.imdbTitleData.image);
+	output = output.replace(/{%MOVIEYEAR%}/g, input.imdbTitleData.year);
+	output = output.replace(/{%MOVIESUMMARY%}/g, input.imdbTitleData.plot);
+	output = output.replace(/{%MOVIERATING%}/g, input.imdbTitleData.imDbRating);
+	output = output.replace(/{%MOVIESOURCES%}/g, input.watchmodeSourcesData[0]);
+
+	// if (!product.organic)
+	// 	output = output.replace(/{%NOTORGANIC%}/g, 'not-organic');
+	// output = product.organic
+	// 	? output.replace(/{%ORGANIC%}/g, product.organic)
+	// 	: output.replace(/{%NOTORGANIC%}/g, product.organic);
+
+	return output;
 };
