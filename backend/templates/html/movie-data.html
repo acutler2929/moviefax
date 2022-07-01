@@ -61,7 +61,26 @@
 				<div class="col-7" id="movie-data-right">
 					<div id="data-summary-wrapper"><p>{%MOVIESUMMARY%}</p></div>
 					<div id="data-rating-wrapper"><p>{%MOVIERATING%}</p></div>
-					<div id="data-sources-wrapper">{%MOVIESOURCES%}</div>
+					<div id="data-sources-wrapper">
+						<div id="sources-purchase-wrapper">
+							<h4>Buy</h4>
+							<ul id="purchase-sources-list">
+								{%MOVIEPURCHASE%}
+							</ul>
+						</div>
+						<div id="sources-rent-wrapper">
+							<h4>Rent</h4>
+							<ul id="rental-sources-list">
+								{%MOVIERENT%}
+							</ul>
+						</div>
+						<div id="sources-streaming-wrapper">
+							<h4>Streaming</h4>
+							<ul ul id="streaming-sources-list">
+								{%MOVIESTREAMING%}
+							</ul>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

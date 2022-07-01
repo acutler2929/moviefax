@@ -64,8 +64,9 @@ app.get('/details', async (req, res) => {
 	});
 
 	const output = dataHandler.replaceData(movieDataTemplate, fullSampleData);
+	// console.log(output);
 
-	res.end(output);
+	res.send(output);
 
 	// res.sendFile(path.join(__dirname, '/templates/html/movie-data.html'));
 });

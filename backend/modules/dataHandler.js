@@ -43,88 +43,100 @@ exports.insertSearchResults = async function (apiResponse) {
 };
 
 /////////////// data to display selected movie:
-exports.insertSelectedMovie = async function (data) {
-	console.log('dataHandler.js: insertSelectedMovie() fired....');
-	// console.log(`dataHandler.js: ${JSON.stringify(data, null, 2)}`);
-	const apiResponse = JSON.parse(data);
-	console.log(
-		`dataHandler.js: apiResponse is a ${typeof apiResponse} after parsing`
-	);
+// exports.insertSelectedMovie = async function (data) {
+// 	console.log('dataHandler.js: insertSelectedMovie() fired....');
+// 	// console.log(`dataHandler.js: ${JSON.stringify(data, null, 2)}`);
+// 	const apiResponse = JSON.parse(data);
+// 	console.log(
+// 		`dataHandler.js: apiResponse is a ${typeof apiResponse} after parsing`
+// 	);
 
-	let offersName = [];
-	let offersURL = [];
-	let offersFormat = [];
-	let movieOffersMarkup = ``;
+// 	const insertImdbData = async function (JSONObj) {
+// 		const summary = JSONObj.imdbTitleData.plot;
+// 		const popularity = JSONObj.imdbTitleData.metacriticRating;
+// 		const movieDataMarkup = `
+// 		<div class="container-lg summary-pop-wrapper">
+// 			<div class="container-lg text-left movie-summary">
+// 				<p><small>${summary}</small></p>
+// 			</div>
+// 			<div class="container-lg popularity">
+// 				<p>${popularity}</p>
+// 			</div>
+// 		</div>
+// 		`;
 
-	const insertImdbData = async function (JSONObj) {
-		const summary = JSONObj.imdbTitleData.plot;
-		const popularity = JSONObj.imdbTitleData.metacriticRating;
-		// console.log(`dataHandler.js: plot: ${summary}`);
-		// console.log(typeof summary);
-		// console.log(`dataHandler.js: metacritic rating: ${popularity}`);
-		// console.log(typeof popularity);
-		// console.log(JSONObj.watchmodeSourcesData[0]);
-		// console.log(`sourcesArray is a ${typeof sourcesArray}`);
+// 		return movieDataMarkup;
+// 	};
 
-		const movieDataMarkup = `
-		<div class="container-lg summary-pop-wrapper">
-			<div class="container-lg text-left movie-summary">
-				<p><small>${summary}</small></p>
-			</div>
-			<div class="container-lg popularity">
-				<p>${popularity}</p>
-			</div>
-		</div>
-		`;
+// 	const dataMarkup = await insertImdbData(apiResponse);
+// 	// const offersMarkup = await insertWatchmodeData(apiResponse);
 
-		return movieDataMarkup;
-	};
+// 	const fullMarkup = JSON.stringify(dataMarkup.concat(offersMarkup));
 
-	const insertWatchmodeData = async function (JSONObj) {
-		const sourcesArray = Object.entries(JSONObj.watchmodeSourcesData);
-		sourcesArray.forEach((entry, i) => {
-			// console.log(entry[1]);
-			// console.log(`WATCHMODE ENTRY: ${entry[1].name}`);
-			offersName.push(entry[1].name);
-			offersURL.push(entry[1].web_url);
-			offersFormat.push(entry[1].format);
-			movieOffersMarkup += `
-				<div class="source-offers">		
-					<a href="${offersURL}">${offersName[i]} ${offersFormat[i]}</a>
-				</div>	
-			`;
+// 	// console.log(`dataHandler.js: fullMarkup: ${fullMarkup}`);
 
-			return movieOffersMarkup;
-		});
-		// console.log(`dataHandler.js movie offers: ${movieOffersMarkup}`);
-		return movieOffersMarkup;
-	};
-
-	const dataMarkup = await insertImdbData(apiResponse);
-	const offersMarkup = await insertWatchmodeData(apiResponse);
-
-	const fullMarkup = JSON.stringify(dataMarkup.concat(offersMarkup));
-
-	// console.log(`dataHandler.js: fullMarkup: ${fullMarkup}`);
-
-	return fullMarkup;
-};
+// 	return fullMarkup;
+// };
 
 exports.replaceData = function (html, data) {
 	const input = JSON.parse(data);
+	const sources = input.watchmodeSourcesData;
+
+	const purchaseSources = sources.filter((source) => source.type === 'buy');
+	const rentalSources = sources.filter((source) => source.type === 'rent');
+	const streamingSources = sources.filter((source) => source.type === 'sub');
+
+	// console.log(streamingSources);
+
+	let purchaseArray = [];
+	let rentalArray = [];
+	let streamingArray = [];
+
+	purchaseSources.forEach((source) => {
+		purchaseArray.push(`
+			<li class="purchase-source">
+				<a href="${source.web_url}">${source.name}, ${source.format} from ${source.price}</a>
+			</li>
+		`);
+		return purchaseArray;
+	});
+
+	rentalSources.forEach((source) => {
+		rentalArray.push(`
+			<li class="rental-source">
+				<a href="${source.web_url}">${source.name}, ${source.type} ${source.format} from ${source.price}</a>
+			</li>
+		`);
+		return rentalArray;
+	});
+
+	streamingSources.forEach((source) => {
+		streamingArray.push(`
+			<li class="streaming-source">
+				<a href="${source.web_url}">${source.name}, ${source.format}</a>
+			</li>
+		`);
+		return streamingArray;
+	});
+
+	const purchaseMarkup = purchaseArray.join('');
+	const rentalMarkup = rentalArray.join('');
+	const streamingMarkup = streamingArray.join('');
 
 	let output = html.replace(/{%MOVIETITLE%}/g, input.imdbTitleData.title);
 	output = output.replace(/{%MOVIEPOSTER%}/g, input.imdbTitleData.image);
 	output = output.replace(/{%MOVIEYEAR%}/g, input.imdbTitleData.year);
 	output = output.replace(/{%MOVIESUMMARY%}/g, input.imdbTitleData.plot);
 	output = output.replace(/{%MOVIERATING%}/g, input.imdbTitleData.imDbRating);
-	output = output.replace(/{%MOVIESOURCES%}/g, input.watchmodeSourcesData[0]);
 
-	// if (!product.organic)
-	// 	output = output.replace(/{%NOTORGANIC%}/g, 'not-organic');
-	// output = product.organic
-	// 	? output.replace(/{%ORGANIC%}/g, product.organic)
-	// 	: output.replace(/{%NOTORGANIC%}/g, product.organic);
+	sources.forEach((source) => {
+		// console.log(source);
+		if (source.type === 'buy') {
+			output = output.replace(/{%MOVIEPURCHASE%}/g, purchaseMarkup);
+		} else if (source.type === 'rent') {
+			output = output.replace(/{%MOVIERENT%}/g, rentalMarkup);
+		} else output = output.replace(/{%MOVIESTREAMING%}/g, streamingMarkup);
+	});
 
 	return output;
 };

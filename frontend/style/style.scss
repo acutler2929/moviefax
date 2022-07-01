@@ -154,6 +154,45 @@ body {
 		#data-rating-wrapper {
 		}
 		#data-sources-wrapper {
+			#sources-purchase-wrapper {
+				#purchase-sources-list {
+					display: flex;
+					flex-direction: row;
+					flex-wrap: wrap;
+					justify-content: center;
+
+					.purchase-source {
+						margin: 0.5rem;
+						padding: 0.5rem;
+					}
+				}
+			}
+			#sources-rent-wrapper {
+				#rental-sources-list {
+					display: flex;
+					flex-direction: row;
+					flex-wrap: wrap;
+					justify-content: center;
+
+					.rental-source {
+						margin: 0.5rem;
+						padding: 0.5rem;
+					}
+				}
+			}
+			#sources-streaming-wrapper {
+				#streaming-sources-list {
+					display: flex;
+					flex-direction: row;
+					flex-wrap: wrap;
+					justify-content: center;
+
+					.streaming-source {
+						margin: 0.5rem;
+						padding: 0.5rem;
+					}
+				}
+			}
 		}
 	}
 }

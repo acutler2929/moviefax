@@ -26,7 +26,7 @@ async function searchMovies() {
 			.insertAdjacentHTML('afterbegin', `${entry}`);
 	});
 
-	const moviePreview = document.querySelectorAll('.movie-wrapper');
+	// const moviePreview = document.querySelectorAll('.movie-wrapper');
 
 	// moviePreview.forEach((element) => {
 	// 	element.addEventListener('click', async function showMovieData() {
