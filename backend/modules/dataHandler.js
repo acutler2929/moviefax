@@ -1,5 +1,7 @@
 'use strict';
 
+const { Value } = require('sass');
+
 // console.log('hello from dataHandler!');
 
 ///////////// data to display Search Results:
@@ -79,14 +81,29 @@ exports.insertSearchResults = async function (apiResponse) {
 // };
 
 exports.replaceData = function (html, data) {
-	const input = JSON.parse(data);
-	const sources = input.watchmodeSourcesData;
-
-	const purchaseSources = sources.filter((source) => source.type === 'buy');
-	const rentalSources = sources.filter((source) => source.type === 'rent');
-	const streamingSources = sources.filter((source) => source.type === 'sub');
-
-	// console.log(streamingSources);
+	const input = JSON.parse(data),
+		sources = input.watchmodeSourcesData,
+		purchaseSources = sources
+			.filter((source) => source.type === 'buy')
+			.filter(
+				(source, i, self) =>
+					i ===
+					self.findIndex((el) => el.source_id === source.source_id)
+			),
+		rentalSources = sources
+			.filter((source) => source.type === 'rent')
+			.filter(
+				(source, i, self) =>
+					i ===
+					self.findIndex((el) => el.source_id === source.source_id)
+			),
+		streamingSources = sources
+			.filter((source) => source.type === 'sub')
+			.filter(
+				(source, i, self) =>
+					i ===
+					self.findIndex((el) => el.source_id === source.source_id)
+			);
 
 	let purchaseArray = [];
 	let rentalArray = [];
@@ -95,7 +112,7 @@ exports.replaceData = function (html, data) {
 	purchaseSources.forEach((source) => {
 		purchaseArray.push(`
 			<li class="purchase-source">
-				<a href="${source.web_url}">${source.name}, ${source.format} from ${source.price}</a>
+				<a href="${source.web_url}">${source.name} from ${source.price}</a>
 			</li>
 		`);
 		return purchaseArray;
@@ -104,7 +121,7 @@ exports.replaceData = function (html, data) {
 	rentalSources.forEach((source) => {
 		rentalArray.push(`
 			<li class="rental-source">
-				<a href="${source.web_url}">${source.name}, ${source.type} ${source.format} from ${source.price}</a>
+				<a href="${source.web_url}">${source.name} from ${source.price}</a>
 			</li>
 		`);
 		return rentalArray;
@@ -113,7 +130,7 @@ exports.replaceData = function (html, data) {
 	streamingSources.forEach((source) => {
 		streamingArray.push(`
 			<li class="streaming-source">
-				<a href="${source.web_url}">${source.name}, ${source.format}</a>
+				<a href="${source.web_url}">${source.name}</a>
 			</li>
 		`);
 		return streamingArray;
@@ -127,7 +144,23 @@ exports.replaceData = function (html, data) {
 	output = output.replace(/{%MOVIEPOSTER%}/g, input.imdbTitleData.image);
 	output = output.replace(/{%MOVIEYEAR%}/g, input.imdbTitleData.year);
 	output = output.replace(/{%MOVIESUMMARY%}/g, input.imdbTitleData.plot);
-	output = output.replace(/{%MOVIERATING%}/g, input.imdbTitleData.imDbRating);
+	output = output.replace(/{%IMDBRATING%}/g, input.imdbTitleData.imDbRating);
+	output = output.replace(
+		/{%METACRITICRATING%}/g,
+		input.imdbTitleData.metacriticRating
+	);
+	output = output.replace(
+		/{%CONTENTRATING%}/g,
+		input.imdbTitleData.contentRating
+	);
+	output = output.replace(
+		/{%MOVIEBUDGET%}/g,
+		input.imdbTitleData.boxOffice.budget
+	);
+	output = output.replace(
+		/{%MOVIEGROSS%}/g,
+		input.imdbTitleData.boxOffice.cumulativeWorldwideGross
+	);
 
 	sources.forEach((source) => {
 		// console.log(source);

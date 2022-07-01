@@ -17,38 +17,46 @@
 		<script defer src="client.js"></script>
 	</head>
 	<body>
-		<div class="container-fluid" id="content-wrapper">
-			<header class="container-fluid text-center">
-				<h1>Welcome to MovieFax!</h1>
-				<i
+		<div id="content-wrapper">
+			<div class="container-fluid row">
+				<div
+					class="col-6 d-flex align-items-center justify-content-center"
+				>
+					<header class="">
+						<h1>Welcome to MovieFax!</h1>
+					</header>
+				</div>
+				<div class="col-6">
+					<nav>
+						<form onsubmit="return false">
+							<div class="row">
+								<div class="col-8 d-flex align-items-center">
+									<input
+										type="text"
+										placeholder="Search for a movie to get started..."
+										class="form-control"
+										id="search-query"
+									/>
+								</div>
+								<div class="col-4">
+									<button
+										type="button"
+										id="search-button"
+										class="btn btn-secondary"
+									>
+										Search Movies
+									</button>
+								</div>
+							</div>
+						</form>
+					</nav>
+				</div>
+				<i class="text-center"
 					>~ Powered by <a href="https://wwww.imdb.com">IMDB.com</a> &
 					<a href="https://www.watchmode.com">Watchmode.com</a>
 					~</i
 				>
-			</header>
-			<nav>
-				<form onsubmit="return false">
-					<div class="row justify-content-center">
-						<div class="col-6">
-							<input
-								type="text"
-								placeholder="Search for a movie to get started..."
-								class="form-control"
-								id="search-query"
-							/>
-						</div>
-						<div class="col-2">
-							<button
-								type="button"
-								id="search-button"
-								class="btn btn-secondary"
-							>
-								Search Movies
-							</button>
-						</div>
-					</div>
-				</form>
-			</nav>
+			</div>
 			<div class="container-fluid" id="search-results-wrapper">
 				<ul>
 					<!--<div class="movie-wrapper">
