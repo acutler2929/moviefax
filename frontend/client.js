@@ -11,7 +11,7 @@ async function searchMovies() {
 	const query = document.getElementById('search-query').value;
 	// console.log(`search button clicked with entry ${query}`);
 
-	let response = await fetch('/getQuery', {
+	let response = await fetch('/querySearch', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ query }),

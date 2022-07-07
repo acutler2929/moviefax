@@ -22,7 +22,7 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('frontend'));
 
-app.post('/getQuery', async (req, res) => {
+app.post('/querySearch', async (req, res) => {
 	const query = req.body.query;
 	console.log(`app.js: receiving query for movie name ${query}`);
 
