@@ -1,47 +1,66 @@
 'use strict';
 
-const { Value } = require('sass');
-
 // console.log('hello from dataHandler!');
 
 ///////////// data to display Search Results:
-exports.insertSearchResults = async function (apiResponse) {
-	console.log('dataHandler.js insertSearchResults() fired...');
-	// console.log(`dataHandler.js: ${apiResponse}`);
+exports.replaceSearchData = async function (html, data, sampleData) {
+	console.log('dataHandler.js replaceSearchData() fired...');
+	console.log(
+		`dataHandler.js: sampleData is a ${typeof sampleData} ${sampleData}`
+	);
 
-	let searchTitle = [];
-	let searchImage = [];
-	let searchDescription = [];
-	let imdbID = [];
-	let movieSearchMarkup = [];
+	const input = data;
+	const detailsLink = sampleData == true ? '/sample-details' : '/details';
 
-	await apiResponse.results.forEach((entry, i) => {
-		// console.log(entry.title);
-		searchTitle.push(entry.title);
-		searchImage.push(entry.image);
-		searchDescription.push(entry.description);
-		imdbID.push(entry.id);
-		movieSearchMarkup.push(`
+	console.log(`dataHandler.js: detailsLink is ${detailsLink}`);
+
+	let moviesMarkupArray = [];
+
+	input.results.forEach((result) => {
+		moviesMarkupArray.push(`
 			<li class="container-fluid movie-wrapper">
-				<a href="/details?id=${imdbID[i]}">
-				<div id="${imdbID[i]}" class="data-wrapper container-fluid text-center">
-					<h6 class="search-title align-middle">${searchTitle[i]}</h6>
-					<img class="search-images" src="${searchImage[i]}" />
-					<p class="search-description align-middle"><small>${searchDescription[i]}</small></p>
-				</div>
-				<div id="data-${searchTitle[i]}" class="container-fluid hidden">
-					
-					
-				</div>
-				</a>
-			</li>
-        `);
+				<a href="${detailsLink}?id=${result.id}">
+		 			<div id="${result.id}" class="data-wrapper container-fluid text-center">
+		 				<h6 class="search-title align-middle">${result.title}</h6>
+		 				<img class="search-images" src="${result.image}" />
+		 				<p class="search-description align-middle"><small>${result.description}</small></p>
+		 			</div>
+		 		</a>
+		 	</li>
+		`);
 
-		return movieSearchMarkup;
+		return moviesMarkupArray;
 	});
 
-	// console.log(movieSearchMarkup);
-	return movieSearchMarkup;
+	const moviesMarkup = moviesMarkupArray.join('');
+
+	let output = html.replace(/{%SEARCHQUERY%}/g, input.expression);
+	output = output.replace(/{%SEARCHRESULTS%}/g, moviesMarkup);
+
+	// await apiResponse.results.forEach((entry, i) => {
+	// 	// console.log(entry.title);
+	// 	searchTitle.push(entry.title);
+	// 	searchImage.push(entry.image);
+	// 	searchDescription.push(entry.description);
+	// 	imdbID.push(entry.id);
+	// 	movieSearchMarkup.push(`
+	// 		<li class="container-fluid movie-wrapper">
+	// 			<a href="/details?id=${imdbID[i]}">
+	// 			<div id="${imdbID[i]}" class="data-wrapper container-fluid text-center">
+	// 				<h6 class="search-title align-middle">${searchTitle[i]}</h6>
+	// 				<img class="search-images" src="${searchImage[i]}" />
+	// 				<p class="search-description align-middle"><small>${searchDescription[i]}</small></p>
+	// 			</div>
+	// 			<div id="data-${searchTitle[i]}" class="container-fluid hidden">
+
+	// 			</div>
+	// 			</a>
+	// 		</li>
+	//     `);
+
+	// 	return movieSearchMarkup;
+	// });
+	return output;
 };
 
 /////////////// data to display selected movie:
@@ -80,8 +99,9 @@ exports.insertSearchResults = async function (apiResponse) {
 // 	return fullMarkup;
 // };
 
-exports.replaceData = function (html, data) {
-	const input = JSON.parse(data),
+exports.replaceDetailData = function (html, data) {
+	console.log(data);
+	const input = data,
 		sources = input.watchmodeSourcesData,
 		purchaseSources = sources
 			.filter((source) => source.type === 'buy')

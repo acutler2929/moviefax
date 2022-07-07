@@ -6,8 +6,9 @@ const imdbApiKey = process.env.IMDB_API_KEY;
 const watchmodeApiKey = process.env.WATCHMODE_API_KEY;
 // console.log('hello from apiHandler');
 
-let searchResults;
-let movieResults;
+let searchData;
+let imdbTitleData;
+let watchmodeSourcesData;
 
 exports.searchMovieData = async function (query) {
 	console.log(`apiHandler.js: searching query ${query}`);
@@ -15,9 +16,8 @@ exports.searchMovieData = async function (query) {
 		.get(`https://imdb-api.com/en/API/SearchMovie/${imdbApiKey}/${query}`)
 		.then((res) => {
 			// handle success
-			// searchResults = JSON.stringify(res.data.results);
-			searchResults = res.data.results;
-			return searchResults;
+			searchData = res.data;
+			return searchData;
 		})
 		.catch((err) => {
 			// handle error
@@ -27,29 +27,35 @@ exports.searchMovieData = async function (query) {
 			// always executed
 		});
 
-	// console.log(searchResults);
-	return searchResults;
+	return searchData;
 };
 
 exports.selectedMovieData = async function (imdbID) {
-	///////// temporarily turned off so I don't burn through my api call limit with watchmode...
-	// await axios
-	// 	.get(
-	// 		`https://api.watchmode.com/v1/title/${imdbID}/details/?apiKey=${watchmodeApiKey}`
-	// 	)
-	// 	.then((res) => {
-	// 		// handle success
-	// 		movieResults = res.data;
-	// 		return movieResults;
-	// 	})
-	// 	.catch((err) => {
-	// 		// handle error
-	// 		console.log(err);
-	// 	});
+	await axios
+		.get(`https://imdb-api.com/en/API/Title/${imdbApiKey}/${imdbID}`)
+		.then((res) => {
+			// handle success
+			imdbTitleData = res.data;
+			return imdbTitleData;
+		})
+		.catch((err) => {
+			// handle error
+			console.log(err);
+		});
 
-	/////////// let's use THIS data instead:
+	await axios
+		.get(
+			`https://api.watchmode.com/v1/title/${imdbID}/details/?apiKey=${watchmodeApiKey}`
+		)
+		.then((res) => {
+			// handle success
+			watchmodeSourcesData = res.data;
+			return watchmodeSourcesData;
+		})
+		.catch((err) => {
+			// handle error
+			console.log(err);
+		});
 
-	// movieDataResults = ;
-
-	return movieResults;
+	return { imdbTitleData, watchmodeSourcesData };
 };
