@@ -67,7 +67,7 @@ app.post('/query-search', async (req, res) => {
 	res.send(output);
 });
 
-app.get('/sample-details', async (req, res) => {
+app.get('/sample-details', (req, res) => {
 	console.log('app.js: /sampleDetails accessed!');
 	const { query, pathname } = url.parse(req.url, true);
 	const imdbID = JSON.stringify(query.id);
@@ -86,33 +86,24 @@ app.get('/sample-details', async (req, res) => {
 		movieDataTemplate,
 		fullSampleData
 	);
-	// console.log(output);
 
 	res.send(output);
-
-	// res.sendFile(path.join(__dirname, '/templates/html/movie-data.html'));
 });
 
 app.get('/details', async (req, res) => {
 	const { query, pathname } = url.parse(req.url, true);
-	const imdbID = JSON.stringify(query.id);
+	const imdbID = query.id;
 	console.log(`/details: receiving query for imdbID ${imdbID}`);
 
 	// movieDataResponse comes back from api Handler...
 	const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
-	// console.log(`app.js movieDataResponse: ${movieDataResponse}`);
 
-	const output = await dataHandler.replaceDetailData(
+	const output = dataHandler.replaceDetailData(
 		movieDataTemplate,
 		movieDataResponse
 	);
 
 	res.send(output);
 });
-
-// app.post('/movieData', async (req, res) => {
-
-// res.send(movieDataTemplate);
-// });
 
 module.exports = app;
