@@ -77,10 +77,10 @@ app.get('/sample-details', async (req, res) => {
 	const imdbTitleData = require('./templates/json/imdb-title-sample.json');
 	const watchmodeSourcesData = require('./templates/json/watchmode-sources-sample.json');
 
-	const fullSampleData = JSON.stringify({
+	const fullSampleData = {
 		imdbTitleData,
 		watchmodeSourcesData,
-	});
+	};
 
 	const output = dataHandler.replaceDetailData(
 		movieDataTemplate,

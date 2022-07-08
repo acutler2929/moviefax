@@ -100,7 +100,6 @@ exports.replaceSearchData = async function (html, data, sampleData) {
 // };
 
 exports.replaceDetailData = function (html, data) {
-	console.log(data);
 	const input = data,
 		sources = input.watchmodeSourcesData,
 		purchaseSources = sources
