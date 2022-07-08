@@ -22,9 +22,6 @@ exports.searchMovieData = async function (query) {
 		.catch((err) => {
 			// handle error
 			console.log(err);
-		})
-		.then((res) => {
-			// always executed
 		});
 
 	return searchData;
@@ -45,7 +42,7 @@ exports.selectedMovieData = async function (imdbID) {
 
 	await axios
 		.get(
-			`https://api.watchmode.com/v1/title/${imdbID}/details/?apiKey=${watchmodeApiKey}`
+			`https://api.watchmode.com/v1/title/${imdbID}/sources/?apiKey=${watchmodeApiKey}`
 		)
 		.then((res) => {
 			// handle success
@@ -57,5 +54,7 @@ exports.selectedMovieData = async function (imdbID) {
 			console.log(err);
 		});
 
-	return { imdbTitleData, watchmodeSourcesData };
+	const output = { imdbTitleData, watchmodeSourcesData };
+
+	return output;
 };
