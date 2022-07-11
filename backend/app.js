@@ -52,19 +52,24 @@ app.post('/query-search', async (req, res) => {
 
 	// imdbResponse comes back from api Handler...
 	const imdbResponse = await apiHandler.searchMovieData(query);
+	console.log(imdbResponse.results);
 
-	console.log(
-		`app.js: received imdbResponse for movie ${imdbResponse.results[0].title}`
-	);
+	if (imdbResponse.message === 'ERROR' || imdbResponse.results === null) {
+		res.send(imdbResponse.errorMessage);
+	} else {
+		console.log(
+			`app.js: received imdbResponse for movie ${imdbResponse.results[0].title}`
+		);
 
-	const output = await dataHandler.replaceSearchData(
-		movieListTemplate,
-		imdbResponse,
-		sampleData
-	);
-	console.log(output[0]);
+		const output = await dataHandler.replaceSearchData(
+			movieListTemplate,
+			imdbResponse,
+			sampleData
+		);
+		console.log(output[0]);
 
-	res.send(output);
+		res.send(output);
+	}
 });
 
 app.get('/sample-details', (req, res) => {
@@ -98,12 +103,16 @@ app.get('/details', async (req, res) => {
 	// movieDataResponse comes back from api Handler...
 	const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
 
-	const output = dataHandler.replaceDetailData(
-		movieDataTemplate,
-		movieDataResponse
-	);
+	if (movieDataResponse.message === 'ERROR') {
+		res.send(movieDataResponse.errorMessage);
+	} else {
+		const output = dataHandler.replaceDetailData(
+			movieDataTemplate,
+			movieDataResponse
+		);
 
-	res.send(output);
+		res.send(output);
+	}
 });
 
 module.exports = app;

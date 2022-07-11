@@ -21,7 +21,8 @@ exports.searchMovieData = async function (query) {
 		})
 		.catch((err) => {
 			// handle error
-			console.log(err);
+			console.log(`returning "ERROR": ${err.message}`);
+			return { message: 'ERROR' };
 		});
 
 	return searchData;
@@ -37,7 +38,8 @@ exports.selectedMovieData = async function (imdbID) {
 		})
 		.catch((err) => {
 			// handle error
-			console.log(err);
+			console.log(`returning "ERROR": ${err.message}`);
+			return { message: 'ERROR' };
 		});
 
 	await axios
@@ -51,7 +53,8 @@ exports.selectedMovieData = async function (imdbID) {
 		})
 		.catch((err) => {
 			// handle error
-			console.log(err);
+			console.log(`returning "ERROR": ${err.message}`);
+			return { message: 'ERROR' };
 		});
 
 	const output = { imdbTitleData, watchmodeSourcesData };
