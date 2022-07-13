@@ -1,14 +1,21 @@
 'use strict';
 
 const express = require('express');
+const session = require('express-session');
 const bodyParser = require('body-parser');
 const url = require('url');
 const fs = require('fs');
 const path = require('path');
 
+/////////////////// Modules
 const apiHandler = require('./modules/apiHandler.js');
 const dataHandler = require('./modules/dataHandler');
 
+////////////////// HTML page templates
+const homePage = fs.readFileSync(
+	`${__dirname}../../frontend/index.html`,
+	'utf-8'
+);
 const movieDataTemplate = fs.readFileSync(
 	`${__dirname}/templates/html/movie-data.html`,
 	'utf-8'
@@ -17,14 +24,56 @@ const movieListTemplate = fs.readFileSync(
 	`${__dirname}/templates/html/movie-list.html`,
 	'utf-8'
 );
+const loginPage = fs.readFileSync(
+	`${__dirname}/templates/html/login.html`,
+	'utf-8'
+);
 
 const app = express();
+
+////////////////////// Middleware
+
+const sessionSecret = process.env.SESSION_SECRET;
+
+app.use(
+	session({
+		secret: sessionSecret,
+		resave: true,
+		saveUninitialized: true,
+	})
+);
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
-app.use(express.static('frontend'));
+// Verify login status
+
+app.get('/', (req, res) => {
+	console.log('welcome to homepage');
+
+	// If user is logged in...
+	if (req.session.loggedin) {
+		console.log('user logged in');
+		// Greet user:
+		homePage.replace(
+			/Welcome to MovieFax!/g,
+			`Welcome back, ${req.session.userName}!`
+		);
+
+		res.send(homePage);
+	} else {
+		console.log('user Not logged in');
+
+		homePage.replace(/Welcome to MovieFax!/g, `Not Logged In!`);
+
+		res.send(homePage);
+	}
+}); // <--- NOT working for some reason...
+
+// app.use(express.static('frontend'));
+
+////////////////////// Searching movies...
 
 app.post('/sample-search', async (req, res) => {
 	console.log('app.js receiving query for SAMPLE data');
@@ -72,6 +121,8 @@ app.post('/query-search', async (req, res) => {
 	}
 });
 
+///////////////////////// Getting movie details
+
 app.get('/sample-details', (req, res) => {
 	console.log('app.js: /sampleDetails accessed!');
 	const { query, pathname } = url.parse(req.url, true);
@@ -113,6 +164,33 @@ app.get('/details', async (req, res) => {
 
 		res.send(output);
 	}
+});
+
+/////////////////// Login module
+
+app.get('/login-form', (req, res) => {
+	console.log('app.js: /login-form fired');
+
+	res.send(loginPage);
+});
+
+app.post('/login', (req, res) => {
+	let userName = req.body.identifier;
+	let password = req.body.password;
+	console.log(`app.js: /login fired ${userName}, ${password}`);
+
+	res.redirect('/');
+});
+
+app.post('/register', (req, res) => {
+	let newUserName = req.body.newUserName;
+	let newEmail = req.body.newEmail;
+	let newPassword = req.body.newPassword;
+	console.log(
+		`app.js: /register ${newUserName}, ${newEmail}, ${newPassword}`
+	);
+
+	res.redirect('/');
 });
 
 module.exports = app;
