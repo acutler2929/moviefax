@@ -1,0 +1,202 @@
+/////////////////////////////////// UNIVERSALS
+
+$color-primary: #2f2fa2;
+$color-secondary: #f64c72;
+$color-tertiary: #553d67;
+$color-accent: #99738e;
+$color-bright-accent: gold;
+
+$bright-border: 1px solid $color-bright-accent;
+
+div {
+	border: $bright-border;
+	color: $color-secondary;
+}
+
+h1 {
+	font-size: 2em;
+	color: $color-secondary;
+}
+
+h2 {
+	color: $color-secondary;
+}
+
+p {
+	color: $color-secondary;
+}
+
+a {
+	font-size: 1em;
+	color: $color-bright-accent;
+}
+
+body {
+	background-color: $color-primary;
+	display: flex;
+	flex-direction: column;
+
+	#content-wrapper {
+		padding: 2.5%;
+
+		header {
+			display: flex;
+			flex-direction: column;
+		}
+
+		nav {
+			background-color: $color-tertiary;
+			border: $bright-border;
+			color: $color-secondary;
+
+			> * {
+				padding: 1vw;
+			}
+
+			form {
+				> * {
+					margin: 1vw;
+				}
+			}
+		}
+
+		#search-results-wrapper {
+			display: flex;
+			flex-direction: row;
+			align-items: space-around;
+			overflow: auto;
+
+			.movie-wrapper {
+				cursor: pointer;
+				display: flex;
+				flex-direction: row;
+				max-height: 100vh;
+
+				.data-wrapper {
+					display: flex;
+					flex-direction: column;
+					justify-content: flex-start;
+					max-width: 20vw;
+					min-width: 20vw;
+					padding: 0;
+
+					.search-title {
+						height: 7.5vh;
+						overflow: hidden;
+					}
+
+					.search-images {
+						align-self: center;
+						max-height: 200vw;
+						width: 100%;
+						object-fit: contain;
+					}
+
+					.search-description {
+						max-height: 10vh;
+						overflow: hidden;
+					}
+
+					> * {
+						justify-content: center;
+					}
+
+					.summary-pop-wrapper {
+						max-height: 80vh;
+						padding: 0;
+
+						.movie-summary {
+							overflow: hidden;
+							padding: 0;
+						}
+
+						.popularity {
+							display: flex;
+							justify-content: center;
+							padding: 0;
+							overflow: hidden;
+						}
+					}
+
+					.source-offers {
+						display: flex;
+						flex-direction: row;
+						padding: 0;
+						overflow: hidden;
+					}
+				}
+			}
+		}
+	}
+}
+
+#movie-data-wrapper {
+	// max-height: 80vh;
+
+	#movie-data-left {
+		display: flex;
+		flex-direction: column;
+		max-height: 100vh;
+		// object-fit: contain;
+
+		#movie-data-poster {
+			object-fit: contain;
+		}
+	}
+
+	#movie-data-right {
+		display: flex;
+		flex-direction: column;
+		max-height: 100vh;
+
+		#data-summary-wrapper {
+		}
+		#data-rating-wrapper {
+		}
+		#data-sources-wrapper {
+			#sources-purchase-wrapper {
+				#purchase-sources-list {
+					display: flex;
+					flex-direction: row;
+					flex-wrap: wrap;
+					justify-content: center;
+
+					.purchase-source {
+						margin: 0.5rem;
+						padding: 0.5rem;
+					}
+				}
+			}
+			#sources-rent-wrapper {
+				#rental-sources-list {
+					display: flex;
+					flex-direction: row;
+					flex-wrap: wrap;
+					justify-content: center;
+
+					.rental-source {
+						margin: 0.5rem;
+						padding: 0.5rem;
+					}
+				}
+			}
+			#sources-streaming-wrapper {
+				#streaming-sources-list {
+					display: flex;
+					flex-direction: row;
+					flex-wrap: wrap;
+					justify-content: center;
+
+					.streaming-source {
+						margin: 0.5rem;
+						padding: 0.5rem;
+					}
+				}
+			}
+		}
+	}
+}
+
+.hidden {
+	display: none;
+}

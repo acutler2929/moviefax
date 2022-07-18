@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>MovieFax</title>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+		/>
+		<link rel="stylesheet" href="./style/style.css" />
+		<script
+			defer
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+		></script>
+	</head>
+	<body>
+		<div id="content-wrapper">
+			<div class="container-fluid row">
+				<div
+					class="col-6 d-flex align-items-center justify-content-center"
+				>
+					<header class="">
+						<h1>Search results for {%SEARCHQUERY%}</h1>
+					</header>
+				</div>
+				<div class="col-6">
+					<nav>
+						<form onsubmit="return false">
+							<div class="row">
+								<div class="col-8 d-flex align-items-center">
+									<input
+										type="text"
+										placeholder="Search for another movie?"
+										class="form-control"
+										id="search-query"
+									/>
+								</div>
+								<div class="col-4">
+									<button
+										type="button"
+										id="search-button"
+										class="btn btn-secondary"
+									>
+										Search Movies
+									</button>
+								</div>
+							</div>
+						</form>
+						<form action="/sampleSearch" method="post">
+							<input
+								type="submit"
+								value="Use Sample Data"
+								class="btn btn-primary"
+							/>
+						</form>
+					</nav>
+				</div>
+				<i class="text-center"
+					>~ Powered by <a href="https://wwww.imdb.com">IMDB.com</a> &
+					<a href="https://www.watchmode.com">Watchmode.com</a>
+					~</i
+				>
+			</div>
+			<div class="container-fluid">
+				<ul id="search-results-wrapper">
+					{%SEARCHRESULTS%}
+				</ul>
+			</div>
+		</div>
+	</body>
+</html>
