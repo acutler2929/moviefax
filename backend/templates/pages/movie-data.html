@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>MovieFax</title>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+		/>
+		<link rel="stylesheet" href="./style/style.css" />
+		<script
+			defer
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+		></script>
+	</head>
+	<body>
+		<div class="container-fluid" id="content-wrapper">
+			<div class="row gx-3">
+				<div class="col-6">
+					<header class="container-fluid text-center">
+						<h1>{%MOVIETITLE%}</h1>
+						<div class="row d-flex justify-content-center">
+							<p class="col-2"><small>{%MOVIEYEAR%}</small></p>
+							<p class="col-2">
+								<small>({%CONTENTRATING%})</small>
+							</p>
+						</div>
+					</header>
+				</div>
+				<div class="col-6">
+					<nav>
+						<form onsubmit="return false">
+							<div
+								class="row d-flex justify-content-center align-items-center"
+							>
+								<div class="col-6">
+									<h5>Return to search...</h5>
+								</div>
+								<div class="col-2">
+									<a href="/">
+										<button
+											type="button"
+											id="back-button"
+											class="btn btn-secondary"
+										>
+											Back
+										</button>
+									</a>
+								</div>
+							</div>
+						</form>
+					</nav>
+				</div>
+			</div>
+			<div class="d-flex justify-content-center">
+				<i class="text-center"
+					>~ Powered by <a href="https://wwww.imdb.com">IMDB.com</a> &
+					<a href="https://www.watchmode.com">Watchmode.com</a>
+					~</i
+				>
+			</div>
+			<div class="row gx-3" id="movie-data-wrapper">
+				<div class="d-flex col-5" id="movie-data-left">
+					<div class="flex-grow-1">
+						<img
+							src="{%MOVIEPOSTER%}"
+							class="img-fluid"
+							id="movie-data-poster"
+						/>
+					</div>
+				</div>
+				<div class="col-7" id="movie-data-right">
+					<div id="data-summary-wrapper"><p>{%MOVIESUMMARY%}</p></div>
+					<div class="row flex-grow-1" id="data-rating-wrapper">
+						<div class="col-3">
+							<p>IMDB: {%IMDBRATING%}</p>
+						</div>
+						<div class="col-3">
+							<p>Metacritic: {%METACRITICRATING%}</p>
+						</div>
+						<div class="col-3">
+							<p>Budget: {%MOVIEBUDGET%}</p>
+						</div>
+						<div class="col-3">
+							<p>Gross: {%MOVIEGROSS%}</p>
+						</div>
+					</div>
+					<div id="data-sources-wrapper">
+						<div id="sources-purchase-wrapper">
+							<h4>Buy</h4>
+							<ul id="purchase-sources-list">
+								{%MOVIEPURCHASE%}
+							</ul>
+						</div>
+						<div id="sources-rent-wrapper">
+							<h4>Rent</h4>
+							<ul id="rental-sources-list">
+								{%MOVIERENT%}
+							</ul>
+						</div>
+						<div id="sources-streaming-wrapper">
+							<h4>Streaming</h4>
+							<ul ul id="streaming-sources-list">
+								{%MOVIESTREAMING%}
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

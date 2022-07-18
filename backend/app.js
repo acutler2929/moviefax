@@ -5,29 +5,35 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const url = require('url');
 const fs = require('fs');
-const path = require('path');
+// const path = require('path');
 
 /////////////////// Modules
 const apiHandler = require('./modules/apiHandler.js');
 const dataHandler = require('./modules/dataHandler');
 
-////////////////// HTML page templates
-const homePage = fs.readFileSync(
-	`${__dirname}../../frontend/index.html`,
-	'utf-8'
-);
-const movieDataTemplate = fs.readFileSync(
-	`${__dirname}/templates/html/movie-data.html`,
-	'utf-8'
-);
-const movieListTemplate = fs.readFileSync(
-	`${__dirname}/templates/html/movie-list.html`,
-	'utf-8'
-);
-const loginPage = fs.readFileSync(
-	`${__dirname}/templates/html/login.html`,
-	'utf-8'
-);
+////////////////// HTML page templates and style sheet
+
+// let homePage = fs.readFileSync(
+// 	`${__dirname}/templates/html/other-index.html`,
+// 	'utf-8'
+// );
+
+// const movieDataTemplate = fs.readFileSync(
+// 	`${__dirname}/templates/html/movie-data.html`,
+// 	'utf-8'
+// );
+
+// const movieListTemplate = fs.readFileSync(
+// 	`${__dirname}/templates/html/movie-list.html`,
+// 	'utf-8'
+// );
+
+// const loginPage = fs.readFileSync(
+// 	`${__dirname}/templates/html/login.html`,
+// 	'utf-8'
+// );
+
+// const css = fs.readFileSync();
 
 const app = express();
 
@@ -56,22 +62,20 @@ app.get('/', (req, res) => {
 	if (req.session.loggedin) {
 		console.log('user logged in');
 		// Greet user:
-		homePage.replace(
-			/Welcome to MovieFax!/g,
-			`Welcome back, ${req.session.userName}!`
-		);
+		// homePage = homePage.replace(
+		// 	/Welcome to MovieFax!/g,
+		// 	`Welcome back, ${req.session.userName}!`
+		// );
 
-		res.send(homePage);
+		res.render('other-index');
 	} else {
 		console.log('user Not logged in');
 
-		homePage.replace(/Welcome to MovieFax!/g, `Not Logged In!`);
+		// homePage = homePage.replace(/Welcome to MovieFax!/g, `Not Logged In!`);
 
-		res.send(homePage);
+		res.render('other-index');
 	}
 }); // <--- NOT working for some reason...
-
-// app.use(express.static('frontend'));
 
 ////////////////////// Searching movies...
 
@@ -179,7 +183,7 @@ app.post('/login', (req, res) => {
 	let password = req.body.password;
 	console.log(`app.js: /login fired ${userName}, ${password}`);
 
-	res.redirect('/');
+	res.redirect(homePage);
 });
 
 app.post('/register', (req, res) => {
@@ -190,7 +194,7 @@ app.post('/register', (req, res) => {
 		`app.js: /register ${newUserName}, ${newEmail}, ${newPassword}`
 	);
 
-	res.redirect('/');
+	res.redirect(homePage);
 });
 
 module.exports = app;
