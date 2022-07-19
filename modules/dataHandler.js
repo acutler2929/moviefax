@@ -8,8 +8,8 @@ exports.replaceSearchData = async function (html, data, sampleData) {
 	console.log(
 		`dataHandler.js: sampleData is a ${typeof sampleData} ${sampleData}`
 	);
-	console.log(`html is a ${typeof html}, here it is:`);
-	console.log(html);
+	// console.log(`html is a ${typeof html}, here it is:`);
+	// console.log(html);
 
 	const input = data;
 	const detailsLink = sampleData == true ? '/sample-details' : '/details';
