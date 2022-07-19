@@ -11,29 +11,19 @@ const fs = require('fs');
 const apiHandler = require('./modules/apiHandler.js');
 const dataHandler = require('./modules/dataHandler');
 
-////////////////// HTML page templates and style sheet
+////////////////// HTML page templates
 
-// let homePage = fs.readFileSync(
-// 	`${__dirname}/templates/html/other-index.html`,
-// 	'utf-8'
-// );
+const movieDataTemplate = fs.readFileSync(
+	`${__dirname}/views/movie-data.ejs`,
+	'utf-8'
+);
 
-// const movieDataTemplate = fs.readFileSync(
-// 	`${__dirname}/templates/html/movie-data.html`,
-// 	'utf-8'
-// );
+const movieListTemplate = fs.readFileSync(
+	`${__dirname}/views/movie-list.ejs`,
+	'utf-8'
+);
 
-// const movieListTemplate = fs.readFileSync(
-// 	`${__dirname}/templates/html/movie-list.html`,
-// 	'utf-8'
-// );
-
-// const loginPage = fs.readFileSync(
-// 	`${__dirname}/templates/html/login.html`,
-// 	'utf-8'
-// );
-
-// const css = fs.readFileSync();
+const loginPage = fs.readFileSync(`${__dirname}/views/login.ejs`, 'utf-8');
 
 const app = express();
 
@@ -53,9 +43,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
-app.use(express.static(`${__dirname}/public`));
-
-console.log(`file path: ${__dirname}/public`);
+app.use('/public', express.static(`${__dirname}/public`));
 
 // Verify login status
 
@@ -90,7 +78,7 @@ app.post('/sample-search', async (req, res) => {
 
 	// using sample data for now...
 
-	const imdbSearchData = require('json/imdb-search-sample.json');
+	const imdbSearchData = require('./json/imdb-search-sample.json');
 
 	const output = await dataHandler.replaceSearchData(
 		movieListTemplate,
@@ -138,8 +126,8 @@ app.get('/sample-details', (req, res) => {
 	console.log(`imdbID: ${imdbID}`);
 
 	/////// next we should do api calls with imdbID, but we will use sample data for now:
-	const imdbTitleData = require('json/imdb-title-sample.json');
-	const watchmodeSourcesData = require('json/watchmode-sources-sample.json');
+	const imdbTitleData = require('./json/imdb-title-sample.json');
+	const watchmodeSourcesData = require('./json/watchmode-sources-sample.json');
 
 	const fullSampleData = {
 		imdbTitleData,
@@ -179,7 +167,7 @@ app.get('/details', async (req, res) => {
 app.get('/login-form', (req, res) => {
 	console.log('app.js: /login-form fired');
 
-	res.send(loginPage);
+	res.render('login');
 });
 
 app.post('/login', (req, res) => {
@@ -187,7 +175,7 @@ app.post('/login', (req, res) => {
 	let password = req.body.password;
 	console.log(`app.js: /login fired ${userName}, ${password}`);
 
-	res.redirect(homePage);
+	res.redirect('/');
 });
 
 app.post('/register', (req, res) => {
@@ -198,7 +186,7 @@ app.post('/register', (req, res) => {
 		`app.js: /register ${newUserName}, ${newEmail}, ${newPassword}`
 	);
 
-	res.redirect(homePage);
+	res.redirect('/');
 });
 
 module.exports = app;
