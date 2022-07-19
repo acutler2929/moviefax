@@ -53,6 +53,10 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
+app.use(express.static(`${__dirname}/public`));
+
+console.log(`file path: ${__dirname}/public`);
+
 // Verify login status
 
 app.get('/', (req, res) => {
@@ -86,7 +90,7 @@ app.post('/sample-search', async (req, res) => {
 
 	// using sample data for now...
 
-	const imdbSearchData = require('./templates/json/imdb-search-sample.json');
+	const imdbSearchData = require('json/imdb-search-sample.json');
 
 	const output = await dataHandler.replaceSearchData(
 		movieListTemplate,
@@ -134,8 +138,8 @@ app.get('/sample-details', (req, res) => {
 	console.log(`imdbID: ${imdbID}`);
 
 	/////// next we should do api calls with imdbID, but we will use sample data for now:
-	const imdbTitleData = require('./templates/json/imdb-title-sample.json');
-	const watchmodeSourcesData = require('./templates/json/watchmode-sources-sample.json');
+	const imdbTitleData = require('json/imdb-title-sample.json');
+	const watchmodeSourcesData = require('json/watchmode-sources-sample.json');
 
 	const fullSampleData = {
 		imdbTitleData,

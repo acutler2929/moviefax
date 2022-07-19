@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "config.js",
 	"scripts": {
-		"start": "nodemon backend/server.js"
+		"start": "nodemon server.js"
 	},
 	"git repository": "https://github.com/acutler1987/moviefax.git",
 	"author": "Alice Cutler",
