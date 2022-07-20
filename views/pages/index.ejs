@@ -10,7 +10,7 @@
 					class="col-6 d-flex align-items-center justify-content-center"
 				>
 					<header class="">
-						<h1>Welcome to Other MovieFax!</h1>
+						<h1>Welcome to MovieFax!</h1>
 						<p><%= greeting %></p>
 					</header>
 				</div>
@@ -47,13 +47,9 @@
 								</form>
 							</div>
 							<div class="col-4">
-								<form action="/login-form" method="get">
-									<input
-										type="submit"
-										value="Login to build list"
-										class="btn btn-primary"
-									/>
-								</form>
+								<%- req.session.loggedin ?
+								include('../partials/logout-btn') :
+								include('../partials/login-btn') %>
 							</div>
 						</div>
 					</nav>

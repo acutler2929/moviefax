@@ -5,6 +5,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const url = require('url');
 const fs = require('fs');
+const mysql = require('mysql');
 // const path = require('path');
 
 /////////////////// Modules
@@ -23,7 +24,16 @@ const movieListTemplate = fs.readFileSync(
 	'utf-8'
 );
 
-// const loginPage = fs.readFileSync(`${__dirname}/views/login.ejs`, 'utf-8');
+///////// Connecting to MYSQL
+
+const mysqlPassword = process.env.MYSQL_PASSWORD;
+
+const connection = mysql.createConnection({
+	host: 'localhost',
+	user: 'root',
+	password: mysqlPassword,
+	database: 'moviefax',
+});
 
 const app = express();
 
@@ -47,22 +57,51 @@ app.use('/public', express.static(`${__dirname}/public`));
 
 // Verify login status
 
+let userName;
+let userEmail;
+let userPassword;
+
+let loginMessage = 'Login to continue...';
+
 app.get('/', (req, res) => {
 	console.log('welcome to homepage');
 	let greeting;
+	let toggleLoginBtn;
 
 	// If user is logged in...
 	if (req.session.loggedin) {
 		console.log('user logged in');
-		// Greet user:
-		greeting = `Welcome back, ${req.session.userName}!`;
+		// Greet user and show logout button:
+		greeting = `Welcome back, ${userName}!`;
+		// toggleLoginBtn = `
+		// 	<form action="/logout" method="get">
+		// 		<input
+		// 			type="submit"
+		// 			value="Logout"
+		// 			class="btn btn-primary"
+		// 		/>
+		// 	</form>
+		// `;
 	} else {
 		console.log('user Not logged in');
-
+		// Greet stranger and show login button:
 		greeting = 'Sign up to build your movie list...';
+		// toggleLoginBtn = `
+		// 	<form action="/login-form" method="get">
+		// 		<input
+		// 			type="submit"
+		// 			value="Login to build list"
+		// 			class="btn btn-primary"
+		// 		/>
+		// 	</form>
+		// `;
 	}
 
-	res.render('pages/other-index', { greeting: greeting });
+	res.render('pages/index', {
+		greeting: greeting,
+		toggleLoginBtn: toggleLoginBtn,
+		req: req,
+	});
 }); // <--- NOT working for some reason...
 
 ////////////////////// Searching movies...
@@ -163,24 +202,87 @@ app.get('/details', async (req, res) => {
 app.get('/login-form', (req, res) => {
 	console.log('app.js: /login-form fired');
 
-	res.render('pages/login');
+	res.render('pages/login', { loginMessage: loginMessage });
 });
 
 app.post('/login', (req, res) => {
-	let userName = req.body.identifier;
-	let password = req.body.password;
-	console.log(`app.js: /login fired ${userName}, ${password}`);
+	userName = req.body.userName;
+	userPassword = req.body.userPassword;
 
-	res.redirect('/');
+	// console.log(`/login userName: ${userName}`);
+	// console.log(`/login userPassword: ${userPassword}`);
+
+	if (userName && userPassword) {
+		connection.query(
+			'SELECT * FROM users WHERE userName = ? AND password = ?',
+			[userName, userPassword],
+			function (error, results, fields) {
+				console.log(results);
+				// If there is an issue with the query, output the error
+				if (error) {
+					console.log(error);
+					throw error;
+				}
+				// If the account exists
+				if (results.length > 0) {
+					console.log(
+						`app.js: /login returning user: ${userName}, ${userPassword}`
+					);
+					// Authenticate the user
+					req.session.loggedin = true;
+					req.session.username = userName;
+					res.redirect('/');
+				} else {
+					loginMessage = 'Invalid user name / password!';
+
+					res.render('pages/login', { loginMessage: loginMessage });
+				}
+			}
+		);
+	}
 });
 
 app.post('/register', (req, res) => {
-	let newUserName = req.body.newUserName;
-	let newEmail = req.body.newEmail;
-	let newPassword = req.body.newPassword;
-	console.log(
-		`app.js: /register ${newUserName}, ${newEmail}, ${newPassword}`
-	);
+	userName = req.body.newUserName;
+	userEmail = req.body.newEmail;
+	userPassword = req.body.newPassword;
+
+	if (userName && userEmail && userPassword) {
+		connection.query(
+			'INSERT INTO users (userName, email, password) VALUES (?, ?, ?)',
+			[userName, userEmail, userPassword],
+			function (error) {
+				// If there is an issue with the query, output the error
+				// if (error) throw error;
+
+				// If there is no error
+				if (!error) {
+					// Authenticate the user
+					req.session.loggedin = true;
+					req.session.username = userName;
+					console.log(
+						`app.js: /register new user: ${userName}, ${userEmail}, ${userPassword}`
+					);
+					// Redirect to home
+					res.redirect('/');
+
+					// If login info already exists, send appropriate error message
+				} else if (error.code === 'ER_DUP_ENTRY') {
+					loginMessage =
+						'User name, email or password already exists!';
+
+					res.render('pages/login', { loginMessage: loginMessage });
+				}
+			}
+		);
+	}
+});
+
+app.get('/logout', (req, res) => {
+	console.log('Logout button fired');
+
+	req.session.loggedin = false;
+	req.session.username = '';
 
 	res.redirect('/');
 });
