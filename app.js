@@ -73,28 +73,10 @@ app.get('/', (req, res) => {
 		console.log('user logged in');
 		// Greet user and show logout button:
 		greeting = `Welcome back, ${userName}!`;
-		// toggleLoginBtn = `
-		// 	<form action="/logout" method="get">
-		// 		<input
-		// 			type="submit"
-		// 			value="Logout"
-		// 			class="btn btn-primary"
-		// 		/>
-		// 	</form>
-		// `;
 	} else {
 		console.log('user Not logged in');
 		// Greet stranger and show login button:
 		greeting = 'Sign up to build your movie list...';
-		// toggleLoginBtn = `
-		// 	<form action="/login-form" method="get">
-		// 		<input
-		// 			type="submit"
-		// 			value="Login to build list"
-		// 			class="btn btn-primary"
-		// 		/>
-		// 	</form>
-		// `;
 	}
 
 	res.render('pages/index', {
@@ -102,100 +84,9 @@ app.get('/', (req, res) => {
 		toggleLoginBtn: toggleLoginBtn,
 		req: req,
 	});
-}); // <--- NOT working for some reason...
-
-////////////////////// Searching movies...
-
-app.post('/sample-search', async (req, res) => {
-	console.log('app.js receiving query for SAMPLE data');
-	const sampleData = new Boolean(true);
-	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
-
-	// using sample data for now...
-
-	const imdbSearchData = require('./json/imdb-search-sample.json');
-
-	const output = await dataHandler.replaceSearchData(
-		movieListTemplate,
-		imdbSearchData,
-		sampleData
-	);
-
-	res.send(output);
 });
 
-app.post('/query-search', async (req, res) => {
-	const query = req.body.query;
-	console.log(`app.js: receiving query for movie name ${query}`);
-	const sampleData = new Boolean(false);
-	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
-
-	// imdbResponse comes back from api Handler...
-	const imdbResponse = await apiHandler.searchMovieData(query);
-	console.log(imdbResponse.results);
-
-	if (imdbResponse.message === 'ERROR' || imdbResponse.results === null) {
-		res.send(imdbResponse.errorMessage);
-	} else {
-		console.log(
-			`app.js: received imdbResponse for movie ${imdbResponse.results[0].title}`
-		);
-
-		const output = await dataHandler.replaceSearchData(
-			movieListTemplate,
-			imdbResponse,
-			sampleData
-		);
-		console.log(output[0]);
-
-		res.send(output);
-	}
-});
-
-///////////////////////// Getting movie details
-
-app.get('/sample-details', (req, res) => {
-	console.log('app.js: /sampleDetails accessed!');
-	const { query, pathname } = url.parse(req.url, true);
-	const imdbID = JSON.stringify(query.id);
-	console.log(`imdbID: ${imdbID}`);
-
-	/////// next we should do api calls with imdbID, but we will use sample data for now:
-	const imdbTitleData = require('./json/imdb-title-sample.json');
-	const watchmodeSourcesData = require('./json/watchmode-sources-sample.json');
-
-	const fullSampleData = {
-		imdbTitleData,
-		watchmodeSourcesData,
-	};
-
-	const output = dataHandler.replaceDetailData(
-		movieDataTemplate,
-		fullSampleData
-	);
-
-	res.send(output);
-});
-
-app.get('/details', async (req, res) => {
-	const { query, pathname } = url.parse(req.url, true);
-	const imdbID = query.id;
-	console.log(`/details: receiving query for imdbID ${imdbID}`);
-
-	// movieDataResponse comes back from api Handler...
-	const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
-
-	if (movieDataResponse.message === 'ERROR') {
-		res.send(movieDataResponse.errorMessage);
-	} else {
-		const output = dataHandler.replaceDetailData(
-			movieDataTemplate,
-			movieDataResponse
-		);
-
-		res.send(output);
-	}
-});
+//////////////////////// Routes
 
 /////////////////// Login module
 
@@ -252,9 +143,6 @@ app.post('/register', (req, res) => {
 			'INSERT INTO users (userName, email, password) VALUES (?, ?, ?)',
 			[userName, userEmail, userPassword],
 			function (error) {
-				// If there is an issue with the query, output the error
-				// if (error) throw error;
-
 				// If there is no error
 				if (!error) {
 					// Authenticate the user
@@ -285,6 +173,113 @@ app.get('/logout', (req, res) => {
 	req.session.username = '';
 
 	res.redirect('/');
+});
+
+////////////////////// Searching movies...
+
+app.post('/sample-search', async (req, res) => {
+	console.log('app.js receiving query for SAMPLE data');
+	const sampleData = new Boolean(true);
+	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
+
+	// using sample data for now...
+
+	const imdbSearchData = require('./json/imdb-search-sample.json');
+
+	// const output = await dataHandler.replaceSearchData(
+	// 	movieListTemplate,
+	// 	imdbSearchData,
+	// 	sampleData
+	// );
+
+	const searchQuery = imdbSearchData.expression;
+	let detailsLink;
+	let resultId;
+	let resultTitle;
+	let resultImage;
+	let resultDescription;
+
+	res.render('pages/movie-list.ejs', {
+		searchQuery: searchQuery,
+		detailsLink: detailsLink,
+		resultId: resultId,
+		resultTitle: resultTitle,
+		resultImage: resultImage,
+		resultDescription: resultDescription,
+	});
+});
+
+app.post('/query-search', async (req, res) => {
+	const query = req.body.query;
+	console.log(`app.js: receiving query for movie name ${query}`);
+	const sampleData = new Boolean(false);
+	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
+
+	// imdbResponse comes back from api Handler...
+	const imdbResponse = await apiHandler.searchMovieData(query);
+	console.log(imdbResponse.results);
+
+	if (imdbResponse.message === 'ERROR' || imdbResponse.results === null) {
+		res.send(imdbResponse.errorMessage);
+	} else {
+		console.log(
+			`app.js: received imdbResponse for movie ${imdbResponse.results[0].title}`
+		);
+
+		const output = await dataHandler.replaceSearchData(
+			movieListTemplate,
+			imdbResponse,
+			sampleData
+		);
+		console.log(output[0]);
+
+		res.render(output);
+	}
+});
+
+///////////////////////// Getting movie details
+
+app.get('/sample-details', (req, res) => {
+	console.log('app.js: /sampleDetails accessed!');
+	const { query, pathname } = url.parse(req.url, true);
+	const imdbID = JSON.stringify(query.id);
+	console.log(`imdbID: ${imdbID}`);
+
+	/////// next we should do api calls with imdbID, but we will use sample data for now:
+	const imdbTitleData = require('./json/imdb-title-sample.json');
+	const watchmodeSourcesData = require('./json/watchmode-sources-sample.json');
+
+	const fullSampleData = {
+		imdbTitleData,
+		watchmodeSourcesData,
+	};
+
+	const output = dataHandler.replaceDetailData(
+		movieDataTemplate,
+		fullSampleData
+	);
+
+	res.render(output);
+});
+
+app.get('/details', async (req, res) => {
+	const { query, pathname } = url.parse(req.url, true);
+	const imdbID = query.id;
+	console.log(`/details: receiving query for imdbID ${imdbID}`);
+
+	// movieDataResponse comes back from api Handler...
+	const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
+
+	if (movieDataResponse.message === 'ERROR') {
+		res.send(movieDataResponse.errorMessage);
+	} else {
+		const output = dataHandler.replaceDetailData(
+			movieDataTemplate,
+			movieDataResponse
+		);
+
+		res.render(output);
+	}
 });
 
 module.exports = app;

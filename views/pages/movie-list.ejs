@@ -10,7 +10,7 @@
 					class="col-6 d-flex align-items-center justify-content-center"
 				>
 					<header class="">
-						<h1>Search results for {%SEARCHQUERY%}</h1>
+						<h1>Search results for <%= searchQuery %></h1>
 					</header>
 				</div>
 				<div class="col-6">
@@ -53,7 +53,11 @@
 			</div>
 			<div class="container-fluid">
 				<ul id="search-results-wrapper">
-					{%SEARCHRESULTS%}
+					<% movies.forEach(function(movie){ %> <%-
+					include('partials/movie-wrapper', {detailsLink: detailsLink,
+					result.id: result.id, result.title: result.title,
+					result.image: result.image, result.description:
+					result.description }); %> <% }); %>
 				</ul>
 			</div>
 		</div>
