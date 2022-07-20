@@ -14,16 +14,16 @@ const dataHandler = require('./modules/dataHandler');
 ////////////////// HTML page templates
 
 const movieDataTemplate = fs.readFileSync(
-	`${__dirname}/views/movie-data.ejs`,
+	`${__dirname}/views/pages/movie-data.ejs`,
 	'utf-8'
 );
 
 const movieListTemplate = fs.readFileSync(
-	`${__dirname}/views/movie-list.ejs`,
+	`${__dirname}/views/pages/movie-list.ejs`,
 	'utf-8'
 );
 
-const loginPage = fs.readFileSync(`${__dirname}/views/login.ejs`, 'utf-8');
+// const loginPage = fs.readFileSync(`${__dirname}/views/login.ejs`, 'utf-8');
 
 const app = express();
 
@@ -49,24 +49,20 @@ app.use('/public', express.static(`${__dirname}/public`));
 
 app.get('/', (req, res) => {
 	console.log('welcome to homepage');
+	let greeting;
 
 	// If user is logged in...
 	if (req.session.loggedin) {
 		console.log('user logged in');
 		// Greet user:
-		// homePage = homePage.replace(
-		// 	/Welcome to MovieFax!/g,
-		// 	`Welcome back, ${req.session.userName}!`
-		// );
-
-		res.render('other-index');
+		greeting = `Welcome back, ${req.session.userName}!`;
 	} else {
 		console.log('user Not logged in');
 
-		// homePage = homePage.replace(/Welcome to MovieFax!/g, `Not Logged In!`);
-
-		res.render('other-index');
+		greeting = 'Sign up to build your movie list...';
 	}
+
+	res.render('pages/other-index', { greeting: greeting });
 }); // <--- NOT working for some reason...
 
 ////////////////////// Searching movies...
@@ -167,7 +163,7 @@ app.get('/details', async (req, res) => {
 app.get('/login-form', (req, res) => {
 	console.log('app.js: /login-form fired');
 
-	res.render('login');
+	res.render('pages/login');
 });
 
 app.post('/login', (req, res) => {
