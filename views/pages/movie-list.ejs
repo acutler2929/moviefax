@@ -53,10 +53,8 @@
 			</div>
 			<div class="container-fluid">
 				<ul id="search-results-wrapper">
-					<%- include('../partials/movie-wrapper', {detailsLink:
-					detailsLink, resultId: resultId, resultTitle: resultTitle,
-					resultImage: resultImage, resultDescription:
-					resultDescription }); %>
+					<%- include('../partials/movie-wrapper', { detailsLink:
+					detailsLink, imdbSearchData: imdbSearchData }) %>
 				</ul>
 			</div>
 		</div>

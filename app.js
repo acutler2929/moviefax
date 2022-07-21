@@ -9,8 +9,9 @@ const mysql = require('mysql');
 // const path = require('path');
 
 /////////////////// Modules
-const apiHandler = require('./modules/apiHandler.js');
+const apiHandler = require('./modules/apiHandler');
 const dataHandler = require('./modules/dataHandler');
+const loginHandler = require('./modules/loginHandler');
 
 ////////////////// HTML page templates
 
@@ -186,19 +187,10 @@ app.post('/sample-search', async (req, res) => {
 
 	const imdbSearchData = require('./json/imdb-search-sample.json');
 
-	// const output = await dataHandler.replaceSearchData(
-	// 	movieListTemplate,
-	// 	imdbSearchData,
-	// 	sampleData
-	// );
-
 	res.render('pages/movie-list', {
 		searchQuery: imdbSearchData.expression,
 		detailsLink: sampleData == true ? '/sample-details' : '/details',
-		resultId: imdbSearchData.results[0].id,
-		resultTitle: imdbSearchData.results[0].title,
-		resultImage: imdbSearchData.results[0].image,
-		resultDescription: imdbSearchData.results[0].description,
+		imdbSearchData: imdbSearchData,
 	});
 });
 
@@ -210,7 +202,7 @@ app.post('/query-search', async (req, res) => {
 
 	// imdbResponse comes back from api Handler...
 	const imdbResponse = await apiHandler.searchMovieData(query);
-	console.log(imdbResponse.results);
+	// console.log(imdbResponse.results);
 
 	if (imdbResponse.message === 'ERROR' || imdbResponse.results === null) {
 		res.send(imdbResponse.errorMessage);
@@ -219,20 +211,12 @@ app.post('/query-search', async (req, res) => {
 			`app.js: received imdbResponse for movie ${imdbResponse.results[0].title}`
 		);
 
-		// const output = await dataHandler.replaceSearchData(
-		// 	movieListTemplate,
-		// 	imdbResponse,
-		// 	sampleData
-		// );
-		// console.log(output[0]);
+		const imdbSearchData = imdbResponse;
 
 		res.render('pages/movie-list', {
 			searchQuery: imdbResponse.expression,
 			detailsLink: sampleData == true ? '/sample-details' : '/details',
-			resultId: imdbResponse.results[0].id,
-			resultTitle: imdbResponse.results[0].title,
-			resultImage: imdbResponse.results[0].image,
-			resultDescription: imdbResponse.results[0].description,
+			imdbSearchData: imdbSearchData,
 		});
 	}
 });
@@ -245,19 +229,9 @@ app.get('/sample-details', (req, res) => {
 	const imdbID = JSON.stringify(query.id);
 	console.log(`imdbID: ${imdbID}`);
 
-	/////// next we should do api calls with imdbID, but we will use sample data for now:
+	/////// next we should do api calls with imdbID and watchmode, but we will use sample data for now:
 	const imdbTitleData = require('./json/imdb-title-sample.json');
 	const watchmodeSourcesData = require('./json/watchmode-sources-sample.json');
-
-	// const fullSampleData = {
-	// 	imdbTitleData,
-	// 	watchmodeSourcesData,
-	// };
-
-	// const output = dataHandler.replaceDetailData(
-	// 	movieDataTemplate,
-	// 	fullSampleData
-	// );
 
 	res.render('pages/movie-data', {
 		movieTitle: imdbTitleData.title,
@@ -282,6 +256,7 @@ app.get('/details', async (req, res) => {
 
 	// movieDataResponse comes back from api Handler...
 	const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
+	// console.log(movieDataResponse);
 
 	if (movieDataResponse.message === 'ERROR') {
 		res.send(movieDataResponse.errorMessage);
@@ -292,15 +267,17 @@ app.get('/details', async (req, res) => {
 		// );
 
 		res.render('pages/movie-data', {
-			movieTitle: 'placeholder',
-			movieYear: 'placeholder',
-			contentRating: 'placeholder',
-			moviePoster: 'placeholder',
-			movieSummary: 'placeholder',
-			imdbRating: 'placeholder',
-			metacriticRating: 'placeholder',
-			movieBudget: 'placeholder',
-			movieGross: 'placeholder',
+			movieTitle: movieDataResponse.imdbTitleData.title,
+			movieYear: movieDataResponse.imdbTitleData.year,
+			contentRating: movieDataResponse.imdbTitleData.contentRating,
+			moviePoster: movieDataResponse.imdbTitleData.image,
+			movieSummary: movieDataResponse.imdbTitleData.plot,
+			imdbRating: movieDataResponse.imdbTitleData.imDbRating,
+			metacriticRating: movieDataResponse.imdbTitleData.metacriticRating,
+			movieBudget: movieDataResponse.imdbTitleData.boxOffice.budget,
+			movieGross:
+				movieDataResponse.imdbTitleData.boxOffice
+					.cumulativeWorldwideGross,
 			moviePurchase: 'placeholder',
 			movieRent: 'placeholder',
 			movieStreaming: 'placeholder',
