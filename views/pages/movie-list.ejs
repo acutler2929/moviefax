@@ -53,11 +53,10 @@
 			</div>
 			<div class="container-fluid">
 				<ul id="search-results-wrapper">
-					<% movies.forEach(function(movie){ %> <%-
-					include('partials/movie-wrapper', {detailsLink: detailsLink,
-					result.id: result.id, result.title: result.title,
-					result.image: result.image, result.description:
-					result.description }); %> <% }); %>
+					<%- include('../partials/movie-wrapper', {detailsLink:
+					detailsLink, resultId: resultId, resultTitle: resultTitle,
+					resultImage: resultImage, resultDescription:
+					resultDescription }); %>
 				</ul>
 			</div>
 		</div>

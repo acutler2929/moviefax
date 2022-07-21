@@ -1,10 +1,10 @@
 <li class="container-fluid movie-wrapper">
-	<a href="<%= detailsLink %>?id=<%= result.id %>">
-		<div id="${result.id}" class="data-wrapper container-fluid text-center">
-			<h6 class="search-title align-middle"><%= result.title %></h6>
-			<img class="search-images" src="<%= result.image %>" />
+	<a href="<%= detailsLink %>?id=<%= resultId %>">
+		<div id="${resultId}" class="data-wrapper container-fluid text-center">
+			<h6 class="search-title align-middle"><%= resultTitle %></h6>
+			<img class="search-images" src="<%= resultImage %>" />
 			<p class="search-description align-middle">
-				<small><%= result.description %></small>
+				<small><%= resultDescription %></small>
 			</p>
 		</div>
 	</a>

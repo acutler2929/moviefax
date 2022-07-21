@@ -192,20 +192,13 @@ app.post('/sample-search', async (req, res) => {
 	// 	sampleData
 	// );
 
-	const searchQuery = imdbSearchData.expression;
-	let detailsLink;
-	let resultId;
-	let resultTitle;
-	let resultImage;
-	let resultDescription;
-
-	res.render('pages/movie-list.ejs', {
-		searchQuery: searchQuery,
-		detailsLink: detailsLink,
-		resultId: resultId,
-		resultTitle: resultTitle,
-		resultImage: resultImage,
-		resultDescription: resultDescription,
+	res.render('pages/movie-list', {
+		searchQuery: imdbSearchData.expression,
+		detailsLink: sampleData == true ? '/sample-details' : '/details',
+		resultId: imdbSearchData.results[0].id,
+		resultTitle: imdbSearchData.results[0].title,
+		resultImage: imdbSearchData.results[0].image,
+		resultDescription: imdbSearchData.results[0].description,
 	});
 });
 
@@ -226,14 +219,21 @@ app.post('/query-search', async (req, res) => {
 			`app.js: received imdbResponse for movie ${imdbResponse.results[0].title}`
 		);
 
-		const output = await dataHandler.replaceSearchData(
-			movieListTemplate,
-			imdbResponse,
-			sampleData
-		);
-		console.log(output[0]);
+		// const output = await dataHandler.replaceSearchData(
+		// 	movieListTemplate,
+		// 	imdbResponse,
+		// 	sampleData
+		// );
+		// console.log(output[0]);
 
-		res.render(output);
+		res.render('pages/movie-list', {
+			searchQuery: imdbResponse.expression,
+			detailsLink: sampleData == true ? '/sample-details' : '/details',
+			resultId: imdbResponse.results[0].id,
+			resultTitle: imdbResponse.results[0].title,
+			resultImage: imdbResponse.results[0].image,
+			resultDescription: imdbResponse.results[0].description,
+		});
 	}
 });
 
@@ -249,17 +249,30 @@ app.get('/sample-details', (req, res) => {
 	const imdbTitleData = require('./json/imdb-title-sample.json');
 	const watchmodeSourcesData = require('./json/watchmode-sources-sample.json');
 
-	const fullSampleData = {
-		imdbTitleData,
-		watchmodeSourcesData,
-	};
+	// const fullSampleData = {
+	// 	imdbTitleData,
+	// 	watchmodeSourcesData,
+	// };
 
-	const output = dataHandler.replaceDetailData(
-		movieDataTemplate,
-		fullSampleData
-	);
+	// const output = dataHandler.replaceDetailData(
+	// 	movieDataTemplate,
+	// 	fullSampleData
+	// );
 
-	res.render(output);
+	res.render('pages/movie-data', {
+		movieTitle: imdbTitleData.title,
+		movieYear: imdbTitleData.year,
+		contentRating: imdbTitleData.contentRating,
+		moviePoster: imdbTitleData.image,
+		movieSummary: imdbTitleData.plot,
+		imdbRating: imdbTitleData.imDbRating,
+		metacriticRating: imdbTitleData.metacriticRating,
+		movieBudget: imdbTitleData.boxOffice.budget,
+		movieGross: imdbTitleData.boxOffice.cumulativeWorldwideGross,
+		moviePurchase: 'placeholder',
+		movieRent: 'placeholder',
+		movieStreaming: 'placeholder',
+	});
 });
 
 app.get('/details', async (req, res) => {
@@ -273,12 +286,25 @@ app.get('/details', async (req, res) => {
 	if (movieDataResponse.message === 'ERROR') {
 		res.send(movieDataResponse.errorMessage);
 	} else {
-		const output = dataHandler.replaceDetailData(
-			movieDataTemplate,
-			movieDataResponse
-		);
+		// const output = dataHandler.replaceDetailData(
+		// 	movieDataTemplate,
+		// 	movieDataResponse
+		// );
 
-		res.render(output);
+		res.render('pages/movie-data', {
+			movieTitle: 'placeholder',
+			movieYear: 'placeholder',
+			contentRating: 'placeholder',
+			moviePoster: 'placeholder',
+			movieSummary: 'placeholder',
+			imdbRating: 'placeholder',
+			metacriticRating: 'placeholder',
+			movieBudget: 'placeholder',
+			movieGross: 'placeholder',
+			moviePurchase: 'placeholder',
+			movieRent: 'placeholder',
+			movieStreaming: 'placeholder',
+		});
 	}
 });
 

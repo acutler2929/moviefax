@@ -8,11 +8,11 @@
 			<div class="row gx-3">
 				<div class="col-6">
 					<header class="container-fluid text-center">
-						<h1>{%MOVIETITLE%}</h1>
+						<h1><%= movieTitle %></h1>
 						<div class="row d-flex justify-content-center">
-							<p class="col-2"><small>{%MOVIEYEAR%}</small></p>
+							<p class="col-2"><small><%= movieYear %></small></p>
 							<p class="col-2">
-								<small>({%CONTENTRATING%})</small>
+								<small>(<%= contentRating %>)</small>
 							</p>
 						</div>
 					</header>
@@ -53,45 +53,47 @@
 				<div class="d-flex col-5" id="movie-data-left">
 					<div class="flex-grow-1">
 						<img
-							src="{%MOVIEPOSTER%}"
+							src="<%= moviePoster %>"
 							class="img-fluid"
 							id="movie-data-poster"
 						/>
 					</div>
 				</div>
 				<div class="col-7" id="movie-data-right">
-					<div id="data-summary-wrapper"><p>{%MOVIESUMMARY%}</p></div>
+					<div id="data-summary-wrapper">
+						<p><%= movieSummary %></p>
+					</div>
 					<div class="row flex-grow-1" id="data-rating-wrapper">
 						<div class="col-3">
-							<p>IMDB: {%IMDBRATING%}</p>
+							<p>IMDB: <%= imdbRating %></p>
 						</div>
 						<div class="col-3">
-							<p>Metacritic: {%METACRITICRATING%}</p>
+							<p>Metacritic: <%= metacriticRating %></p>
 						</div>
 						<div class="col-3">
-							<p>Budget: {%MOVIEBUDGET%}</p>
+							<p>Budget: <%= movieBudget %></p>
 						</div>
 						<div class="col-3">
-							<p>Gross: {%MOVIEGROSS%}</p>
+							<p>Gross: <%= movieGross %></p>
 						</div>
 					</div>
 					<div id="data-sources-wrapper">
 						<div id="sources-purchase-wrapper">
 							<h4>Buy</h4>
 							<ul id="purchase-sources-list">
-								{%MOVIEPURCHASE%}
+								<%= moviePurchase %>
 							</ul>
 						</div>
 						<div id="sources-rent-wrapper">
 							<h4>Rent</h4>
 							<ul id="rental-sources-list">
-								{%MOVIERENT%}
+								<%= movieRent %>
 							</ul>
 						</div>
 						<div id="sources-streaming-wrapper">
 							<h4>Streaming</h4>
 							<ul ul id="streaming-sources-list">
-								{%MOVIESTREAMING%}
+								<%= movieStreaming %>
 							</ul>
 						</div>
 					</div>
