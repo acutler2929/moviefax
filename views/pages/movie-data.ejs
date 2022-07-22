@@ -78,24 +78,10 @@
 						</div>
 					</div>
 					<div id="data-sources-wrapper">
-						<div id="sources-purchase-wrapper">
-							<h4>Buy</h4>
-							<ul id="purchase-sources-list">
-								<%= moviePurchase %>
-							</ul>
-						</div>
-						<div id="sources-rent-wrapper">
-							<h4>Rent</h4>
-							<ul id="rental-sources-list">
-								<%= movieRent %>
-							</ul>
-						</div>
-						<div id="sources-streaming-wrapper">
-							<h4>Streaming</h4>
-							<ul ul id="streaming-sources-list">
-								<%= movieStreaming %>
-							</ul>
-						</div>
+						<%- include('../partials/sources-wrapper',
+						{moviePurchaseArray: moviePurchaseArray, movieRentArray:
+						movieRentArray, movieStreamingArray:
+						movieStreamingArray}) %>
 					</div>
 				</div>
 			</div>

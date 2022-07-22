@@ -12,6 +12,7 @@ const mysql = require('mysql');
 const apiHandler = require('./modules/apiHandler');
 const dataHandler = require('./modules/dataHandler');
 const loginHandler = require('./modules/loginHandler');
+const sourceHandler = require('./modules/sourceHandler');
 
 ////////////////// HTML page templates
 
@@ -233,6 +234,8 @@ app.get('/sample-details', (req, res) => {
 	const imdbTitleData = require('./json/imdb-title-sample.json');
 	const watchmodeSourcesData = require('./json/watchmode-sources-sample.json');
 
+	const movieSources = sourceHandler(watchmodeSourcesData);
+
 	res.render('pages/movie-data', {
 		movieTitle: imdbTitleData.title,
 		movieYear: imdbTitleData.year,
@@ -243,9 +246,9 @@ app.get('/sample-details', (req, res) => {
 		metacriticRating: imdbTitleData.metacriticRating,
 		movieBudget: imdbTitleData.boxOffice.budget,
 		movieGross: imdbTitleData.boxOffice.cumulativeWorldwideGross,
-		moviePurchase: 'placeholder',
-		movieRent: 'placeholder',
-		movieStreaming: 'placeholder',
+		moviePurchaseArray: movieSources.purchaseSources,
+		movieRentArray: movieSources.rentalSources,
+		movieStreamingArray: movieSources.streamingSources,
 	});
 });
 
@@ -261,10 +264,9 @@ app.get('/details', async (req, res) => {
 	if (movieDataResponse.message === 'ERROR') {
 		res.send(movieDataResponse.errorMessage);
 	} else {
-		// const output = dataHandler.replaceDetailData(
-		// 	movieDataTemplate,
-		// 	movieDataResponse
-		// );
+		const movieSources = sourceHandler(
+			movieDataResponse.watchmodeSourcesData
+		);
 
 		res.render('pages/movie-data', {
 			movieTitle: movieDataResponse.imdbTitleData.title,
@@ -278,9 +280,9 @@ app.get('/details', async (req, res) => {
 			movieGross:
 				movieDataResponse.imdbTitleData.boxOffice
 					.cumulativeWorldwideGross,
-			moviePurchase: 'placeholder',
-			movieRent: 'placeholder',
-			movieStreaming: 'placeholder',
+			moviePurchaseArray: movieSources.purchaseSources,
+			movieRentArray: movieSources.rentalSources,
+			movieStreamingArray: movieSources.streamingSources,
 		});
 	}
 });

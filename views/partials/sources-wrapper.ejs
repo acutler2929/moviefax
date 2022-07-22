@@ -1,0 +1,34 @@
+<div id="sources-purchase-wrapper">
+	<h4>Buy</h4>
+	<ul id="purchase-sources-list">
+		<% moviePurchaseArray.forEach((source) => { %>
+		<li class="purchase-source">
+			<a href="<%= source.web_url %>"
+				><%= source.name %> from <%= source.price %></a
+			>
+		</li>
+		<% }) %>
+	</ul>
+</div>
+<div id="sources-rent-wrapper">
+	<h4>Rent</h4>
+	<ul id="rental-sources-list">
+		<% movieRentArray.forEach((source) => { %>
+		<li class="rental-source">
+			<a href="<%= source.web_url %>"
+				><%= source.name %> from <%= source.price %></a
+			>
+		</li>
+		<% }) %>
+	</ul>
+</div>
+<div id="sources-streaming-wrapper">
+	<h4>Streaming</h4>
+	<ul ul id="streaming-sources-list">
+		<% movieStreamingArray.forEach((source) => { %>
+		<li class="streaming-source">
+			<a href="<%= source.web_url %>"><%= source.name %></a>
+		</li>
+		<% }) %>
+	</ul>
+</div>
