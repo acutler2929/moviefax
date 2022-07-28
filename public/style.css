@@ -60,6 +60,11 @@ body #content-wrapper nav form > * {
   margin: 1vw;
 }
 
+body #content-wrapper #tmdb-logo {
+  height: auto;
+  width: 10vw;
+}
+
 body #content-wrapper #search-results-wrapper {
   display: -webkit-box;
   display: -ms-flexbox;

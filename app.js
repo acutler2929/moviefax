@@ -186,12 +186,19 @@ app.post('/sample-search', async (req, res) => {
 
 	// using sample data for now...
 
-	const imdbSearchData = require('./json/imdb-search-sample.json');
+	// const imdbSearchData = require('./json/imdb-search-sample.json');
+	const tmdbSearchData = require('./json/tmdb-search-sample.json');
+
+	// res.render('pages/movie-list', {
+	// 	searchQuery: imdbSearchData.expression,
+	// 	detailsLink: sampleData == true ? '/sample-details' : '/details',
+	// 	imdbSearchData: imdbSearchData,
+	// });
 
 	res.render('pages/movie-list', {
-		searchQuery: imdbSearchData.expression,
+		searchQuery: `"${req.body.query}"`,
 		detailsLink: sampleData == true ? '/sample-details' : '/details',
-		imdbSearchData: imdbSearchData,
+		tmdbSearchData: tmdbSearchData,
 	});
 });
 
