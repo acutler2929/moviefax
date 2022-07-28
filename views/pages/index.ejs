@@ -11,7 +11,7 @@
 				>
 					<header class="">
 						<h1>Welcome to MovieFax!</h1>
-						<p><%= greeting %></p>
+						<p><%= greetingMessage %></p>
 					</header>
 				</div>
 				<div class="col-6">
@@ -66,8 +66,47 @@
 					~</i
 				>
 			</div>
-			<div class="container-fluid" id="search-results-wrapper">
-				<ul></ul>
+			<div class="container-fluid" id="movies-content-wrapper">
+				<div id="lists-wrapper">
+					<div id="search-results-wrapper">
+						<ul>
+							<%- req.url === '/sample-search' || req.url ===
+							'/query-search' ?
+							include('../partials/movie-wrapper', { detailsLink:
+							detailsLink, imdbSearchData: imdbSearchData }) :
+							include('../partials/storage') %>
+						</ul>
+					</div>
+					<div id="user-movies-wrapper">
+						<ul>
+							<p>placeholder</p>
+						</ul>
+						<ul>
+							<p>placeholder</p>
+						</ul>
+						<ul>
+							<p>placeholder</p>
+						</ul>
+					</div>
+				</div>
+				<div class="row gx-3" id="movie-data-wrapper">
+					<div id="poster-data-wrapper">
+						<%- req.url === '/sample-details' || req.url ===
+						'/details' ? include('../partials/poster-data',
+						{moviePoster: moviePoster, movieSummary: movieSummary,
+						imdbRating: imdbRating, metacriticRating:
+						metacriticRating, movieBudget: movieBudget, movieGross:
+						movieGross}) : include('../partials/storage') %>
+					</div>
+					<div id="data-sources-wrapper">
+						<%- req.url === '/sample-details' || req.url ===
+						'/details' ? include('../partials/sources-wrapper',
+						{moviePurchaseArray: moviePurchaseArray, movieRentArray:
+						movieRentArray, movieStreamingArray:
+						movieStreamingArray}) : include('../partials/storage')
+						%>
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>

@@ -4,7 +4,7 @@ const axios = require('axios');
 
 const imdbApiKey = process.env.IMDB_API_KEY;
 const watchmodeApiKey = process.env.WATCHMODE_API_KEY;
-// console.log('hello from apiHandler');
+// console.log(`hello from apiHandler, imdbApiKey: ${imdbApiKey}`);
 
 let searchData;
 let imdbTitleData;

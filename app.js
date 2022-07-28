@@ -58,32 +58,24 @@ app.set('view engine', 'ejs');
 app.use('/public', express.static(`${__dirname}/public`));
 
 // Verify login status
+// let loginStatus;
 
-let userName;
-let userEmail;
-let userPassword;
+// let userName;
+// let userEmail;
+// let userPassword;
 
-let loginMessage = 'Login to continue...';
+// let loginMessage = 'Login to continue...';
 
 app.get('/', (req, res) => {
 	console.log('welcome to homepage');
-	let greeting;
-	let toggleLoginBtn;
 
-	// If user is logged in...
-	if (req.session.loggedin) {
-		console.log('user logged in');
-		// Greet user and show logout button:
-		greeting = `Welcome back, ${userName}!`;
-	} else {
-		console.log('user Not logged in');
-		// Greet stranger and show login button:
-		greeting = 'Sign up to build your movie list...';
-	}
+	console.log(`req.url: ${req.url}`);
+
+	loginStatus = loginHandler.greeting(req);
 
 	res.render('pages/index', {
-		greeting: greeting,
-		toggleLoginBtn: toggleLoginBtn,
+		greetingMessage: loginStatus.greetingMessage,
+		toggleLoginBtn: loginStatus.toggleLoginBtn,
 		req: req,
 	});
 });
@@ -95,43 +87,59 @@ app.get('/', (req, res) => {
 app.get('/login-form', (req, res) => {
 	console.log('app.js: /login-form fired');
 
-	res.render('pages/login', { loginMessage: loginMessage });
+	console.log(`req.url: ${req.url}`);
+
+	res.render('pages/login', { loginMessage: loginMessage, req: req });
 });
 
-app.post('/login', (req, res) => {
-	userName = req.body.userName;
-	userPassword = req.body.userPassword;
-
+app.post('/login', async (req, res) => {
+	// userName = req.body.userName;
+	// userPassword = req.body.userPassword;
 	// console.log(`/login userName: ${userName}`);
 	// console.log(`/login userPassword: ${userPassword}`);
+	// if (userName && userPassword) {
+	// 	connection.query(
+	// 		'SELECT * FROM users WHERE userName = ? AND password = ?',
+	// 		[userName, userPassword],
+	// 		function (error, results, fields) {
+	// 			console.log(results);
+	// 			// If there is an issue with the query, output the error
+	// 			if (error) {
+	// 				console.log(error);
+	// 				throw error;
+	// 			}
+	// 			// If the account exists
+	// 			if (results.length > 0) {
+	// 				console.log(
+	// 					`app.js: /login returning user: ${userName}, ${userPassword}`
+	// 				);
+	// 				// Authenticate the user
+	// 				req.session.loggedin = true;
+	// 				req.session.username = userName;
+	// 				res.redirect('/');
+	// 			} else {
+	// 				loginMessage = 'Invalid user name / password!';
+	// 				res.render('pages/login', {
+	// 					loginMessage: loginMessage,
+	// 					req: req,
+	// 				});
+	// 			}
+	// 		}
+	// 	);
+	// }
 
-	if (userName && userPassword) {
-		connection.query(
-			'SELECT * FROM users WHERE userName = ? AND password = ?',
-			[userName, userPassword],
-			function (error, results, fields) {
-				console.log(results);
-				// If there is an issue with the query, output the error
-				if (error) {
-					console.log(error);
-					throw error;
-				}
-				// If the account exists
-				if (results.length > 0) {
-					console.log(
-						`app.js: /login returning user: ${userName}, ${userPassword}`
-					);
-					// Authenticate the user
-					req.session.loggedin = true;
-					req.session.username = userName;
-					res.redirect('/');
-				} else {
-					loginMessage = 'Invalid user name / password!';
+	const loginResponse = await loginHandler.login(req, connection);
 
-					res.render('pages/login', { loginMessage: loginMessage });
-				}
-			}
-		);
+	if (loginResponse.loginStatus === true) {
+		// Authenticate the user
+		req.session.loggedin = true;
+		req.session.username = loginResponse.userName;
+		res.redirect('/');
+	} else {
+		res.render('pages/login', {
+			loginMessage: loginResponse.loginMessage,
+			req: req,
+		});
 	}
 });
 
@@ -161,7 +169,10 @@ app.post('/register', (req, res) => {
 					loginMessage =
 						'User name, email or password already exists!';
 
-					res.render('pages/login', { loginMessage: loginMessage });
+					res.render('pages/login', {
+						loginMessage: loginMessage,
+						req: req,
+					});
 				}
 			}
 		);
@@ -184,22 +195,25 @@ app.post('/sample-search', async (req, res) => {
 	const sampleData = new Boolean(true);
 	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
 
+	console.log(`req.url: ${req.url}`);
+
 	// using sample data for now...
 
-	// const imdbSearchData = require('./json/imdb-search-sample.json');
-	const tmdbSearchData = require('./json/tmdb-search-sample.json');
+	const imdbSearchData = require('./json/imdb-search-sample.json');
+	// const tmdbSearchData = require('./json/tmdb-search-sample.json');
+
+	res.render('pages/index.ejs', {
+		searchQuery: imdbSearchData.expression,
+		detailsLink: sampleData == true ? '/sample-details' : '/details',
+		imdbSearchData: imdbSearchData,
+		req: req,
+	});
 
 	// res.render('pages/movie-list', {
-	// 	searchQuery: imdbSearchData.expression,
+	// 	searchQuery: `"${req.body.query}"`,
 	// 	detailsLink: sampleData == true ? '/sample-details' : '/details',
-	// 	imdbSearchData: imdbSearchData,
+	// 	tmdbSearchData: tmdbSearchData,
 	// });
-
-	res.render('pages/movie-list', {
-		searchQuery: `"${req.body.query}"`,
-		detailsLink: sampleData == true ? '/sample-details' : '/details',
-		tmdbSearchData: tmdbSearchData,
-	});
 });
 
 app.post('/query-search', async (req, res) => {
@@ -221,10 +235,11 @@ app.post('/query-search', async (req, res) => {
 
 		const imdbSearchData = imdbResponse;
 
-		res.render('pages/movie-list', {
+		res.render('pages/index.ejs', {
 			searchQuery: imdbResponse.expression,
 			detailsLink: sampleData == true ? '/sample-details' : '/details',
 			imdbSearchData: imdbSearchData,
+			req: req,
 		});
 	}
 });
@@ -243,7 +258,7 @@ app.get('/sample-details', (req, res) => {
 
 	const movieSources = sourceHandler(watchmodeSourcesData);
 
-	res.render('pages/movie-data', {
+	res.render('pages/index.ejs', {
 		movieTitle: imdbTitleData.title,
 		movieYear: imdbTitleData.year,
 		contentRating: imdbTitleData.contentRating,
@@ -256,6 +271,7 @@ app.get('/sample-details', (req, res) => {
 		moviePurchaseArray: movieSources.purchaseSources,
 		movieRentArray: movieSources.rentalSources,
 		movieStreamingArray: movieSources.streamingSources,
+		req: req,
 	});
 });
 
@@ -275,7 +291,7 @@ app.get('/details', async (req, res) => {
 			movieDataResponse.watchmodeSourcesData
 		);
 
-		res.render('pages/movie-data', {
+		res.render('pages/index.ejs', {
 			movieTitle: movieDataResponse.imdbTitleData.title,
 			movieYear: movieDataResponse.imdbTitleData.year,
 			contentRating: movieDataResponse.imdbTitleData.contentRating,
@@ -290,6 +306,7 @@ app.get('/details', async (req, res) => {
 			moviePurchaseArray: movieSources.purchaseSources,
 			movieRentArray: movieSources.rentalSources,
 			movieStreamingArray: movieSources.streamingSources,
+			req: req,
 		});
 	}
 });
