@@ -58,13 +58,13 @@ app.set('view engine', 'ejs');
 app.use('/public', express.static(`${__dirname}/public`));
 
 // Verify login status
-// let loginStatus;
+let loginStatus;
 
-// let userName;
-// let userEmail;
-// let userPassword;
+let userName;
+let userEmail;
+let userPassword;
 
-// let loginMessage = 'Login to continue...';
+let loginMessage = 'Login to continue...';
 
 app.get('/', (req, res) => {
 	console.log('welcome to homepage');
@@ -129,8 +129,13 @@ app.post('/login', async (req, res) => {
 	// }
 
 	const loginResponse = await loginHandler.login(req, connection);
+	console.log('app.js loginResponse on next line:');
+	console.dir(loginResponse);
 
 	if (loginResponse.loginStatus === true) {
+		console.log(
+			`app.js: login successful for user ${loginResponse.userName}`
+		);
 		// Authenticate the user
 		req.session.loggedin = true;
 		req.session.username = loginResponse.userName;
@@ -190,7 +195,7 @@ app.get('/logout', (req, res) => {
 
 ////////////////////// Searching movies...
 
-app.post('/sample-search', async (req, res) => {
+app.post('/sample-search', (req, res) => {
 	console.log('app.js receiving query for SAMPLE data');
 	const sampleData = new Boolean(true);
 	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
@@ -202,10 +207,14 @@ app.post('/sample-search', async (req, res) => {
 	const imdbSearchData = require('./json/imdb-search-sample.json');
 	// const tmdbSearchData = require('./json/tmdb-search-sample.json');
 
+	loginStatus = loginHandler.greeting(req);
+
 	res.render('pages/index.ejs', {
 		searchQuery: imdbSearchData.expression,
 		detailsLink: sampleData == true ? '/sample-details' : '/details',
 		imdbSearchData: imdbSearchData,
+		greetingMessage: loginStatus.greetingMessage,
+		toggleLoginBtn: loginStatus.toggleLoginBtn,
 		req: req,
 	});
 
@@ -226,6 +235,8 @@ app.post('/query-search', async (req, res) => {
 	const imdbResponse = await apiHandler.searchMovieData(query);
 	// console.log(imdbResponse.results);
 
+	loginStatus = loginHandler.greeting(req);
+
 	if (imdbResponse.message === 'ERROR' || imdbResponse.results === null) {
 		res.send(imdbResponse.errorMessage);
 	} else {
@@ -239,6 +250,8 @@ app.post('/query-search', async (req, res) => {
 			searchQuery: imdbResponse.expression,
 			detailsLink: sampleData == true ? '/sample-details' : '/details',
 			imdbSearchData: imdbSearchData,
+			greetingMessage: loginStatus.greetingMessage,
+			toggleLoginBtn: loginStatus.toggleLoginBtn,
 			req: req,
 		});
 	}
@@ -258,6 +271,8 @@ app.get('/sample-details', (req, res) => {
 
 	const movieSources = sourceHandler(watchmodeSourcesData);
 
+	loginStatus = loginHandler.greeting(req);
+
 	res.render('pages/index.ejs', {
 		movieTitle: imdbTitleData.title,
 		movieYear: imdbTitleData.year,
@@ -271,6 +286,8 @@ app.get('/sample-details', (req, res) => {
 		moviePurchaseArray: movieSources.purchaseSources,
 		movieRentArray: movieSources.rentalSources,
 		movieStreamingArray: movieSources.streamingSources,
+		greetingMessage: loginStatus.greetingMessage,
+		toggleLoginBtn: loginStatus.toggleLoginBtn,
 		req: req,
 	});
 });
@@ -283,6 +300,8 @@ app.get('/details', async (req, res) => {
 	// movieDataResponse comes back from api Handler...
 	const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
 	// console.log(movieDataResponse);
+
+	loginStatus = loginHandler.greeting(req);
 
 	if (movieDataResponse.message === 'ERROR') {
 		res.send(movieDataResponse.errorMessage);
@@ -306,6 +325,8 @@ app.get('/details', async (req, res) => {
 			moviePurchaseArray: movieSources.purchaseSources,
 			movieRentArray: movieSources.rentalSources,
 			movieStreamingArray: movieSources.streamingSources,
+			greetingMessage: loginStatus.greetingMessage,
+			toggleLoginBtn: loginStatus.toggleLoginBtn,
 			req: req,
 		});
 	}

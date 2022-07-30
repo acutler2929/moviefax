@@ -27,12 +27,12 @@ exports.greeting = function (req) {
 
 exports.register = function (req) {};
 
-exports.login = function (req, connection) {
+exports.login = async function (req, connection) {
 	userName = req.body.userName;
 	userPassword = req.body.userPassword;
 
 	if (userName && userPassword) {
-		connection.query(
+		await connection.query(
 			'SELECT * FROM users WHERE userName = ? AND password = ?',
 			[userName, userPassword],
 			function (error, results, fields) {
@@ -60,6 +60,8 @@ exports.login = function (req, connection) {
 			}
 		);
 	}
+
+	return { loginMessage, loginStatus };
 };
 
 exports.logout = function (req) {};
