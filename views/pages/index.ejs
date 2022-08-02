@@ -11,7 +11,11 @@
 				>
 					<header class="">
 						<h1>Welcome to MovieFax!</h1>
-						<p><%= greetingMessage %></p>
+						<% if (req.session.loggedin) { %>
+						<p>Welcome back, <%= req.session.userName %>!</p>
+						<% } else{ %>
+						<p>Sign up to build your movie list...</p>
+						<% } %>
 					</header>
 				</div>
 				<div class="col-6">

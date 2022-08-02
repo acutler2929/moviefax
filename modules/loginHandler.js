@@ -1,42 +1,22 @@
 'use strict';
 
-let loginStatus;
-let userName;
+let loginStatus = new Boolean();
+let userInfo;
 let userEmail;
-let userPassword;
+let output;
 
 let loginMessage = 'Login to continue...';
-
-exports.greeting = function (req) {
-	let greetingMessage;
-	let toggleLoginBtn;
-
-	// If user is logged in...
-	if (req.session.loggedin) {
-		console.log('user logged in');
-		// Greet user and show logout button:
-		greetingMessage = `Welcome back, ${userName}!`;
-	} else {
-		console.log('user Not logged in');
-		// Greet stranger and show login button:
-		greetingMessage = 'Sign up to build your movie list...';
-	}
-
-	return { greetingMessage, toggleLoginBtn };
-};
 
 exports.register = function (req) {};
 
 exports.login = async function (req, connection) {
-	userName = req.body.userName;
-	userPassword = req.body.userPassword;
-
-	if (userName && userPassword) {
+	if (req.body.userName && req.body.userPassword) {
 		await connection.query(
 			'SELECT * FROM users WHERE userName = ? AND password = ?',
-			[userName, userPassword],
+			[req.body.userName, req.body.userPassword],
 			function (error, results, fields) {
-				console.log(results);
+				userInfo = JSON.parse(JSON.stringify(results[0]));
+				console.log(userInfo);
 				// If there is an issue with the query, output the error
 				if (error) {
 					console.log(error);
@@ -45,23 +25,38 @@ exports.login = async function (req, connection) {
 				// If the account exists
 				if (results.length > 0) {
 					console.log(
-						`loginHandler.js: /login returning user: ${userName}, ${userPassword}`
+						`loginHandler.js: /login returning user: ${userInfo.userName}, ${userInfo.userPassword}`
 					);
 					// Authenticate the user
 					loginStatus = true;
+					console.log(`loginStatus: ${loginStatus}`);
 
-					return { userName, userPassword, loginStatus };
+					output = { loginStatus, userInfo };
+					// console.log(`login output: ${output}`);
+					console.log(typeof output);
+
+					return output;
 				} else {
 					loginMessage = 'Invalid user name / password!';
 					loginStatus = false;
+					console.log(`loginStatus: ${loginStatus}`);
 
-					return { loginMessage, loginStatus };
+					output = { loginStatus, loginMessage };
+					// console.log(`login output: ${output}`);
+					console.log(tyepof(output));
+
+					return output;
 				}
 			}
 		);
+
+		console.log(`login output: ${output}`);
+
+		return output;
 	}
 
-	return { loginMessage, loginStatus };
+	console.log('output returned');
+	return output;
 };
 
 exports.logout = function (req) {};

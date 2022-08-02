@@ -57,8 +57,18 @@ app.set('view engine', 'ejs');
 
 app.use('/public', express.static(`${__dirname}/public`));
 
-// Verify login status
-let loginStatus;
+// app.use((req, res, next) => {
+// 	// Greet stranger and show login button:
+// 	let indexGreeting = 'Sign up to build your movie list...';
+
+// 	// Verify login status
+// 	indexGreeting = loginHandler.greeting(req);
+// 	console.log(`loginHandler.greeting returned object:`);
+// 	console.dir(indexGreeting);
+// 	console.log(indexGreeting);
+
+// 	next();
+// });
 
 let userName;
 let userEmail;
@@ -70,12 +80,9 @@ app.get('/', (req, res) => {
 	console.log('welcome to homepage');
 
 	console.log(`req.url: ${req.url}`);
-
-	loginStatus = loginHandler.greeting(req);
+	// greetingMessage: loginStatus.greetingMessage,
 
 	res.render('pages/index', {
-		greetingMessage: loginStatus.greetingMessage,
-		toggleLoginBtn: loginStatus.toggleLoginBtn,
 		req: req,
 	});
 });
@@ -93,52 +100,20 @@ app.get('/login-form', (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-	// userName = req.body.userName;
-	// userPassword = req.body.userPassword;
-	// console.log(`/login userName: ${userName}`);
-	// console.log(`/login userPassword: ${userPassword}`);
-	// if (userName && userPassword) {
-	// 	connection.query(
-	// 		'SELECT * FROM users WHERE userName = ? AND password = ?',
-	// 		[userName, userPassword],
-	// 		function (error, results, fields) {
-	// 			console.log(results);
-	// 			// If there is an issue with the query, output the error
-	// 			if (error) {
-	// 				console.log(error);
-	// 				throw error;
-	// 			}
-	// 			// If the account exists
-	// 			if (results.length > 0) {
-	// 				console.log(
-	// 					`app.js: /login returning user: ${userName}, ${userPassword}`
-	// 				);
-	// 				// Authenticate the user
-	// 				req.session.loggedin = true;
-	// 				req.session.username = userName;
-	// 				res.redirect('/');
-	// 			} else {
-	// 				loginMessage = 'Invalid user name / password!';
-	// 				res.render('pages/login', {
-	// 					loginMessage: loginMessage,
-	// 					req: req,
-	// 				});
-	// 			}
-	// 		}
-	// 	);
-	// }
-
 	const loginResponse = await loginHandler.login(req, connection);
-	console.log('app.js loginResponse on next line:');
+
+	console.log(loginResponse);
 	console.dir(loginResponse);
+
+	console.log('am i being executed???');
 
 	if (loginResponse.loginStatus === true) {
 		console.log(
-			`app.js: login successful for user ${loginResponse.userName}`
+			`app.js: login successful for user ${loginResponse.userInfo.userName}, id: ${loginResponse.userInfo.userID}`
 		);
 		// Authenticate the user
 		req.session.loggedin = true;
-		req.session.username = loginResponse.userName;
+		req.session.userName = loginResponse.userInfo.userName;
 		res.redirect('/');
 	} else {
 		res.render('pages/login', {
@@ -207,14 +182,11 @@ app.post('/sample-search', (req, res) => {
 	const imdbSearchData = require('./json/imdb-search-sample.json');
 	// const tmdbSearchData = require('./json/tmdb-search-sample.json');
 
-	loginStatus = loginHandler.greeting(req);
-
 	res.render('pages/index.ejs', {
 		searchQuery: imdbSearchData.expression,
 		detailsLink: sampleData == true ? '/sample-details' : '/details',
 		imdbSearchData: imdbSearchData,
 		greetingMessage: loginStatus.greetingMessage,
-		toggleLoginBtn: loginStatus.toggleLoginBtn,
 		req: req,
 	});
 
@@ -235,8 +207,6 @@ app.post('/query-search', async (req, res) => {
 	const imdbResponse = await apiHandler.searchMovieData(query);
 	// console.log(imdbResponse.results);
 
-	loginStatus = loginHandler.greeting(req);
-
 	if (imdbResponse.message === 'ERROR' || imdbResponse.results === null) {
 		res.send(imdbResponse.errorMessage);
 	} else {
@@ -251,7 +221,6 @@ app.post('/query-search', async (req, res) => {
 			detailsLink: sampleData == true ? '/sample-details' : '/details',
 			imdbSearchData: imdbSearchData,
 			greetingMessage: loginStatus.greetingMessage,
-			toggleLoginBtn: loginStatus.toggleLoginBtn,
 			req: req,
 		});
 	}
@@ -271,8 +240,6 @@ app.get('/sample-details', (req, res) => {
 
 	const movieSources = sourceHandler(watchmodeSourcesData);
 
-	loginStatus = loginHandler.greeting(req);
-
 	res.render('pages/index.ejs', {
 		movieTitle: imdbTitleData.title,
 		movieYear: imdbTitleData.year,
@@ -287,7 +254,6 @@ app.get('/sample-details', (req, res) => {
 		movieRentArray: movieSources.rentalSources,
 		movieStreamingArray: movieSources.streamingSources,
 		greetingMessage: loginStatus.greetingMessage,
-		toggleLoginBtn: loginStatus.toggleLoginBtn,
 		req: req,
 	});
 });
@@ -300,8 +266,6 @@ app.get('/details', async (req, res) => {
 	// movieDataResponse comes back from api Handler...
 	const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
 	// console.log(movieDataResponse);
-
-	loginStatus = loginHandler.greeting(req);
 
 	if (movieDataResponse.message === 'ERROR') {
 		res.send(movieDataResponse.errorMessage);
@@ -326,7 +290,6 @@ app.get('/details', async (req, res) => {
 			movieRentArray: movieSources.rentalSources,
 			movieStreamingArray: movieSources.streamingSources,
 			greetingMessage: loginStatus.greetingMessage,
-			toggleLoginBtn: loginStatus.toggleLoginBtn,
 			req: req,
 		});
 	}
