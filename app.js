@@ -100,10 +100,77 @@ app.get('/login-form', (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-	const loginResponse = await loginHandler.login(req, connection);
+	/*
+	let loginStatus = new Boolean();
+	let userInfo;
+	let output;
+	let loginResponse;
 
-	console.log(loginResponse);
+	const logMeIn = async function (req, connection) {
+		if (req.body.userName && req.body.userPassword) {
+			await new Promise((resolve, reject) => {
+				connection.query(
+					'SELECT * FROM users WHERE userName = ? AND password = ?',
+					[req.body.userName, req.body.userPassword],
+					function (error, results, fields) {
+						userInfo = JSON.parse(JSON.stringify(results[0]));
+						console.log(userInfo);
+						// If there is an issue with the query, output the error
+						if (error) {
+							console.log(error);
+							throw error;
+						}
+						// If the account exists
+						if (results.length > 0) {
+							console.log(
+								`loginHandler.js: /login returning user: ${userInfo.userName}, ${userInfo.userPassword}`
+							);
+							// Authenticate the user
+							loginStatus = true;
+							console.log(`loginStatus: ${loginStatus}`);
+
+							output = { loginStatus, userInfo };
+							// console.log(`login output: ${output}`);
+							console.log(typeof output);
+
+							return output;
+						} else {
+							loginMessage = 'Invalid user name / password!';
+							loginStatus = false;
+							console.log(`loginStatus: ${loginStatus}`);
+
+							output = { loginStatus, loginMessage };
+							// console.log(`login output: ${output}`);
+							console.log(tyepof(output));
+
+							return output;
+						}
+					}
+				);
+			});
+
+			console.log(`login output: ${output}`);
+
+			return output;
+		}
+
+		console.log('output returned');
+		return output;
+	};
+
+	loginResponse = await new Promise((resolve, reject) => {
+		logMeIn(req, connection);
+	});
+*/
+
+	try {
+		const loginResponse = await loginHandler.login(req, connection);
+	} catch (error) {
+		console.log(error);
+	}
+
 	console.dir(loginResponse);
+	console.log(loginResponse);
 
 	console.log('am i being executed???');
 
