@@ -22,7 +22,7 @@ USE MovieFax;
 --         ('Dick', 'dick@yahoo.com', 'password'),
 --         ('Harry', 'harry@gmail.com',  '5678');
 
--- DELETE FROM users;
+-- DELETE FROM users WHERE userID = 15;
 
 -- ALTER TABLE users AUTO_INCREMENT = 1;
 

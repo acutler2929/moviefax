@@ -57,25 +57,6 @@ app.set('view engine', 'ejs');
 
 app.use('/public', express.static(`${__dirname}/public`));
 
-// app.use((req, res, next) => {
-// 	// Greet stranger and show login button:
-// 	let indexGreeting = 'Sign up to build your movie list...';
-
-// 	// Verify login status
-// 	indexGreeting = loginHandler.greeting(req);
-// 	console.log(`loginHandler.greeting returned object:`);
-// 	console.dir(indexGreeting);
-// 	console.log(indexGreeting);
-
-// 	next();
-// });
-
-let userName;
-let userEmail;
-let userPassword;
-
-let loginMessage = 'Login to continue...';
-
 app.get('/', (req, res) => {
 	console.log('welcome to homepage');
 
@@ -93,136 +74,83 @@ app.get('/', (req, res) => {
 
 app.get('/login-form', (req, res) => {
 	console.log('app.js: /login-form fired');
-
 	console.log(`req.url: ${req.url}`);
+
+	let loginMessage = 'Login to continue...';
 
 	res.render('pages/login', { loginMessage: loginMessage, req: req });
 });
 
-app.post('/login', async (req, res) => {
-	/*
-	let loginStatus = new Boolean();
-	let userInfo;
-	let output;
-	let loginResponse;
+app.post('/auth', async (req, res) => {
+	const loginResponse = await loginHandler.auth(req, connection);
 
-	const logMeIn = async function (req, connection) {
-		if (req.body.userName && req.body.userPassword) {
-			await new Promise((resolve, reject) => {
-				connection.query(
-					'SELECT * FROM users WHERE userName = ? AND password = ?',
-					[req.body.userName, req.body.userPassword],
-					function (error, results, fields) {
-						userInfo = JSON.parse(JSON.stringify(results[0]));
-						console.log(userInfo);
-						// If there is an issue with the query, output the error
-						if (error) {
-							console.log(error);
-							throw error;
-						}
-						// If the account exists
-						if (results.length > 0) {
-							console.log(
-								`loginHandler.js: /login returning user: ${userInfo.userName}, ${userInfo.userPassword}`
-							);
-							// Authenticate the user
-							loginStatus = true;
-							console.log(`loginStatus: ${loginStatus}`);
-
-							output = { loginStatus, userInfo };
-							// console.log(`login output: ${output}`);
-							console.log(typeof output);
-
-							return output;
-						} else {
-							loginMessage = 'Invalid user name / password!';
-							loginStatus = false;
-							console.log(`loginStatus: ${loginStatus}`);
-
-							output = { loginStatus, loginMessage };
-							// console.log(`login output: ${output}`);
-							console.log(tyepof(output));
-
-							return output;
-						}
-					}
-				);
-			});
-
-			console.log(`login output: ${output}`);
-
-			return output;
-		}
-
-		console.log('output returned');
-		return output;
-	};
-
-	loginResponse = await new Promise((resolve, reject) => {
-		logMeIn(req, connection);
-	});
-*/
-
-	try {
-		const loginResponse = await loginHandler.login(req, connection);
-	} catch (error) {
-		console.log(error);
-	}
-
+	console.log(
+		`app.js: loginResponse received on following line: ${loginResponse}`
+	);
 	console.dir(loginResponse);
-	console.log(loginResponse);
-
-	console.log('am i being executed???');
 
 	if (loginResponse.loginStatus === true) {
-		console.log(
-			`app.js: login successful for user ${loginResponse.userInfo.userName}, id: ${loginResponse.userInfo.userID}`
-		);
-		// Authenticate the user
-		req.session.loggedin = true;
+		// Validate the user:
+		req.session.loggedin = loginResponse.loginStatus;
 		req.session.userName = loginResponse.userInfo.userName;
+		req.session.userEmail = loginResponse.userInfo.email;
+		console.log(req.session);
+
+		console.log(
+			`app.js: login successful for user ${req.session.userName}, email: ${req.session.userEmail}`
+		);
 		res.redirect('/');
 	} else {
+		// Or kick them back to the login page:
+		req.session.loggedin = loginResponse.loginStatus;
+
 		res.render('pages/login', {
-			loginMessage: loginResponse.loginMessage,
+			loginMessage: 'Invalid user name / password!',
 			req: req,
 		});
 	}
 });
 
-app.post('/register', (req, res) => {
-	userName = req.body.newUserName;
-	userEmail = req.body.newEmail;
-	userPassword = req.body.newPassword;
+app.post('/register', async (req, res) => {
+	const registerResponse = await loginHandler.register(req, connection);
 
-	if (userName && userEmail && userPassword) {
-		connection.query(
-			'INSERT INTO users (userName, email, password) VALUES (?, ?, ?)',
-			[userName, userEmail, userPassword],
-			function (error) {
-				// If there is no error
-				if (!error) {
-					// Authenticate the user
-					req.session.loggedin = true;
-					req.session.username = userName;
-					console.log(
-						`app.js: /register new user: ${userName}, ${userEmail}, ${userPassword}`
-					);
-					// Redirect to home
-					res.redirect('/');
+	console.log(
+		`app.js: registerResponse received on following line: ${registerResponse}`
+	);
+	console.dir(registerResponse);
 
-					// If login info already exists, send appropriate error message
-				} else if (error.code === 'ER_DUP_ENTRY') {
-					loginMessage =
-						'User name, email or password already exists!';
+	if (registerResponse.loginStatus === true) {
+		// Validate the user:
+		req.session.loggedin = registerResponse.loginStatus;
+		req.session.userName = registerResponse.userInfo.userName;
+		req.session.userEmail = registerResponse.userInfo.userEmail;
+		console.log(req.session);
 
-					res.render('pages/login', {
-						loginMessage: loginMessage,
-						req: req,
-					});
-				}
-			}
+		console.log(
+			`app.js: registry successful for NEW user ${req.session.userName}, email: ${req.session.userEmail}`
 		);
+
+		// Redirect to home:
+		res.redirect('/');
+
+		// If registration info already exists...
+	} else if (registerResponse.userInfo === 'ER_DUP_ENTRY') {
+		// then kick them back to the login page:
+		req.session.loggedin = registerResponse.loginStatus;
+
+		res.render('pages/login', {
+			loginMessage: 'User name, email or password already exists!',
+			req: req,
+		});
+		// or else if registration info is invalid...
+	} else {
+		// then kick them back to the login page:
+		req.session.loggedin = registerResponse.loginStatus;
+
+		res.render('pages/login', {
+			loginMessage: 'Invalid name, email or password!',
+			req: req,
+		});
 	}
 });
 

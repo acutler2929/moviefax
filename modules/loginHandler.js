@@ -1,69 +1,112 @@
 'use strict';
 
-let loginStatus = new Boolean();
-let userInfo;
-let userEmail;
+// CREATE new mySQL entry:
+exports.register = async function (req, connection) {
+	let output;
+	let loginStatus = new Boolean();
+	let userInfo;
 
-let loginMessage = 'Login to continue...';
-
-exports.register = function (req) {};
-
-exports.login = async function (req, connection) {
-	console.log('loginHandler.login started');
-	let output = 'login info expected';
-	let query;
-
-	if (req.body.userName && req.body.userPassword) {
-		console.log('has username and password');
+	if (req.body.newUserName && req.body.newEmail && req.body.newPassword) {
 		await new Promise((resolve, reject) => {
-			query = connection.query(
-				'SELECT * FROM users WHERE userName = ? AND password = ?',
-				[req.body.userName, req.body.userPassword],
-				function (error, results, fields) {
-					userInfo = JSON.parse(JSON.stringify(results[0]));
-					console.log(`returned userInfo: ${userInfo}`);
-					// If there is an issue with the query, output the error
-					if (error) {
-						console.log(error);
-						throw error;
-					}
-					// If the account exists
-					if (results.length > 0) {
-						console.log(
-							`loginHandler.js: /login returning user: ${userInfo.userName}, ${userInfo.userPassword}`
-						);
-						// Authenticate the user
+			connection.query(
+				'INSERT INTO users (userName, email, password) VALUES (?, ?, ?)',
+				[req.body.newUserName, req.body.newEmail, req.body.newPassword],
+				function (error) {
+					// If there is no error
+					if (!error) {
+						//Prepare to Authenticate the user
 						loginStatus = true;
-						console.log(`loginStatus: ${loginStatus}`);
+						userInfo = {
+							userName: req.body.newUserName,
+							email: req.body.newEmail,
+							password: req.body.newPassword,
+						};
+						console.log(
+							`app.js: /register new user: ${userInfo.userName}, ${userInfo.email}, ${userInfo.password}`
+						);
 
-						output = { loginStatus, userInfo };
-						// console.log(`login output: ${output}`);
-						console.log(typeof output);
+						resolve({ loginStatus, userInfo });
 
-						return output;
-					} else {
-						loginMessage = 'Invalid user name / password!';
+						// If login info already exists, send appropriate error message
+					} else if (error.code === 'ER_DUP_ENTRY') {
 						loginStatus = false;
-						console.log(`loginStatus: ${loginStatus}`);
+						userInfo = error.code;
 
-						output = { loginStatus, loginMessage };
-						// console.log(`login output: ${output}`);
-						console.log(tyepof(output));
-
-						return output;
+						reject({ loginStatus, userInfo });
 					}
 				}
 			);
-		});
+		})
+			.then((res) => {
+				console.log(res);
+				output = res;
 
-		console.log(`longinHandler line 58: connection.query: ${query}`);
+				return output;
+			})
+			.catch((err) => {
+				console.log(err);
+				output = err;
 
-		return query;
+				return output;
+			});
+	} else {
+		console.log('invalid register info!');
+		output = {
+			loginStatus: false,
+			userInfo: 'ERROR INVALID INFO',
+		};
+
+		return output;
 	}
 
-	console.log('query returned');
-	console.log('loginHandler.login finished');
-	return query;
+	return output;
 };
 
-exports.logout = function (req) {};
+// READ new mySQL entry:
+exports.auth = async function (req, connection) {
+	let output;
+	let loginStatus = new Boolean();
+	let userInfo;
+
+	if (req.body.userName && req.body.userPassword) {
+		await new Promise((resolve, reject) => {
+			connection.query(
+				'SELECT * FROM users WHERE userName = ? AND password = ?',
+				[req.body.userName, req.body.userPassword],
+				function (error, results, fields) {
+					if (results.length > 0) {
+						loginStatus = true;
+						userInfo = JSON.parse(JSON.stringify(results[0]));
+						// console.log(userInfo);
+
+						resolve({ loginStatus, userInfo });
+					} else {
+						loginStatus = false;
+						userInfo = 'no user';
+
+						reject({ loginStatus, userInfo });
+					}
+				}
+			);
+		})
+			.then((res) => {
+				console.log('login module Promise success!');
+				// console.log(res);
+				output = res;
+
+				return output;
+			})
+			.catch((err) => {
+				console.log('login module Promise failed :(');
+				// console.log(err);
+				output = err;
+
+				return output;
+			});
+	}
+
+	return output;
+};
+
+// UPDATE existing mySQL entry:
+exports.passwordReset = function (req) {};
