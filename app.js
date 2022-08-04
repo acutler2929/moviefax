@@ -4,27 +4,15 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const url = require('url');
-const fs = require('fs');
+// const fs = require('fs');
 const mysql = require('mysql');
 // const path = require('path');
 
 /////////////////// Modules
 const apiHandler = require('./modules/apiHandler');
-const dataHandler = require('./modules/dataHandler');
+// const dataHandler = require('./modules/dataHandler');
 const loginHandler = require('./modules/loginHandler');
 const sourceHandler = require('./modules/sourceHandler');
-
-////////////////// HTML page templates
-
-const movieDataTemplate = fs.readFileSync(
-	`${__dirname}/views/pages/movie-data.ejs`,
-	'utf-8'
-);
-
-const movieListTemplate = fs.readFileSync(
-	`${__dirname}/views/pages/movie-list.ejs`,
-	'utf-8'
-);
 
 ///////// Connecting to MYSQL
 
@@ -181,7 +169,6 @@ app.post('/sample-search', (req, res) => {
 		searchQuery: imdbSearchData.expression,
 		detailsLink: sampleData == true ? '/sample-details' : '/details',
 		imdbSearchData: imdbSearchData,
-		greetingMessage: loginStatus.greetingMessage,
 		req: req,
 	});
 
@@ -215,7 +202,6 @@ app.post('/query-search', async (req, res) => {
 			searchQuery: imdbResponse.expression,
 			detailsLink: sampleData == true ? '/sample-details' : '/details',
 			imdbSearchData: imdbSearchData,
-			greetingMessage: loginStatus.greetingMessage,
 			req: req,
 		});
 	}
@@ -225,6 +211,9 @@ app.post('/query-search', async (req, res) => {
 
 app.get('/sample-details', (req, res) => {
 	console.log('app.js: /sampleDetails accessed!');
+	const sampleData = new Boolean(true);
+	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
+
 	const { query, pathname } = url.parse(req.url, true);
 	const imdbID = JSON.stringify(query.id);
 	console.log(`imdbID: ${imdbID}`);
@@ -248,12 +237,14 @@ app.get('/sample-details', (req, res) => {
 		moviePurchaseArray: movieSources.purchaseSources,
 		movieRentArray: movieSources.rentalSources,
 		movieStreamingArray: movieSources.streamingSources,
-		greetingMessage: loginStatus.greetingMessage,
+		detailsLink: sampleData == true ? '/sample-details' : '/details',
 		req: req,
 	});
 });
 
 app.get('/details', async (req, res) => {
+	const sampleData = new Boolean(false);
+	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
 	const { query, pathname } = url.parse(req.url, true);
 	const imdbID = query.id;
 	console.log(`/details: receiving query for imdbID ${imdbID}`);
@@ -284,10 +275,22 @@ app.get('/details', async (req, res) => {
 			moviePurchaseArray: movieSources.purchaseSources,
 			movieRentArray: movieSources.rentalSources,
 			movieStreamingArray: movieSources.streamingSources,
-			greetingMessage: loginStatus.greetingMessage,
+			detailsLink: sampleData == true ? '/sample-details' : '/details',
 			req: req,
 		});
 	}
+});
+
+app.get('/toggle-list', (req, res) => {
+	console.log(`req.url: ${req.url}`);
+
+	res.redirect('/');
+});
+
+app.get('/toggle-movie-info', (req, res) => {
+	console.log(`req.url: ${req.url}`);
+
+	res.redirect('/');
 });
 
 module.exports = app;

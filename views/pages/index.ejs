@@ -59,19 +59,46 @@
 					</nav>
 				</div>
 				<i class="text-center"
-					>~ Powered by
-					<a href="https://www.themoviedb.org/"
-						><img
-							id="tmdb-logo"
-							src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_long_1-8ba2ac31f354005783fab473602c34c3f4fd207150182061e425d366e4f34596.svg"
-					/></a>
-					api &
+					>~ Powered by <a href="https://www.imdb.com">IMDB.com</a> &
 					<a href="https://www.watchmode.com">Watchmode.com</a>
 					~</i
 				>
+				<div class="row" id="toggle-button-section">
+					<div class="col-3">
+						<form
+							action="/toggle-list"
+							method="get"
+							onsubmit="return false"
+						>
+							<input
+								type="submit"
+								value="Toggle Search / Custom List"
+								class="btn btn-primary"
+								id="toggle-list-button"
+							/>
+						</form>
+					</div>
+					<div class="col-9">
+						<form
+							action="toggle-movie-info"
+							method="get"
+							onsubmit="return false"
+						>
+							<input
+								type="submit"
+								value="Toggle Movie / Sources Info"
+								class="btn btn-primary"
+								id="toggle-movie-info-button"
+							/>
+						</form>
+					</div>
+				</div>
 			</div>
-			<div class="container-fluid" id="movies-content-wrapper">
-				<div id="lists-wrapper">
+			<div
+				class="container-fluid row align-items-start"
+				id="movies-content-wrapper"
+			>
+				<div class="col-3" id="lists-wrapper">
 					<div id="search-results-wrapper">
 						<ul>
 							<%- req.url === '/sample-search' || req.url ===
@@ -81,7 +108,7 @@
 							include('../partials/storage') %>
 						</ul>
 					</div>
-					<div id="user-movies-wrapper">
+					<div id="user-movies-wrapper" class="hidden">
 						<ul>
 							<p>placeholder</p>
 						</ul>
@@ -93,18 +120,20 @@
 						</ul>
 					</div>
 				</div>
-				<div class="row gx-3" id="movie-data-wrapper">
+				<div class="col-9" id="movie-data-wrapper">
 					<div id="poster-data-wrapper">
-						<%- req.url === '/sample-details' || req.url ===
-						'/details' ? include('../partials/poster-data',
-						{moviePoster: moviePoster, movieSummary: movieSummary,
-						imdbRating: imdbRating, metacriticRating:
-						metacriticRating, movieBudget: movieBudget, movieGross:
-						movieGross}) : include('../partials/storage') %>
+						<%- req.url.includes('/sample-details') ||
+						req.url.includes('/details') ?
+						include('../partials/poster-data', {moviePoster:
+						moviePoster, movieSummary: movieSummary, imdbRating:
+						imdbRating, metacriticRating: metacriticRating,
+						movieBudget: movieBudget, movieGross: movieGross}) :
+						include('../partials/storage') %>
 					</div>
-					<div id="data-sources-wrapper">
-						<%- req.url === '/sample-details' || req.url ===
-						'/details' ? include('../partials/sources-wrapper',
+					<div id="data-sources-wrapper" class="hidden">
+						<%- req.url.includes('/sample-details') ||
+						req.url.includes('/details') ?
+						include('../partials/sources-wrapper',
 						{moviePurchaseArray: moviePurchaseArray, movieRentArray:
 						movieRentArray, movieStreamingArray:
 						movieStreamingArray}) : include('../partials/storage')

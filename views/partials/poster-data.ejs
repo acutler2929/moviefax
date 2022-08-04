@@ -1,28 +1,34 @@
-<div class="d-flex col-5" id="movie-data-left">
-	<div class="flex-grow-1">
-		<img
-			src="<%= moviePoster %>"
-			class="img-fluid"
-			id="movie-data-poster"
-		/>
+<div class="row">
+	<div class="d-flex col-5" id="movie-data-left">
+		<div class="flex-grow-1">
+			<img
+				src="<%= moviePoster %>"
+				class="img-fluid"
+				id="movie-data-poster"
+			/>
+		</div>
 	</div>
-</div>
-<div class="col-7" id="movie-data-right">
-	<div id="data-summary-wrapper">
-		<p><%= movieSummary %></p>
-	</div>
-	<div class="row flex-grow-1" id="data-rating-wrapper">
-		<div class="col-3">
-			<p>IMDB: <%= imdbRating %></p>
+	<div class="col-7" id="movie-data-right">
+		<div id="data-summary-wrapper">
+			<p><%= movieSummary %></p>
 		</div>
-		<div class="col-3">
-			<p>Metacritic: <%= metacriticRating %></p>
-		</div>
-		<div class="col-3">
-			<p>Budget: <%= movieBudget %></p>
-		</div>
-		<div class="col-3">
-			<p>Gross: <%= movieGross %></p>
+		<div class="row flex-grow-1" id="data-rating-wrapper">
+			<div class="row justify-content-around">
+				<div class="col-3">
+					<p>IMDB: <%= imdbRating %></p>
+				</div>
+				<div class="col-3">
+					<p>Metacritic: <%= metacriticRating %></p>
+				</div>
+			</div>
+			<div class="row justify-content-around">
+				<div class="col-3">
+					<p>Budget: <%= movieBudget %></p>
+				</div>
+				<div class="col-3">
+					<p>Gross: <%= movieGross %></p>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
