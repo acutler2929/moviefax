@@ -99,24 +99,15 @@
 				id="movies-content-wrapper"
 			>
 				<div class="col-3" id="lists-wrapper">
-					<div id="search-results-wrapper">
-						<ul>
-							<%- req.url === '/sample-search' || req.url ===
-							'/query-search' ?
-							include('../partials/movie-wrapper', { detailsLink:
-							detailsLink, imdbSearchData: imdbSearchData }) :
-							include('../partials/storage') %>
-						</ul>
-					</div>
+					<ul class="list-group" id="search-results-wrapper">
+						<%- req.url === '/sample-search' || req.url ===
+						'/query-search' ? include('../partials/movie-wrapper', {
+						detailsLink: detailsLink, imdbSearchData: imdbSearchData
+						}) : include('../partials/storage') %>
+					</ul>
 					<div id="user-movies-wrapper" class="hidden">
 						<ul>
-							<p>placeholder</p>
-						</ul>
-						<ul>
-							<p>placeholder</p>
-						</ul>
-						<ul>
-							<p>placeholder</p>
+							<p>Login to build your own list!</p>
 						</ul>
 					</div>
 				</div>

@@ -60,38 +60,16 @@ body #content-wrapper nav form > * {
   margin: 1vw;
 }
 
-body #content-wrapper #tmdb-logo {
-  height: auto;
-  width: 10vw;
-}
-
-body #content-wrapper #search-results-wrapper {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-align: space-around;
-      -ms-flex-align: space-around;
-          align-items: space-around;
-  overflow: auto;
-}
-
-body #content-wrapper #search-results-wrapper .movie-wrapper {
-  cursor: pointer;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
+body #content-wrapper #movies-content-wrapper {
   max-height: 100vh;
 }
 
-body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper {
+body #content-wrapper #movies-content-wrapper #lists-wrapper #search-results-wrapper {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-left {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -99,74 +77,15 @@ body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
-  max-width: 20vw;
-  min-width: 20vw;
-  padding: 0;
+  max-height: 100vh;
 }
 
-body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper .search-title {
-  height: 7.5vh;
-  overflow: hidden;
-}
-
-body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper .search-images {
-  -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
-      align-self: center;
-  max-height: 200vw;
-  width: 100%;
+body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-left #movie-data-poster {
   -o-object-fit: contain;
      object-fit: contain;
 }
 
-body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper .search-description {
-  max-height: 10vh;
-  overflow: hidden;
-}
-
-body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper > * {
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-}
-
-body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper .summary-pop-wrapper {
-  max-height: 80vh;
-  padding: 0;
-}
-
-body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper .summary-pop-wrapper .movie-summary {
-  overflow: hidden;
-  padding: 0;
-}
-
-body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper .summary-pop-wrapper .popularity {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  padding: 0;
-  overflow: hidden;
-}
-
-body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper .source-offers {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  padding: 0;
-  overflow: hidden;
-}
-
-#movie-data-wrapper #movie-data-left {
+body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -177,23 +96,7 @@ body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper .sour
   max-height: 100vh;
 }
 
-#movie-data-wrapper #movie-data-left #movie-data-poster {
-  -o-object-fit: contain;
-     object-fit: contain;
-}
-
-#movie-data-wrapper #movie-data-right {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  max-height: 100vh;
-}
-
-#movie-data-wrapper #movie-data-right #data-sources-wrapper #sources-purchase-wrapper #purchase-sources-list {
+body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-purchase-wrapper #purchase-sources-list {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -208,12 +111,12 @@ body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper .sour
           justify-content: center;
 }
 
-#movie-data-wrapper #movie-data-right #data-sources-wrapper #sources-purchase-wrapper #purchase-sources-list .purchase-source {
+body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-purchase-wrapper #purchase-sources-list .purchase-source {
   margin: 0.5rem;
   padding: 0.5rem;
 }
 
-#movie-data-wrapper #movie-data-right #data-sources-wrapper #sources-rent-wrapper #rental-sources-list {
+body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-rent-wrapper #rental-sources-list {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -228,12 +131,12 @@ body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper .sour
           justify-content: center;
 }
 
-#movie-data-wrapper #movie-data-right #data-sources-wrapper #sources-rent-wrapper #rental-sources-list .rental-source {
+body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-rent-wrapper #rental-sources-list .rental-source {
   margin: 0.5rem;
   padding: 0.5rem;
 }
 
-#movie-data-wrapper #movie-data-right #data-sources-wrapper #sources-streaming-wrapper #streaming-sources-list {
+body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-streaming-wrapper #streaming-sources-list {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -248,7 +151,7 @@ body #content-wrapper #search-results-wrapper .movie-wrapper .data-wrapper .sour
           justify-content: center;
 }
 
-#movie-data-wrapper #movie-data-right #data-sources-wrapper #sources-streaming-wrapper #streaming-sources-list .streaming-source {
+body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-streaming-wrapper #streaming-sources-list .streaming-source {
   margin: 0.5rem;
   padding: 0.5rem;
 }
