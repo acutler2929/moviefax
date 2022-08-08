@@ -40,99 +40,143 @@ body {
 		padding: 2.5%;
 
 		header {
-			display: flex;
-			flex-direction: column;
-		}
+			height: 20vh;
+			width: auto;
 
-		nav {
-			background-color: $color-tertiary;
-			border: $bright-border;
-			color: $color-secondary;
-
-			> * {
-				padding: 1vw;
+			#greeting-wrapper {
+				height: 100%;
 			}
 
-			form {
+			nav {
+				height: 100%;
+				background-color: $color-tertiary;
+				border: $bright-border;
+				color: $color-secondary;
+
 				> * {
-					margin: 1vw;
+					padding: 1vw;
 				}
+
+				#search-form {
+					display: flex;
+					justify-content: center;
+					height: 50%;
+					// width: 100%;
+				}
+
+				#nav-buttons {
+					display: flex;
+					justify-content: center;
+					height: 50%;
+				}
+			}
+		}
+
+		#sub-header {
+			height: 10%;
+			width: 100%;
+		}
+
+		#toggle-button-section {
+			height: 10%;
+			padding: 0.5rem;
+
+			#toggle-list-wrapper {
+				height: 100%;
+			}
+
+			#toggle-info-wrapper {
+				height: 100%;
 			}
 		}
 
 		#movies-content-wrapper {
 			max-height: 100vh;
+			padding: 0;
 
 			#lists-wrapper {
+				height: 100%;
+				padding: 0;
+
 				#search-results-wrapper {
+					height: 100vh;
 					overflow-y: scroll;
+					padding: 0;
+
+					.movie-wrapper {
+						background-color: $color-accent;
+
+						max-height: 35vh;
+						padding: 1rem;
+
+						.movie-link {
+							max-height: 35vh;
+							padding: 0;
+
+							.data-wrapper {
+								max-height: 35vh;
+								padding: 0;
+
+								.search-title {
+									height: 1rem;
+									overflow: hidden;
+								}
+
+								.search-images {
+									height: 8rem;
+									width: auto;
+									overflow: visible;
+								}
+
+								.search-description {
+									overflow: hidden;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		#movie-data-wrapper {
+			height: 100vh;
+
+			#poster-data-wrapper {
+				#movie-data-left {
+					display: flex;
+					flex-direction: column;
+					max-height: 100vh;
+					// object-fit: contain;
+
+					#movie-data-poster {
+						object-fit: contain;
+					}
+				}
+
+				#movie-data-right {
+					display: flex;
+					flex-direction: column;
+					max-height: 100vh;
+
+					#data-summary-wrapper {
+					}
+					#data-rating-wrapper {
+					}
 				}
 			}
 
-			#movie-data-wrapper {
-				// max-height: 80vh;
-
-				#poster-data-wrapper {
-					#movie-data-left {
+			#data-sources-wrapper {
+				.sources-wrapper {
+					.source-ul {
 						display: flex;
-						flex-direction: column;
-						max-height: 100vh;
-						// object-fit: contain;
+						flex-direction: row;
+						flex-wrap: wrap;
+						justify-content: center;
+						padding: 0.5rem;
 
-						#movie-data-poster {
-							object-fit: contain;
-						}
-					}
-
-					#movie-data-right {
-						display: flex;
-						flex-direction: column;
-						max-height: 100vh;
-
-						#data-summary-wrapper {
-						}
-						#data-rating-wrapper {
-						}
-						#data-sources-wrapper {
-							#sources-purchase-wrapper {
-								#purchase-sources-list {
-									display: flex;
-									flex-direction: row;
-									flex-wrap: wrap;
-									justify-content: center;
-
-									.purchase-source {
-										margin: 0.5rem;
-										padding: 0.5rem;
-									}
-								}
-							}
-							#sources-rent-wrapper {
-								#rental-sources-list {
-									display: flex;
-									flex-direction: row;
-									flex-wrap: wrap;
-									justify-content: center;
-
-									.rental-source {
-										margin: 0.5rem;
-										padding: 0.5rem;
-									}
-								}
-							}
-							#sources-streaming-wrapper {
-								#streaming-sources-list {
-									display: flex;
-									flex-direction: row;
-									flex-wrap: wrap;
-									justify-content: center;
-
-									.streaming-source {
-										margin: 0.5rem;
-										padding: 0.5rem;
-									}
-								}
-							}
+						.source-li {
+							margin: 0.5rem;
+							padding: 0.5rem;
 						}
 					}
 				}

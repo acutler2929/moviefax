@@ -5,100 +5,105 @@
 	</head>
 	<body>
 		<div id="content-wrapper">
-			<div class="container-fluid row">
-				<div
-					class="col-6 d-flex align-items-center justify-content-center"
-				>
-					<header class="">
-						<h1>Welcome to MovieFax!</h1>
-						<% if (req.session.loggedin) { %>
-						<p>Welcome back, <%= req.session.userName %>!</p>
-						<% } else{ %>
-						<p>Sign up to build your movie list...</p>
-						<% } %>
-					</header>
+			<header class="row">
+				<div class="col-4" id="greeting-wrapper">
+					<h1>Welcome to MovieFax!</h1>
+					<% if (req.session.loggedin) { %>
+					<p>Welcome back, <%= req.session.userName %>!</p>
+					<% } else{ %>
+					<p>Sign up to build your movie list...</p>
+					<% } %>
 				</div>
-				<div class="col-6">
-					<nav>
-						<form action="/query-search" method="post">
-							<div class="row">
-								<div class="col-8 d-flex align-items-center">
-									<input
-										type="text"
-										name="query"
-										placeholder="Search for a movie to get started..."
-										class="form-control"
-									/>
-								</div>
-								<div class="col-4">
-									<input
-										type="submit"
-										id="search-button"
-										value="Search Movies"
-										class="btn btn-secondary"
-									/>
-								</div>
-							</div>
-						</form>
-						<div class="row d-flex justify-content-around">
-							<div class="col-4">
-								<form action="/sample-search" method="post">
-									<input
-										type="submit"
-										value="Use Sample Data"
-										class="btn btn-primary"
-									/>
-								</form>
+				<nav class="col-8">
+					<form
+						class="row"
+						id="search-form"
+						action="/query-search"
+						method="post"
+					>
+						<div class="col-12 row width-100">
+							<div class="col-8 d-flex align-items-center">
+								<input
+									type="text"
+									name="query"
+									placeholder="Search for a movie to get started..."
+									class="form-control"
+								/>
 							</div>
 							<div class="col-4">
-								<%- req.session.loggedin ?
-								include('../partials/logout-btn') :
-								include('../partials/login-btn') %>
+								<input
+									type="submit"
+									id="search-button"
+									value="Search Movies"
+									class="btn btn-secondary"
+								/>
 							</div>
 						</div>
-					</nav>
-				</div>
-				<i class="text-center"
+					</form>
+					<div
+						class="row d-flex justify-content-around"
+						id="nav-buttons"
+					>
+						<div class="col-4">
+							<form action="/sample-search" method="post">
+								<input
+									type="submit"
+									value="Use Sample Data"
+									class="btn btn-primary"
+								/>
+							</form>
+						</div>
+						<div class="col-4">
+							<%- req.session.loggedin ?
+							include('../partials/logout-btn') :
+							include('../partials/login-btn') %>
+						</div>
+					</div>
+				</nav>
+			</header>
+			<div class="text-center" id="sub-header">
+				<i
 					>~ Powered by <a href="https://www.imdb.com">IMDB.com</a> &
 					<a href="https://www.watchmode.com">Watchmode.com</a>
 					~</i
 				>
-				<div class="row" id="toggle-button-section">
-					<div class="col-3">
-						<form
-							action="/toggle-list"
-							method="get"
-							onsubmit="return false"
-						>
-							<input
-								type="submit"
-								value="Toggle Search / Custom List"
-								class="btn btn-primary"
-								id="toggle-list-button"
-							/>
-						</form>
-					</div>
-					<div class="col-9">
-						<form
-							action="toggle-movie-info"
-							method="get"
-							onsubmit="return false"
-						>
-							<input
-								type="submit"
-								value="Toggle Movie / Sources Info"
-								class="btn btn-primary"
-								id="toggle-movie-info-button"
-							/>
-						</form>
-					</div>
+			</div>
+			<div class="row" id="toggle-button-section">
+				<div class="col-3" id="toggle-list-wrapper">
+					<form
+						action="/toggle-list"
+						method="get"
+						onsubmit="return false"
+					>
+						<input
+							type="submit"
+							value="Toggle Search / Custom List"
+							class="btn btn-primary"
+							id="toggle-list-button"
+						/>
+					</form>
+				</div>
+				<div class="col-9 text-center" id="toggle-info-wrapper">
+					<form
+						action="toggle-movie-info"
+						method="get"
+						onsubmit="return false"
+					>
+						<input
+							type="submit"
+							value="Toggle Movie / Sources Info"
+							class="btn btn-primary"
+							id="toggle-movie-info-button"
+						/>
+					</form>
 				</div>
 			</div>
+
 			<div
 				class="container-fluid row align-items-start"
 				id="movies-content-wrapper"
 			>
-				<div class="col-3" id="lists-wrapper">
+				<div class="col-2" id="lists-wrapper">
 					<ul class="list-group" id="search-results-wrapper">
 						<%- req.url === '/sample-search' || req.url ===
 						'/query-search' ? include('../partials/movie-wrapper', {
@@ -111,7 +116,7 @@
 						</ul>
 					</div>
 				</div>
-				<div class="col-9" id="movie-data-wrapper">
+				<div class="col-10" id="movie-data-wrapper">
 					<div id="poster-data-wrapper">
 						<%- req.url.includes('/sample-details') ||
 						req.url.includes('/details') ?

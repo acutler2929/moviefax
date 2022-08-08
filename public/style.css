@@ -37,39 +37,115 @@ body #content-wrapper {
 }
 
 body #content-wrapper header {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  height: 20vh;
+  width: auto;
 }
 
-body #content-wrapper nav {
+body #content-wrapper header #greeting-wrapper {
+  height: 100%;
+}
+
+body #content-wrapper header nav {
+  height: 100%;
   background-color: #553d67;
   border: 1px solid gold;
   color: #f64c72;
 }
 
-body #content-wrapper nav > * {
+body #content-wrapper header nav > * {
   padding: 1vw;
 }
 
-body #content-wrapper nav form > * {
-  margin: 1vw;
+body #content-wrapper header nav #search-form {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 50%;
+}
+
+body #content-wrapper header nav #nav-buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 50%;
+}
+
+body #content-wrapper #sub-header {
+  height: 10%;
+  width: 100%;
+}
+
+body #content-wrapper #toggle-button-section {
+  height: 10%;
+  padding: 0.5rem;
+}
+
+body #content-wrapper #toggle-button-section #toggle-list-wrapper {
+  height: 100%;
+}
+
+body #content-wrapper #toggle-button-section #toggle-info-wrapper {
+  height: 100%;
 }
 
 body #content-wrapper #movies-content-wrapper {
   max-height: 100vh;
+  padding: 0;
+}
+
+body #content-wrapper #movies-content-wrapper #lists-wrapper {
+  height: 100%;
+  padding: 0;
 }
 
 body #content-wrapper #movies-content-wrapper #lists-wrapper #search-results-wrapper {
-  height: 100%;
+  height: 100vh;
   overflow-y: scroll;
+  padding: 0;
 }
 
-body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-left {
+body #content-wrapper #movies-content-wrapper #lists-wrapper #search-results-wrapper .movie-wrapper {
+  background-color: #99738e;
+  max-height: 35vh;
+  padding: 1rem;
+}
+
+body #content-wrapper #movies-content-wrapper #lists-wrapper #search-results-wrapper .movie-wrapper .movie-link {
+  max-height: 35vh;
+  padding: 0;
+}
+
+body #content-wrapper #movies-content-wrapper #lists-wrapper #search-results-wrapper .movie-wrapper .movie-link .data-wrapper {
+  max-height: 35vh;
+  padding: 0;
+}
+
+body #content-wrapper #movies-content-wrapper #lists-wrapper #search-results-wrapper .movie-wrapper .movie-link .data-wrapper .search-title {
+  height: 1rem;
+  overflow: hidden;
+}
+
+body #content-wrapper #movies-content-wrapper #lists-wrapper #search-results-wrapper .movie-wrapper .movie-link .data-wrapper .search-images {
+  height: 8rem;
+  width: auto;
+  overflow: visible;
+}
+
+body #content-wrapper #movies-content-wrapper #lists-wrapper #search-results-wrapper .movie-wrapper .movie-link .data-wrapper .search-description {
+  overflow: hidden;
+}
+
+body #content-wrapper #movie-data-wrapper {
+  height: 100vh;
+}
+
+body #content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-left {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -80,12 +156,12 @@ body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-w
   max-height: 100vh;
 }
 
-body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-left #movie-data-poster {
+body #content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-left #movie-data-poster {
   -o-object-fit: contain;
      object-fit: contain;
 }
 
-body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right {
+body #content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -96,7 +172,7 @@ body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-w
   max-height: 100vh;
 }
 
-body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-purchase-wrapper #purchase-sources-list {
+body #content-wrapper #movie-data-wrapper #data-sources-wrapper .sources-wrapper .source-ul {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -109,49 +185,10 @@ body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-w
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-}
-
-body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-purchase-wrapper #purchase-sources-list .purchase-source {
-  margin: 0.5rem;
   padding: 0.5rem;
 }
 
-body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-rent-wrapper #rental-sources-list {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-}
-
-body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-rent-wrapper #rental-sources-list .rental-source {
-  margin: 0.5rem;
-  padding: 0.5rem;
-}
-
-body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-streaming-wrapper #streaming-sources-list {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-}
-
-body #content-wrapper #movies-content-wrapper #movie-data-wrapper #poster-data-wrapper #movie-data-right #data-sources-wrapper #sources-streaming-wrapper #streaming-sources-list .streaming-source {
+body #content-wrapper #movie-data-wrapper #data-sources-wrapper .sources-wrapper .source-ul .source-li {
   margin: 0.5rem;
   padding: 0.5rem;
 }
