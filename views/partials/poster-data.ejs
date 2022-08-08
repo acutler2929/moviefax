@@ -29,6 +29,17 @@
 					<p>Gross: <%= movieGross %></p>
 				</div>
 			</div>
+			<div class="text-center">
+				<% if (req.session.loggedin) { %>
+				<form action="/list-add" method="post">
+					<input
+						type="submit"
+						value="DON'T click me I'm broken"
+						class="btn btn-primary"
+					/>
+				</form>
+				<% } %>
+			</div>
 		</div>
 	</div>
 </div>

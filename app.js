@@ -151,6 +151,20 @@ app.get('/logout', (req, res) => {
 	res.redirect('/');
 });
 
+app.get('/forgotPassword', (req, res) => {
+	console.log(`req.url: ${req.url}`);
+
+	res.render('pages/iforgot.ejs', {
+		loginMessage: 'enter your email to change password...',
+	});
+});
+
+app.post('/passwordEmail', (req, res) => {
+	console.log(`req.url: ${req.url}`);
+
+	res.redirect('/');
+});
+
 ////////////////////// Searching movies...
 
 app.post('/sample-search', (req, res) => {
@@ -281,16 +295,10 @@ app.get('/details', async (req, res) => {
 	}
 });
 
-app.get('/toggle-list', (req, res) => {
-	console.log(`req.url: ${req.url}`);
+app.post('/list-add', (req, res) => {
+	console.log(req.url);
 
-	res.redirect('/');
-});
-
-app.get('/toggle-movie-info', (req, res) => {
-	console.log(`req.url: ${req.url}`);
-
-	res.redirect('/');
+	res.redirect('/details');
 });
 
 module.exports = app;

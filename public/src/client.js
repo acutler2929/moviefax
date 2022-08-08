@@ -22,3 +22,12 @@ infoToggleBtn.addEventListener('click', () => {
 	movieInfoDisplay.classList.toggle('hidden');
 	sourcesInfoDisplay.classList.toggle('hidden');
 });
+
+/////////////// Password reset email alert:
+
+const iforgotBtn = document.getElementById('iforgot-button');
+
+iforgotBtn.addEventListener('click', () => {
+	console.log('change password!');
+	alert('Password change email has been sent!');
+});

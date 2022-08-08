@@ -54,9 +54,23 @@
 							</form>
 						</div>
 						<div class="col-4">
-							<%- req.session.loggedin ?
-							include('../partials/logout-btn') :
-							include('../partials/login-btn') %>
+							<% if (req.session.loggedin) { %>
+							<form action="/logout" method="get">
+								<input
+									type="submit"
+									value="Logout"
+									class="btn btn-primary"
+								/>
+							</form>
+							<% } else{ %>
+							<form action="/login-form" method="get">
+								<input
+									type="submit"
+									value="Login to build list"
+									class="btn btn-primary"
+								/>
+							</form>
+							<% } %>
 						</div>
 					</div>
 				</nav>
