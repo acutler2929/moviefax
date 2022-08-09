@@ -7,12 +7,14 @@ const url = require('url');
 // const fs = require('fs');
 const mysql = require('mysql');
 // const path = require('path');
+const nodemailer = require('nodemailer');
 
 /////////////////// Modules
 const apiHandler = require('./modules/apiHandler');
 // const dataHandler = require('./modules/dataHandler');
 const loginHandler = require('./modules/loginHandler');
 const sourceHandler = require('./modules/sourceHandler');
+const { doesNotMatch } = require('assert');
 
 ///////// Connecting to MYSQL
 
@@ -55,8 +57,6 @@ app.get('/', (req, res) => {
 		req: req,
 	});
 });
-
-//////////////////////// Routes
 
 /////////////////// Login module
 
@@ -161,11 +161,48 @@ app.get('/forgotPassword', (req, res) => {
 
 app.post('/passwordEmail', (req, res) => {
 	console.log(`req.url: ${req.url}`);
+	const myGmailEmail = process.env.MY_GMAIL;
+	const gmailPassword = process.env.MY_GMAIL_PASSWORD;
 
-	res.redirect('/');
+	const transporter = nodemailer.createTransport({
+		service: 'gmail',
+		auth: {
+			user: myGmailEmail,
+			pass: gmailPassword,
+		},
+		// host: dns.resolve(69.58.42.88),
+	});
+
+	const mailOptions = {
+		from: 'acutler0451@gmail.com',
+		to: 'bin_code_4@yahoo.com',
+		subject: 'Sending Email using Node.js',
+		text: 'That was easy!',
+	};
+
+	transporter.sendMail(mailOptions, function (error, info) {
+		if (error) {
+			console.log(error);
+		} else {
+			console.log('Email sent: ' + info.response);
+		}
+	});
+
+	res.render('pages/iforgot.ejs', {
+		loginMessage: 'please check your email',
+	});
 });
 
-////////////////////// Searching movies...
+app.post('/new-password', (req, res) => {
+	console.log(`req.url: ${req.url}`);
+
+	res.render('pages/login', {
+		loginMessage: 'Password changed successfully!',
+		req: req,
+	});
+});
+
+//////////////////////////////////////////// Searching movies...
 
 app.post('/sample-search', (req, res) => {
 	console.log('app.js receiving query for SAMPLE data');

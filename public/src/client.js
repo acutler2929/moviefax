@@ -25,9 +25,9 @@ infoToggleBtn.addEventListener('click', () => {
 
 /////////////// Password reset email alert:
 
-const iforgotBtn = document.getElementById('iforgot-button');
+// const iforgotBtn = document.getElementById('iforgot-button');
 
-iforgotBtn.addEventListener('click', () => {
-	console.log('change password!');
-	alert('Password change email has been sent!');
-});
+// iforgotBtn.addEventListener('click', () => {
+// 	console.log('change password!');
+// 	alert('Password change email has been sent!');
+// });
