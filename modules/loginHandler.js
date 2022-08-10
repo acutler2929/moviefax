@@ -109,4 +109,57 @@ exports.auth = async function (req, connection) {
 };
 
 // UPDATE existing mySQL entry:
-exports.passwordReset = function (req) {};
+exports.passwordReset = async function (req, connection) {
+	let output;
+	let loginStatus = new Boolean();
+	let userInfo;
+
+	console.log(req.body.newPasswordOne, req.body.newPasswordTwo);
+
+	if (req.body.newPasswordOne === req.body.newPasswordTwo) {
+		await new Promise((resolve, reject) => {
+			connection.query(
+				'UPDATE users SET password = ? WHERE userName = ?',
+				[req.body.newPasswordOne, req.body.userName],
+				function (error, results, fields) {
+					connection.query(
+						'SELECT * FROM users WHERE userName = ? AND password = ?',
+						[req.body.userName, req.body.newPasswordOne],
+						function (error, results, fields) {
+							if (results.length > 0) {
+								loginStatus = true;
+								userInfo = JSON.parse(
+									JSON.stringify(results[0])
+								);
+								// console.log(userInfo);
+
+								resolve({ loginStatus, userInfo });
+							} else {
+								loginStatus = false;
+								userInfo = 'no user';
+
+								reject({ loginStatus, userInfo });
+							}
+						}
+					);
+				}
+			);
+		})
+			.then((res) => {
+				console.log('login module Promise success!');
+				// console.log(res);
+				output = res;
+
+				return output;
+			})
+			.catch((err) => {
+				console.log('login module Promise failed :(');
+				// console.log(err);
+				output = err;
+
+				return output;
+			});
+	}
+
+	return output;
+};

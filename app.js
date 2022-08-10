@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
 	});
 });
 
-/////////////////// Login module
+///////////////////////////////////////////////////// Login module
 
 app.get('/login-form', (req, res) => {
 	console.log('app.js: /login-form fired');
@@ -161,23 +161,25 @@ app.get('/forgotPassword', (req, res) => {
 
 app.post('/passwordEmail', (req, res) => {
 	console.log(`req.url: ${req.url}`);
-	const myGmailEmail = process.env.MY_GMAIL;
-	const gmailPassword = process.env.MY_GMAIL_PASSWORD;
+	let recoverEmail = req.body.email;
+	const serverGmail = process.env.MY_GMAIL;
+	const googleAppPassword = process.env.GOOGLE_APP_PASSWORD;
 
 	const transporter = nodemailer.createTransport({
 		service: 'gmail',
 		auth: {
-			user: myGmailEmail,
-			pass: gmailPassword,
+			user: serverGmail,
+			pass: googleAppPassword,
 		},
-		// host: dns.resolve(69.58.42.88),
 	});
 
 	const mailOptions = {
-		from: 'acutler0451@gmail.com',
-		to: 'bin_code_4@yahoo.com',
-		subject: 'Sending Email using Node.js',
-		text: 'That was easy!',
+		from: serverGmail,
+		to: recoverEmail,
+		subject: 'MovieFax Password Reset',
+		html: `
+		<p>Click <a href="http://localhost:8888/new-password">here</a>, then enter a new password...</p>
+		`,
 	};
 
 	transporter.sendMail(mailOptions, function (error, info) {
@@ -193,13 +195,33 @@ app.post('/passwordEmail', (req, res) => {
 	});
 });
 
-app.post('/new-password', (req, res) => {
+app.get('/new-password', (req, res) => {
 	console.log(`req.url: ${req.url}`);
 
-	res.render('pages/login', {
-		loginMessage: 'Password changed successfully!',
+	res.render('pages/new-password', {
+		loginMessage: 'Please enter new credentials...',
 		req: req,
 	});
+});
+
+app.post('/change-password', async (req, res) => {
+	console.log(`req.url: ${req.url}`);
+
+	const updatePassword = await loginHandler.passwordReset(req, connection);
+
+	if (updatePassword.loginStatus === true)
+		// Validate the user:
+		req.session.loggedin = updatePassword.loginStatus;
+	req.session.userName = updatePassword.userInfo.userName;
+	req.session.userEmail = updatePassword.userInfo.userEmail;
+	console.log(req.session);
+
+	console.log(
+		`app.js: registry successful for NEW user ${req.session.userName}, email: ${req.session.userEmail}`
+	);
+
+	// Redirect to home:
+	res.redirect('/');
 });
 
 //////////////////////////////////////////// Searching movies...
