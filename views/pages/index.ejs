@@ -120,9 +120,11 @@
 				<div class="col-2" id="lists-wrapper">
 					<ul class="list-group" id="search-results-wrapper">
 						<%- req.url === '/sample-search' || req.url ===
-						'/query-search' ? include('../partials/movie-wrapper', {
-						detailsLink: detailsLink, imdbSearchData: imdbSearchData
-						}) : include('../partials/storage') %>
+						'/query-search' || req.url.includes('/sample-details')
+						|| req.url.includes('/details') ?
+						include('../partials/movie-wrapper', { detailsLink:
+						detailsLink, imdbSearchData: imdbSearchData }) :
+						include('../partials/storage') %>
 					</ul>
 					<div id="user-movies-wrapper" class="hidden">
 						<ul>

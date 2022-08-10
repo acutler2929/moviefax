@@ -4,7 +4,7 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const url = require('url');
-// const fs = require('fs');
+const fs = require('fs');
 const mysql = require('mysql');
 // const path = require('path');
 const nodemailer = require('nodemailer');
@@ -224,7 +224,7 @@ app.post('/change-password', async (req, res) => {
 	res.redirect('/');
 });
 
-//////////////////////////////////////////// Searching movies...
+///////////////////////////////////////////////////////// Searching movies...
 
 app.post('/sample-search', (req, res) => {
 	console.log('app.js receiving query for SAMPLE data');
@@ -235,8 +235,18 @@ app.post('/sample-search', (req, res) => {
 
 	// using sample data for now...
 
-	const imdbSearchData = require('./json/imdb-search-sample.json');
+	const imdbSearchData = require('./tmp/imdb-search-sample.json');
 	// const tmdbSearchData = require('./json/tmdb-search-sample.json');
+
+	(function saveState() {
+		fs.writeFile(
+			'./tmp/movie-list-state.json',
+			JSON.stringify(imdbSearchData),
+			(err) => {
+				console.log(err);
+			}
+		);
+	})();
 
 	res.render('pages/index.ejs', {
 		searchQuery: imdbSearchData.expression,
@@ -244,12 +254,6 @@ app.post('/sample-search', (req, res) => {
 		imdbSearchData: imdbSearchData,
 		req: req,
 	});
-
-	// res.render('pages/movie-list', {
-	// 	searchQuery: `"${req.body.query}"`,
-	// 	detailsLink: sampleData == true ? '/sample-details' : '/details',
-	// 	tmdbSearchData: tmdbSearchData,
-	// });
 });
 
 app.post('/query-search', async (req, res) => {
@@ -271,6 +275,16 @@ app.post('/query-search', async (req, res) => {
 
 		const imdbSearchData = imdbResponse;
 
+		(function saveState() {
+			fs.writeFile(
+				'./tmp/movie-list-state.json',
+				JSON.stringify(imdbSearchData),
+				(err) => {
+					console.log(err);
+				}
+			);
+		})();
+
 		res.render('pages/index.ejs', {
 			searchQuery: imdbResponse.expression,
 			detailsLink: sampleData == true ? '/sample-details' : '/details',
@@ -280,9 +294,9 @@ app.post('/query-search', async (req, res) => {
 	}
 });
 
-///////////////////////// Getting movie details
+///////////////////////////////////////////// Getting movie details
 
-app.get('/sample-details', (req, res) => {
+app.get('/sample-details', async (req, res) => {
 	console.log('app.js: /sampleDetails accessed!');
 	const sampleData = new Boolean(true);
 	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
@@ -292,12 +306,55 @@ app.get('/sample-details', (req, res) => {
 	console.log(`imdbID: ${imdbID}`);
 
 	/////// next we should do api calls with imdbID and watchmode, but we will use sample data for now:
-	const imdbTitleData = require('./json/imdb-title-sample.json');
-	const watchmodeSourcesData = require('./json/watchmode-sources-sample.json');
+	const imdbTitleData = require('./tmp/imdb-title-sample.json');
+	const watchmodeSourcesData = require('./tmp/watchmode-sources-sample.json');
 
 	const movieSources = sourceHandler(watchmodeSourcesData);
 
+	async function loadState() {
+		console.log('loadState() fired');
+		let imdbSearchData;
+		let output;
+		await new Promise((resolve, reject) => {
+			fs.readFile('./tmp/movie-list-state.json', function (err, data) {
+				if (err) {
+					console.log(err);
+					reject;
+				} else {
+					resolve((imdbSearchData = JSON.parse(data)));
+				}
+			});
+		})
+			.then((res) => {
+				console.log('imdbSearchData coming back from loadState()');
+				// console.log(res);
+				output = res;
+
+				return output;
+			})
+			.catch((err) => {
+				console.log('loadState() Promise failed :(');
+				// console.log(err);
+				output = err;
+
+				return output;
+			});
+	}
+
+	imdbSearchData = await loadState();
+
+	// imdbSearchData = await JSON.parse(
+	// 	fs.readFile('./tmp/movie-list-state.json', (err) => {
+	// 		if (err) {
+	// 			console.log(err);
+	// 		}
+	// 	})
+	// );
+
+	console.log(imdbSearchData);
+
 	res.render('pages/index.ejs', {
+		imdbSearchData: imdbSearchData,
 		movieTitle: imdbTitleData.title,
 		movieYear: imdbTitleData.year,
 		contentRating: imdbTitleData.contentRating,
@@ -316,6 +373,7 @@ app.get('/sample-details', (req, res) => {
 });
 
 app.get('/details', async (req, res) => {
+	let imdbSearchData;
 	const sampleData = new Boolean(false);
 	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
 	const { query, pathname } = url.parse(req.url, true);
@@ -333,7 +391,14 @@ app.get('/details', async (req, res) => {
 			movieDataResponse.watchmodeSourcesData
 		);
 
+		(function loadState() {
+			fs.readFile('./tmp/movie-list-state.json', function (err, data) {
+				imdbSearchData = JSON.parse(data);
+			});
+		})();
+
 		res.render('pages/index.ejs', {
+			imdbSearchData: imdbSearchData,
 			movieTitle: movieDataResponse.imdbTitleData.title,
 			movieYear: movieDataResponse.imdbTitleData.year,
 			contentRating: movieDataResponse.imdbTitleData.contentRating,
@@ -354,7 +419,7 @@ app.get('/details', async (req, res) => {
 	}
 });
 
-app.post('/list-add', (req, res) => {
+app.post('/add-movie', (req, res) => {
 	console.log(req.url);
 
 	res.redirect('/details');
