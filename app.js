@@ -298,7 +298,6 @@ app.post('/query-search', async (req, res) => {
 
 app.get('/sample-details', async (req, res) => {
 	console.log('app.js: /sampleDetails accessed!');
-	let imdbSearchData;
 	const sampleData = new Boolean(true);
 	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
 
@@ -312,19 +311,11 @@ app.get('/sample-details', async (req, res) => {
 
 	const movieSources = sourceHandler(watchmodeSourcesData);
 
-	(async function loadState() {
-		imdbSearchData = await JSON.parse(
-			fs.readFile('./tmp/movie-list-state.json', (err) => {
-				if (err) {
-					console.log(err);
-				}
-			})
-		);
+	let imdbSearchData = JSON.parse(
+		fs.readFileSync('./tmp/movie-list-state.json')
+	);
 
-		return imdbSearchData;
-	})();
-
-	console.log(imdbSearchData);
+	console.log(`imdbSearchData: ${imdbSearchData}`);
 
 	res.render('pages/index.ejs', {
 		imdbSearchData: imdbSearchData,
@@ -364,11 +355,9 @@ app.get('/details', async (req, res) => {
 			movieDataResponse.watchmodeSourcesData
 		);
 
-		(function loadState() {
-			fs.readFile('./tmp/movie-list-state.json', function (err, data) {
-				imdbSearchData = JSON.parse(data);
-			});
-		})();
+		let imdbSearchData = JSON.parse(
+			fs.readFileSync('./tmp/movie-list-state.json')
+		);
 
 		res.render('pages/index.ejs', {
 			imdbSearchData: imdbSearchData,
