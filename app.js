@@ -69,6 +69,8 @@ app.get('/login-form', (req, res) => {
 	res.render('pages/login', { loginMessage: loginMessage, req: req });
 });
 
+///////////////// Authorizing login information:
+
 app.post('/auth', async (req, res) => {
 	const loginResponse = await loginHandler.auth(req, connection);
 
@@ -80,8 +82,9 @@ app.post('/auth', async (req, res) => {
 	if (loginResponse.loginStatus === true) {
 		// Validate the user:
 		req.session.loggedin = loginResponse.loginStatus;
-		req.session.userName = loginResponse.userInfo.userName;
+		req.session.username = loginResponse.userInfo.userName;
 		req.session.userEmail = loginResponse.userInfo.email;
+		console.log('req.session object on following line:');
 		console.log(req.session);
 
 		console.log(
@@ -93,7 +96,7 @@ app.post('/auth', async (req, res) => {
 		req.session.loggedin = loginResponse.loginStatus;
 
 		res.render('pages/login', {
-			loginMessage: 'Invalid user name / password!',
+			loginMessage: loginResponse.errorMessage,
 			req: req,
 		});
 	}
@@ -224,7 +227,7 @@ app.post('/change-password', async (req, res) => {
 	res.redirect('/');
 });
 
-///////////////////////////////////////////////////////// Searching movies...
+///////////////////////////////////////////////////////// Searching movies with SAMPLE data...
 
 app.post('/sample-search', (req, res) => {
 	console.log('app.js receiving query for SAMPLE data');
@@ -248,6 +251,9 @@ app.post('/sample-search', (req, res) => {
 		);
 	})();
 
+	console.log('req.session on following line:');
+	console.dir(req.session);
+
 	res.render('pages/index.ejs', {
 		searchQuery: imdbSearchData.expression,
 		detailsLink: sampleData == true ? '/sample-details' : '/details',
@@ -255,6 +261,8 @@ app.post('/sample-search', (req, res) => {
 		req: req,
 	});
 });
+
+///////////////////////////////////////////////////////// Searching movies...
 
 app.post('/query-search', async (req, res) => {
 	const query = req.body.query;
@@ -294,7 +302,7 @@ app.post('/query-search', async (req, res) => {
 	}
 });
 
-///////////////////////////////////////////// Getting movie details
+///////////////////////////////////////////// Getting movie details using SAMPLE data
 
 app.get('/sample-details', async (req, res) => {
 	console.log('app.js: /sampleDetails accessed!');
@@ -317,6 +325,9 @@ app.get('/sample-details', async (req, res) => {
 
 	console.log(`imdbSearchData: ${imdbSearchData}`);
 
+	console.log('req.session on following line:');
+	console.dir(req.session);
+
 	res.render('pages/index.ejs', {
 		imdbSearchData: imdbSearchData,
 		movieTitle: imdbTitleData.title,
@@ -336,8 +347,9 @@ app.get('/sample-details', async (req, res) => {
 	});
 });
 
+///////////////////////////////////////////// Getting movie details
+
 app.get('/details', async (req, res) => {
-	let imdbSearchData;
 	const sampleData = new Boolean(false);
 	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
 	const { query, pathname } = url.parse(req.url, true);
@@ -355,6 +367,7 @@ app.get('/details', async (req, res) => {
 			movieDataResponse.watchmodeSourcesData
 		);
 
+		/////////// loading movie-list state from temporary files:
 		let imdbSearchData = JSON.parse(
 			fs.readFileSync('./tmp/movie-list-state.json')
 		);
@@ -380,6 +393,8 @@ app.get('/details', async (req, res) => {
 		});
 	}
 });
+
+////////////////////////////// Adding a movie to a user's list:
 
 app.post('/add-movie', (req, res) => {
 	console.log(req.url);

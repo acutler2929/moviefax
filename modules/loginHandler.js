@@ -62,29 +62,44 @@ exports.register = async function (req, connection) {
 	return output;
 };
 
-// READ new mySQL entry:
+// READ existing mySQL entry:
 exports.auth = async function (req, connection) {
 	let output;
 	let loginStatus = new Boolean();
 	let userInfo;
+	let errorMessage;
 
 	if (req.body.userName && req.body.userPassword) {
 		await new Promise((resolve, reject) => {
+			console.log('loginHandler.auth: connection query about to fire...');
 			connection.query(
 				'SELECT * FROM users WHERE userName = ? AND password = ?',
 				[req.body.userName, req.body.userPassword],
 				function (error, results, fields) {
-					if (results.length > 0) {
-						loginStatus = true;
-						userInfo = JSON.parse(JSON.stringify(results[0]));
-						// console.log(userInfo);
+					if (error) {
+						console.log(`loginHandler.auth: ${error}`);
 
-						resolve({ loginStatus, userInfo });
-					} else {
 						loginStatus = false;
 						userInfo = 'no user';
+						errorMessage = error;
 
-						reject({ loginStatus, userInfo });
+						reject({ loginStatus, userInfo, errorMessage });
+					} else if (results.length > 0) {
+						console.log(
+							'loginHandler.auth: received valid results'
+						);
+						loginStatus = true;
+						userInfo = JSON.parse(JSON.stringify(results[0]));
+						errorMessage = 'no error';
+
+						resolve({ loginStatus, userInfo, errorMessage });
+					} else {
+						console.log('loginHandler.auth: no results');
+						loginStatus = false;
+						userInfo = 'no user';
+						errorMessage = 'Invalid user name / password!';
+
+						resolve({ loginStatus, userInfo, errorMessage });
 					}
 				}
 			);

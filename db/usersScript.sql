@@ -26,4 +26,6 @@ USE MovieFax;
 
 -- ALTER TABLE users AUTO_INCREMENT = 1;
 
-SELECT * FROM users;
+-- SELECT * FROM users;
+
+SELECT * FROM users WHERE userName = 'rufus';

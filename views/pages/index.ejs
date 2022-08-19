@@ -9,7 +9,7 @@
 				<div class="col-4" id="greeting-wrapper">
 					<h1>Welcome to MovieFax!</h1>
 					<% if (req.session.loggedin) { %>
-					<p>Welcome back, <%= req.session.userName %>!</p>
+					<p>Welcome back, <%= req.session.username %>!</p>
 					<% } else{ %>
 					<p>Sign up to build your movie list...</p>
 					<% } %>
@@ -26,6 +26,7 @@
 								<input
 									type="text"
 									name="query"
+									autocomplete="off"
 									placeholder="Search for a movie to get started..."
 									class="form-control"
 								/>
