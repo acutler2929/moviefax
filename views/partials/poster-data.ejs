@@ -2,7 +2,7 @@
 	<div class="d-flex col-5" id="movie-data-left">
 		<div class="flex-grow-1">
 			<img
-				src="<%= moviePoster %>"
+				src="<%= movieData.moviePoster %>"
 				class="img-fluid"
 				id="movie-data-poster"
 			/>
@@ -10,28 +10,29 @@
 	</div>
 	<div class="col-7" id="movie-data-right">
 		<div id="data-summary-wrapper">
-			<p><%= movieSummary %></p>
+			<h3 class="text-center"><%= movieData.movieTitle %></h3>
+			<p><%= movieData.movieSummary %></p>
 		</div>
 		<div class="row flex-grow-1" id="data-rating-wrapper">
 			<div class="row justify-content-around">
 				<div class="col-3">
-					<p>IMDB: <%= imdbRating %></p>
+					<p>IMDB: <%= movieData.imdbRating %></p>
 				</div>
 				<div class="col-3">
-					<p>Metacritic: <%= metacriticRating %></p>
+					<p>Metacritic: <%= movieData.metacriticRating %></p>
 				</div>
 			</div>
 			<div class="row justify-content-around">
 				<div class="col-3">
-					<p>Budget: <%= movieBudget %></p>
+					<p>Budget: <%= movieData.movieBudget %></p>
 				</div>
 				<div class="col-3">
-					<p>Gross: <%= movieGross %></p>
+					<p>Gross: <%= movieData.movieGross %></p>
 				</div>
 			</div>
 			<div class="text-center">
 				<% if (req.session.loggedin) { %>
-				<form action="/list-add" method="post">
+				<form action="/add-movie" method="post">
 					<input
 						type="submit"
 						value="DON'T click me I'm broken"

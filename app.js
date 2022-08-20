@@ -15,6 +15,7 @@ const apiHandler = require('./modules/apiHandler');
 const loginHandler = require('./modules/loginHandler');
 const sourceHandler = require('./modules/sourceHandler');
 const { doesNotMatch } = require('assert');
+const { callbackPromise } = require('nodemailer/lib/shared');
 
 ///////// Connecting to MYSQL
 
@@ -82,6 +83,7 @@ app.post('/auth', async (req, res) => {
 	if (loginResponse.loginStatus === true) {
 		// Validate the user:
 		req.session.loggedin = loginResponse.loginStatus;
+		req.session.userid = loginResponse.userInfo.userID;
 		req.session.username = loginResponse.userInfo.userName;
 		req.session.userEmail = loginResponse.userInfo.email;
 		console.log('req.session object on following line:');
@@ -112,9 +114,10 @@ app.post('/register', async (req, res) => {
 
 	if (registerResponse.loginStatus === true) {
 		// Validate the user:
-		req.session.loggedin = registerResponse.loginStatus;
-		req.session.userName = registerResponse.userInfo.userName;
-		req.session.userEmail = registerResponse.userInfo.userEmail;
+		req.session.loggedin = loginResponse.loginStatus;
+		req.session.userid = loginResponse.userInfo.userID;
+		req.session.username = loginResponse.userInfo.userName;
+		req.session.userEmail = loginResponse.userInfo.email;
 		console.log(req.session);
 
 		console.log(
@@ -232,7 +235,7 @@ app.post('/change-password', async (req, res) => {
 app.post('/sample-search', (req, res) => {
 	console.log('app.js receiving query for SAMPLE data');
 	const sampleData = new Boolean(true);
-	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
+	// console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
 
 	console.log(`req.url: ${req.url}`);
 
@@ -241,7 +244,7 @@ app.post('/sample-search', (req, res) => {
 	const imdbSearchData = require('./tmp/imdb-search-sample.json');
 	// const tmdbSearchData = require('./json/tmdb-search-sample.json');
 
-	(function saveState() {
+	(function saveListState() {
 		fs.writeFile(
 			'./tmp/movie-list-state.json',
 			JSON.stringify(imdbSearchData),
@@ -266,9 +269,11 @@ app.post('/sample-search', (req, res) => {
 
 app.post('/query-search', async (req, res) => {
 	const query = req.body.query;
+	console.log('req.body on next line:');
+	console.dir(req.body);
 	console.log(`app.js: receiving query for movie name ${query}`);
 	const sampleData = new Boolean(false);
-	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
+	// console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
 
 	// imdbResponse comes back from api Handler...
 	const imdbResponse = await apiHandler.searchMovieData(query);
@@ -283,7 +288,7 @@ app.post('/query-search', async (req, res) => {
 
 		const imdbSearchData = imdbResponse;
 
-		(function saveState() {
+		(function saveListState() {
 			fs.writeFile(
 				'./tmp/movie-list-state.json',
 				JSON.stringify(imdbSearchData),
@@ -307,7 +312,7 @@ app.post('/query-search', async (req, res) => {
 app.get('/sample-details', async (req, res) => {
 	console.log('app.js: /sampleDetails accessed!');
 	const sampleData = new Boolean(true);
-	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
+	// console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
 
 	const { query, pathname } = url.parse(req.url, true);
 	const imdbID = JSON.stringify(query.id);
@@ -319,17 +324,8 @@ app.get('/sample-details', async (req, res) => {
 
 	const movieSources = sourceHandler(watchmodeSourcesData);
 
-	let imdbSearchData = JSON.parse(
-		fs.readFileSync('./tmp/movie-list-state.json')
-	);
-
-	console.log(`imdbSearchData: ${imdbSearchData}`);
-
-	console.log('req.session on following line:');
-	console.dir(req.session);
-
-	res.render('pages/index.ejs', {
-		imdbSearchData: imdbSearchData,
+	let movieData = {
+		imdbID: imdbID,
 		movieTitle: imdbTitleData.title,
 		movieYear: imdbTitleData.year,
 		contentRating: imdbTitleData.contentRating,
@@ -342,6 +338,32 @@ app.get('/sample-details', async (req, res) => {
 		moviePurchaseArray: movieSources.purchaseSources,
 		movieRentArray: movieSources.rentalSources,
 		movieStreamingArray: movieSources.streamingSources,
+	};
+
+	// console.log('movieData on following line:');
+	// console.dir(movieData);
+
+	let imdbSearchData = JSON.parse(
+		fs.readFileSync('./tmp/movie-list-state.json')
+	);
+	// console.log(`imdbSearchData: ${imdbSearchData}`);
+
+	(function saveState() {
+		fs.writeFile(
+			'./tmp/movie-data-state.json',
+			JSON.stringify(movieData),
+			(err) => {
+				console.log(err);
+			}
+		);
+	})();
+
+	console.log('req.session on following line:');
+	console.dir(req.session);
+
+	res.render('pages/index.ejs', {
+		imdbSearchData: imdbSearchData,
+		movieData: movieData,
 		detailsLink: sampleData == true ? '/sample-details' : '/details',
 		req: req,
 	});
@@ -351,7 +373,7 @@ app.get('/sample-details', async (req, res) => {
 
 app.get('/details', async (req, res) => {
 	const sampleData = new Boolean(false);
-	console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
+	// console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
 	const { query, pathname } = url.parse(req.url, true);
 	const imdbID = query.id;
 	console.log(`/details: receiving query for imdbID ${imdbID}`);
@@ -366,14 +388,11 @@ app.get('/details', async (req, res) => {
 		const movieSources = sourceHandler(
 			movieDataResponse.watchmodeSourcesData
 		);
+		// console.log('movieDataResponse.imdbTitleData:');
+		// console.dir(movieDataResponse.imdbTitleData);
 
-		/////////// loading movie-list state from temporary files:
-		let imdbSearchData = JSON.parse(
-			fs.readFileSync('./tmp/movie-list-state.json')
-		);
-
-		res.render('pages/index.ejs', {
-			imdbSearchData: imdbSearchData,
+		let movieData = {
+			imdbID: imdbID,
 			movieTitle: movieDataResponse.imdbTitleData.title,
 			movieYear: movieDataResponse.imdbTitleData.year,
 			contentRating: movieDataResponse.imdbTitleData.contentRating,
@@ -388,6 +407,26 @@ app.get('/details', async (req, res) => {
 			moviePurchaseArray: movieSources.purchaseSources,
 			movieRentArray: movieSources.rentalSources,
 			movieStreamingArray: movieSources.streamingSources,
+		};
+
+		/////////// loading movie-list state from temporary files:
+		let imdbSearchData = JSON.parse(
+			fs.readFileSync('./tmp/movie-list-state.json')
+		);
+
+		(function saveState() {
+			fs.writeFile(
+				'./tmp/movie-data-state.json',
+				JSON.stringify(movieData),
+				(err) => {
+					console.log(err);
+				}
+			);
+		})();
+
+		res.render('pages/index.ejs', {
+			imdbSearchData: imdbSearchData,
+			movieData: movieData,
 			detailsLink: sampleData == true ? '/sample-details' : '/details',
 			req: req,
 		});
@@ -398,8 +437,75 @@ app.get('/details', async (req, res) => {
 
 app.post('/add-movie', (req, res) => {
 	console.log(req.url);
+	console.log('req.session on following line:');
+	console.dir(req.session);
 
-	res.redirect('/details');
+	//////////////// read the movie data state
+	let movieData = JSON.parse(fs.readFileSync('./tmp/movie-data-state.json'));
+
+	/////////////// building function to add userid to MYSQL movie row
+	function addMovie(movie) {
+		connection.query(
+			`INSERT INTO user_movies (imdbID, movie_title, release_year, content_rating, movie_poster, movie_summary, imdb_rating, metacritic_rating, movie_budget, movie_gross, movie_purchase_sources, movie_rental_sources, movie_streaming_sources, users_selected)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+			[
+				movie.imdbID,
+				movie.movie_title,
+				movie.release_year,
+				movie.content_rating,
+				movie.movie_poster,
+				movie.movie_summary,
+				movie.imdb_rating,
+				movie.metacritic_rating,
+				movie.movie_budget,
+				movie.movie_gross,
+				movie.movie_purchase_sources,
+				movie.movie_rental_sources,
+				movie.movie_streaming_sources,
+				req.session.userid,
+			],
+			function (error, results, fields) {
+				console.log(results);
+
+				return;
+			}
+		);
+	}
+
+	///////////////////// building function to add movieData to MYSQL table user_movies
+
+	function addUserId(imdbid, userid) {
+		connection.query(
+			'UPDATE user_movies SET users_selected = users_selected + ? WHERE imdbID = ?',
+			[userid, imdbid],
+			function (error, results, fields) {
+				console.log(results);
+				return;
+			}
+		);
+	}
+
+	////////////////// see if this movie is stored in user_movies already
+	connection.query(
+		'SELECT * FROM user_movies WHERE imdbID = ?',
+		movieData.imdbID,
+		function (error, results, fields) {
+			// <------------ BROKEN returns 'undefined'
+			///////////// if it is, just add userid to it
+			if (results.length > 0) {
+				console.log(results);
+				callback(addUserId(movieData.imdbID, req.body.userid));
+
+				//////////////// if NOT, add it with current user's id
+			} else if (results.length == 0) {
+				callback(addMovie(movieData));
+			}
+		}
+	);
+
+	// console.log(movieData);
+
+	res.redirect('/');
 });
 
 module.exports = app;

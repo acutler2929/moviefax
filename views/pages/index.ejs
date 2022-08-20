@@ -137,20 +137,14 @@
 					<div id="poster-data-wrapper">
 						<%- req.url.includes('/sample-details') ||
 						req.url.includes('/details') ?
-						include('../partials/poster-data', {moviePoster:
-						moviePoster, movieSummary: movieSummary, imdbRating:
-						imdbRating, metacriticRating: metacriticRating,
-						movieBudget: movieBudget, movieGross: movieGross}) :
+						include('../partials/poster-data', movieData) :
 						include('../partials/storage') %>
 					</div>
 					<div id="data-sources-wrapper" class="hidden">
 						<%- req.url.includes('/sample-details') ||
 						req.url.includes('/details') ?
-						include('../partials/sources-wrapper',
-						{moviePurchaseArray: moviePurchaseArray, movieRentArray:
-						movieRentArray, movieStreamingArray:
-						movieStreamingArray}) : include('../partials/storage')
-						%>
+						include('../partials/sources-wrapper', movieData) :
+						include('../partials/storage') %>
 					</div>
 				</div>
 			</div>

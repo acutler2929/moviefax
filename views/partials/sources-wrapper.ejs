@@ -1,7 +1,7 @@
 <div class="sources-wrapper">
 	<h4 class="text-center">Buy</h4>
 	<ul class="source-ul">
-		<% moviePurchaseArray.forEach((source) => { %>
+		<% movieData.moviePurchaseArray.forEach((source) => { %>
 		<li class="source-li">
 			<a href="<%= source.web_url %>"
 				><%= source.name %> from <%= source.price %></a
@@ -13,7 +13,7 @@
 <div class="sources-wrapper">
 	<h4 class="text-center">Rent</h4>
 	<ul class="source-ul">
-		<% movieRentArray.forEach((source) => { %>
+		<% movieData.movieRentArray.forEach((source) => { %>
 		<li class="source-li">
 			<a href="<%= source.web_url %>"
 				><%= source.name %> from <%= source.price %></a
@@ -25,7 +25,7 @@
 <div" class="sources-wrapper">
 	<h4 class="text-center">Streaming</h4>
 	<ul  class="source-ul">
-		<% movieStreamingArray.forEach((source) => { %>
+		<% movieData.movieStreamingArray.forEach((source) => { %>
 		<li class="source-li">
 			<a href="<%= source.web_url %>"><%= source.name %></a>
 		</li>
