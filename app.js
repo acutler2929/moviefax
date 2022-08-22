@@ -90,7 +90,7 @@ app.post('/auth', async (req, res) => {
 		console.log(req.session);
 
 		console.log(
-			`app.js: login successful for user ${req.session.userName}, email: ${req.session.userEmail}`
+			`app.js: login successful for user ${req.session.username}, email: ${req.session.userEmail}`
 		);
 		res.redirect('/');
 	} else {
@@ -443,31 +443,62 @@ app.post('/add-movie', (req, res) => {
 	//////////////// read the movie data state
 	let movieData = JSON.parse(fs.readFileSync('./tmp/movie-data-state.json'));
 
-	/////////////// building function to add userid to MYSQL movie row
-	function addMovie(movie) {
-		connection.query(
-			`INSERT INTO user_movies (imdbID, movie_title, release_year, content_rating, movie_poster, movie_summary, imdb_rating, metacritic_rating, movie_budget, movie_gross, movie_purchase_sources, movie_rental_sources, movie_streaming_sources, users_selected)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-			[
-				movie.imdbID,
-				movie.movie_title,
-				movie.release_year,
-				movie.content_rating,
-				movie.movie_poster,
-				movie.movie_summary,
-				movie.imdb_rating,
-				movie.metacritic_rating,
-				movie.movie_budget,
-				movie.movie_gross,
-				movie.movie_purchase_sources,
-				movie.movie_rental_sources,
-				movie.movie_streaming_sources,
-				req.session.userid,
-			],
-			function (error, results, fields) {
-				console.log(results);
+	// const queryArr = [
+	// 	movieData.map((movie) => [
+	// 		movie.imdbID,
+	// 		movie.movieTitle,
+	// 		movie.movieYear,
+	// 		movie.contentRating,
+	// 		movie.moviePoster,
+	// 		movie.movieSummary,
+	// 		movie.imdbRating,
+	// 		movie.metacriticRating,
+	// 		movie.movieBudget,
+	// 		movie.movieGross,
+	// 		movie.moviePurchaseArray,
+	// 		movie.movieRentArray,
+	// 		movie.movieStreamingArray,
+	// 	]),
+	// ];
 
-				return;
+	/////////////// building function to add userid to MYSQL movie row
+	function addMovie(movieData) {
+		// for (let i in movieData) movieArr.push([movieData[i]]).splice(-3);
+		const movieArr = [];
+		for (let i in movieData) movieArr.push(movieData[i]);
+		const movieInfoArr = movieArr.splice(-3).concat([req.session.userid]);
+		// const movieInfoArr = Object.values(movieData)
+		// 	.splice(-3)
+		// 	.concat(req.session.userid);
+		const movieSourcesArr = [];
+		// console.log('movieArr:');
+		// console.dir(movieArr);
+		console.log('movieInfoArr:');
+		console.dir(movieInfoArr);
+		console.log('movieSourcesArr:');
+		console.dir(movieSourcesArr);
+		// let queryArr = [];
+		// for (let i in movieData) queryArr.push([i, movieData[i]]);
+		// const indexToSplit = queryArr.indexOf('movieGross');
+		// console.log(`indexToSplit: ${indexToSplit}`);
+		// let movieArr = queryArr.slice(0, indexToSplit);
+		// let sourcesArr = queryArr.slice(indexToSplit + 1);
+		// console.log(`movieArr:`);
+		// console.dir(movieArr);
+		// console.log(`sourcesArr:`);
+		// console.dir(sourcesArr);
+
+		const query =
+			'INSERT INTO user_movies (imdbID, movie_title, release_year, content_rating, movie_poster, movie_summary, imdb_rating, metacritic_rating, movie_budget, movie_gross, users_selected) VALUES (?);';
+		// let values = [movieInfoArr];
+		connection.query(
+			query,
+			[movieInfoArr],
+			function (error, results, fields) {
+				if (error) {
+					console.log(JSON.stringify(error));
+				}
+				console.log(JSON.stringify(results));
 			}
 		);
 	}
@@ -479,8 +510,10 @@ app.post('/add-movie', (req, res) => {
 			'UPDATE user_movies SET users_selected = users_selected + ? WHERE imdbID = ?',
 			[userid, imdbid],
 			function (error, results, fields) {
-				console.log(results);
-				return;
+				if (error) {
+					callback(JSON.stringify(error));
+				}
+				callback(JSON.stringify(results));
 			}
 		);
 	}
@@ -492,13 +525,13 @@ app.post('/add-movie', (req, res) => {
 		function (error, results, fields) {
 			// <------------ BROKEN returns 'undefined'
 			///////////// if it is, just add userid to it
-			if (results.length > 0) {
+			if (results && results.length > 0) {
 				console.log(results);
-				callback(addUserId(movieData.imdbID, req.body.userid));
+				addUserId(movieData.imdbID, req.body.userid);
 
 				//////////////// if NOT, add it with current user's id
-			} else if (results.length == 0) {
-				callback(addMovie(movieData));
+			} else if (!results || results.length == 0) {
+				addMovie(movieData);
 			}
 		}
 	);
