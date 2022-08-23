@@ -461,15 +461,13 @@ app.post('/add-movie', (req, res) => {
 	// 	]),
 	// ];
 
-	/////////////// building function to add userid to MYSQL movie row
+	///////////////////// building function to add movieData to MYSQL table user_movies
 	function addMovie(movieData) {
 		// for (let i in movieData) movieArr.push([movieData[i]]).splice(-3);
 		const movieArr = [];
 		for (let i in movieData) movieArr.push(movieData[i]);
-		const movieInfoArr = movieArr.splice(-3).concat([req.session.userid]);
-		// const movieInfoArr = Object.values(movieData)
-		// 	.splice(-3)
-		// 	.concat(req.session.userid);
+		const movieInfoArr = movieArr.slice(0, -3).concat([req.session.userid]);
+		// const movieInfoArr = Object.values(movieData).splice(-3).concat(req.session.userid);
 		const movieSourcesArr = [];
 		// console.log('movieArr:');
 		// console.dir(movieArr);
@@ -477,16 +475,6 @@ app.post('/add-movie', (req, res) => {
 		console.dir(movieInfoArr);
 		console.log('movieSourcesArr:');
 		console.dir(movieSourcesArr);
-		// let queryArr = [];
-		// for (let i in movieData) queryArr.push([i, movieData[i]]);
-		// const indexToSplit = queryArr.indexOf('movieGross');
-		// console.log(`indexToSplit: ${indexToSplit}`);
-		// let movieArr = queryArr.slice(0, indexToSplit);
-		// let sourcesArr = queryArr.slice(indexToSplit + 1);
-		// console.log(`movieArr:`);
-		// console.dir(movieArr);
-		// console.log(`sourcesArr:`);
-		// console.dir(sourcesArr);
 
 		const query =
 			'INSERT INTO user_movies (imdbID, movie_title, release_year, content_rating, movie_poster, movie_summary, imdb_rating, metacritic_rating, movie_budget, movie_gross, users_selected) VALUES (?);';
@@ -503,8 +491,7 @@ app.post('/add-movie', (req, res) => {
 		);
 	}
 
-	///////////////////// building function to add movieData to MYSQL table user_movies
-
+	/////////////// building function to add userid to MYSQL movie row
 	function addUserId(imdbid, userid) {
 		connection.query(
 			'UPDATE user_movies SET users_selected = users_selected + ? WHERE imdbID = ?',
@@ -523,10 +510,10 @@ app.post('/add-movie', (req, res) => {
 		'SELECT * FROM user_movies WHERE imdbID = ?',
 		movieData.imdbID,
 		function (error, results, fields) {
-			// <------------ BROKEN returns 'undefined'
 			///////////// if it is, just add userid to it
 			if (results && results.length > 0) {
 				console.log(results);
+
 				addUserId(movieData.imdbID, req.body.userid);
 
 				//////////////// if NOT, add it with current user's id

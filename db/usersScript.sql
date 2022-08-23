@@ -33,7 +33,7 @@ USE MovieFax;
 -- 	movie_poster varchar(255),
 -- 	movie_summary varchar(255),
 -- 	imdb_rating DECIMAL(2,1),
--- 	metacritic_rating DECIMAL(2,1),
+-- 	metacritic_rating INT,
 -- 	movie_budget varchar(55),
 -- 	movie_gross varchar(55),
 --     users_selected INT,
@@ -48,7 +48,7 @@ USE MovieFax;
 
 -- DELETE FROM user_movies;
 
--- ALTER TABLE user_movies AUTO_INCREMENT = 1;
+-- ALTER TABLE user_movies MODIFY metacritic_rating INT;
 
 -- SELECT * FROM users;
 
