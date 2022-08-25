@@ -443,38 +443,16 @@ app.post('/add-movie', (req, res) => {
 	//////////////// read the movie data state
 	let movieData = JSON.parse(fs.readFileSync('./tmp/movie-data-state.json'));
 
-	// const queryArr = [
-	// 	movieData.map((movie) => [
-	// 		movie.imdbID,
-	// 		movie.movieTitle,
-	// 		movie.movieYear,
-	// 		movie.contentRating,
-	// 		movie.moviePoster,
-	// 		movie.movieSummary,
-	// 		movie.imdbRating,
-	// 		movie.metacriticRating,
-	// 		movie.movieBudget,
-	// 		movie.movieGross,
-	// 		movie.moviePurchaseArray,
-	// 		movie.movieRentArray,
-	// 		movie.movieStreamingArray,
-	// 	]),
-	// ];
-
 	///////////////////// building function to add movieData to MYSQL table user_movies
 	function addMovie(movieData) {
 		// for (let i in movieData) movieArr.push([movieData[i]]).splice(-3);
 		const movieArr = [];
+
 		for (let i in movieData) movieArr.push(movieData[i]);
 		const movieInfoArr = movieArr.slice(0, -3).concat([req.session.userid]);
-		// const movieInfoArr = Object.values(movieData).splice(-3).concat(req.session.userid);
-		const movieSourcesArr = [];
-		// console.log('movieArr:');
-		// console.dir(movieArr);
+
 		console.log('movieInfoArr:');
 		console.dir(movieInfoArr);
-		console.log('movieSourcesArr:');
-		console.dir(movieSourcesArr);
 
 		const query =
 			'INSERT INTO user_movies (imdbID, movie_title, release_year, content_rating, movie_poster, movie_summary, imdb_rating, metacritic_rating, movie_budget, movie_gross, users_selected) VALUES (?);';
@@ -482,6 +460,27 @@ app.post('/add-movie', (req, res) => {
 		connection.query(
 			query,
 			[movieInfoArr],
+			function (error, results, fields) {
+				if (error) {
+					console.log(JSON.stringify(error));
+				}
+				console.log(JSON.stringify(results));
+			}
+		);
+	}
+
+	//////////////// buidling function to add sources info to MYSQL table 'movie_sources'
+	function addSources(movieData) {
+		const movieSourcesArr = [];
+
+		console.log('movieSourcesArr:');
+		console.dir(movieSourcesArr);
+
+		const query = '';
+		let values = [movieSourcesArr];
+		connection.query(
+			query,
+			[movieSourcesArr],
 			function (error, results, fields) {
 				if (error) {
 					console.log(JSON.stringify(error));

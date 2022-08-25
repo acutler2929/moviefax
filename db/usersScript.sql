@@ -41,8 +41,8 @@ USE MovieFax;
 --     PRIMARY KEY(movieID)
 -- );
 
--- INSERT INTO user_movies (imdbID, movie_title, release_year, content_rating, movie_poster, movie_summary, imdb_rating, metacritic_rating, movie_budget, movie_gross, movie_purchase_sources, movie_rental_sources, movie_streaming_sources, users_selected)
---     VALUES (imdbID, movieTitle, movieYear, contentRating, moviePoster, movieSummary, imdbRating, metacriticRating, movieBudget, movieGross, moviePurchaseArray, movieRentArray, movieStreamingArray, users_selected);
+-- INSERT INTO user_movies (imdbID, movie_title, release_year, content_rating, movie_poster, movie_summary, imdb_rating, metacritic_rating, movie_budget, movie_gross, users_selected)
+--     VALUES (imdbID, movieTitle, movieYear, contentRating, moviePoster, movieSummary, imdbRating, metacriticRating, movieBudget, movieGross, users_selected);
 
 -- DELETE FROM users WHERE userID = 15;
 
@@ -50,7 +50,23 @@ USE MovieFax;
 
 -- ALTER TABLE user_movies MODIFY metacritic_rating INT;
 
+-- CREATE TABLE sources (
+--     movieID INT NOT NULL,
+--     imdbID varchar(55) NOT NULL UNIQUE DEFAULT 'placeholder',
+--     source_id INT,
+--     source_name VARCHAR(55),
+--     source_type enum('buy', 'rent', 'sub'),
+--     region VARCHAR(55),
+--     web_url VARCHAR(255),
+--     format VARCHAR(55),
+--     price DECIMAL(6,2) DEFAULT NULL,
+--     last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     PRIMARY KEY(movieID)
+-- );
+
 -- SELECT * FROM users;
 
-SELECT * FROM user_movies;
+-- SELECT * FROM user_movies;
+
+-- SELECT * FROM sources;
 
