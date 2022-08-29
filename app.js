@@ -440,48 +440,93 @@ app.post('/add-movie', (req, res) => {
 	console.log('req.session on following line:');
 	console.dir(req.session);
 
-	//////////////// read the movie data state
+	//////////////// read the movie data state from TMP folder
 	let movieData = JSON.parse(fs.readFileSync('./tmp/movie-data-state.json'));
-
-	// const queryArr = [
-	// 	movieData.map((movie) => [
-	// 		movie.imdbID,
-	// 		movie.movieTitle,
-	// 		movie.movieYear,
-	// 		movie.contentRating,
-	// 		movie.moviePoster,
-	// 		movie.movieSummary,
-	// 		movie.imdbRating,
-	// 		movie.metacriticRating,
-	// 		movie.movieBudget,
-	// 		movie.movieGross,
-	// 		movie.moviePurchaseArray,
-	// 		movie.movieRentArray,
-	// 		movie.movieStreamingArray,
-	// 	]),
-	// ];
 
 	///////////////////// building function to add movieData to MYSQL table user_movies
 	function addMovie(movieData) {
-		// for (let i in movieData) movieArr.push([movieData[i]]).splice(-3);
-		const movieArr = [];
-		for (let i in movieData) movieArr.push(movieData[i]);
-		const movieInfoArr = movieArr.slice(0, -3).concat([req.session.userid]);
-		// const movieInfoArr = Object.values(movieData).splice(-3).concat(req.session.userid);
-		const movieSourcesArr = [];
-		// console.log('movieArr:');
-		// console.dir(movieArr);
+		console.log(`addMovie() fired, movieData.imdbID = ${movieData.imdbID}`);
+		//////////// taking movieData object, and cutting it into an array that contains just the movie's info without source data
+		function makeMovieArr(movieData) {
+			let movieArr = [];
+
+			for (let i in movieData) movieArr.push(movieData[i]);
+			const movieInfoArr = movieArr
+				.slice(0, -3)
+				.concat(req.session.userid);
+
+			return movieInfoArr;
+		}
+
+		///////////// taking movieData object, and cutting it into an array that contains only the SOURCES info, without any other movie data...
+		function makeSourcesArr(movieData) {
+			// let sourcesArr = [];
+			let purchaseArr = [];
+			let rentalArr = [];
+			let streamingArr = [];
+			let finalArr = [];
+
+			for (let i in movieData.moviePurchaseArray)
+				purchaseArr.push(
+					Object.values(movieData.moviePurchaseArray[i])
+				);
+
+			for (let i in movieData.movieRentArray)
+				rentalArr.push(Object.values(movieData.movieRentArray[i]));
+
+			for (let i in movieData.movieStreamingArray)
+				streamingArr.push(
+					Object.values(movieData.movieStreamingArray[i])
+				);
+
+			const sourcesArr = purchaseArr
+				.concat(rentalArr)
+				.concat(streamingArr);
+
+			for (let i in sourcesArr) {
+				let source = sourcesArr[i]
+					.filter(
+						(entry) =>
+							entry !== 'Deeplinks available for paid plans only.'
+					)
+					.slice(0, -2);
+				source.unshift(movieData.imdbID);
+
+				finalArr.push(source);
+			}
+
+			return finalArr;
+		}
+
+		const movieInfoArr = makeMovieArr(movieData);
+		const movieSourcesArr = makeSourcesArr(movieData);
+
 		console.log('movieInfoArr:');
 		console.dir(movieInfoArr);
 		console.log('movieSourcesArr:');
 		console.dir(movieSourcesArr);
 
-		const query =
+		const movieInfoQuery =
 			'INSERT INTO user_movies (imdbID, movie_title, release_year, content_rating, movie_poster, movie_summary, imdb_rating, metacritic_rating, movie_budget, movie_gross, users_selected) VALUES (?);';
-		// let values = [movieInfoArr];
+		const movieSourcesQuery =
+			'INSERT INTO movie_sources (imdbID, source_id, source_name, source_type, region, web_url, format, price) VALUES ?;';
+
+		//////////// pushing movie info to MYSQL table user_movies:
 		connection.query(
-			query,
+			movieInfoQuery,
 			[movieInfoArr],
+			function (error, results, fields) {
+				if (error) {
+					console.log(JSON.stringify(error));
+				}
+				console.log(JSON.stringify(results));
+			}
+		);
+
+		//////////// pushing movie sources info to MYSQL table movie_sources:
+		connection.query(
+			movieSourcesQuery,
+			[movieSourcesArr],
 			function (error, results, fields) {
 				if (error) {
 					console.log(JSON.stringify(error));
@@ -494,13 +539,13 @@ app.post('/add-movie', (req, res) => {
 	/////////////// building function to add userid to MYSQL movie row
 	function addUserId(imdbid, userid) {
 		connection.query(
-			'UPDATE user_movies SET users_selected = users_selected + ? WHERE imdbID = ?',
+			'UPDATE user_movies SET users_selected = CONCAT(users_selected, ?) WHERE imdbID = ?;',
 			[userid, imdbid],
 			function (error, results, fields) {
 				if (error) {
-					callback(JSON.stringify(error));
+					console.log(JSON.stringify(error));
 				}
-				callback(JSON.stringify(results));
+				console.log(JSON.stringify(results));
 			}
 		);
 	}
@@ -510,13 +555,13 @@ app.post('/add-movie', (req, res) => {
 		'SELECT * FROM user_movies WHERE imdbID = ?',
 		movieData.imdbID,
 		function (error, results, fields) {
-			///////////// if it is, just add userid to it
+			///////////// if it is, just add the current user's userid to it
 			if (results && results.length > 0) {
 				console.log(results);
 
 				addUserId(movieData.imdbID, req.body.userid);
 
-				//////////////// if NOT, add it with current user's id
+				//////////////// if NOT, add the MOVIE and SOURCES info, with current user's id, to MYSQL tables: user_movies and movie_sources
 			} else if (!results || results.length == 0) {
 				addMovie(movieData);
 			}

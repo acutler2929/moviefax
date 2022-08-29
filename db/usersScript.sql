@@ -52,5 +52,7 @@ USE MovieFax;
 
 -- SELECT * FROM users;
 
-SELECT * FROM user_movies;
+-- SELECT * FROM user_movies;
+
+SELECT * FROM movie_sources;
 
