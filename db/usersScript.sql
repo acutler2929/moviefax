@@ -50,6 +50,7 @@ USE MovieFax;
 
 -- ALTER TABLE user_movies MODIFY metacritic_rating INT;
 
+<<<<<<< HEAD
 -- CREATE TABLE sources (
 --     movieID INT NOT NULL,
 --     imdbID varchar(55) NOT NULL UNIQUE DEFAULT 'placeholder',
@@ -62,12 +63,27 @@ USE MovieFax;
 --     price DECIMAL(6,2) DEFAULT NULL,
 --     last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 --     PRIMARY KEY(movieID)
+=======
+-- CHANGE USERID IN USERS AND IMDBID IN USER_MOVIES BEFORE EXECUTING SCRIPT
+-- CREATE TABLE selected_movies(
+--     user_id INT,
+--     imdb_id varchar(55),
+--     PRIMARY KEY(user_id, imdb_id),
+--     FOREIGN KEY(user_id)
+--         REFERENCES users(user_id,),
+--     FOREIGN KEY(imdb_id)
+--         REFERENCES user_movies(imdb_id)
+>>>>>>> building-user-movie-list
 -- );
 
 -- SELECT * FROM users;
 
 -- SELECT * FROM user_movies;
 
+<<<<<<< HEAD
 -- SELECT * FROM sources;
 SELECT * FROM movie_sources;
+=======
+-- SELECT * FROM movie_sources;
+>>>>>>> building-user-movie-list
 
