@@ -50,9 +50,20 @@ USE MovieFax;
 
 -- ALTER TABLE user_movies MODIFY metacritic_rating INT;
 
+-- CHANGE USERID IN USERS AND IMDBID IN USER_MOVIES BEFORE EXECUTING SCRIPT
+-- CREATE TABLE selected_movies(
+--     user_id INT,
+--     imdb_id varchar(55),
+--     PRIMARY KEY(user_id, imdb_id),
+--     FOREIGN KEY(user_id)
+--         REFERENCES users(user_id,),
+--     FOREIGN KEY(imdb_id)
+--         REFERENCES user_movies(imdb_id)
+-- );
+
 -- SELECT * FROM users;
 
 -- SELECT * FROM user_movies;
 
-SELECT * FROM movie_sources;
+-- SELECT * FROM movie_sources;
 
