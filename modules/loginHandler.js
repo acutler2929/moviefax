@@ -9,7 +9,7 @@ exports.register = async function (req, connection) {
 	if (req.body.newUserName && req.body.newEmail && req.body.newPassword) {
 		await new Promise((resolve, reject) => {
 			connection.query(
-				'INSERT INTO users (userName, email, password) VALUES (?, ?, ?)',
+				'INSERT INTO users (user_name, email, password) VALUES (?, ?, ?)',
 				[req.body.newUserName, req.body.newEmail, req.body.newPassword],
 				function (error) {
 					// If there is no error
@@ -73,7 +73,7 @@ exports.auth = async function (req, connection) {
 		await new Promise((resolve, reject) => {
 			console.log('loginHandler.auth: connection query about to fire...');
 			connection.query(
-				'SELECT * FROM users WHERE userName = ? AND password = ?',
+				'SELECT * FROM users WHERE user_name = ? AND password = ?',
 				[req.body.userName, req.body.userPassword],
 				function (error, results, fields) {
 					if (error) {
@@ -134,11 +134,11 @@ exports.passwordReset = async function (req, connection) {
 	if (req.body.newPasswordOne === req.body.newPasswordTwo) {
 		await new Promise((resolve, reject) => {
 			connection.query(
-				'UPDATE users SET password = ? WHERE userName = ?',
+				'UPDATE users SET password = ? WHERE user_name = ?',
 				[req.body.newPasswordOne, req.body.userName],
 				function (error, results, fields) {
 					connection.query(
-						'SELECT * FROM users WHERE userName = ? AND password = ?',
+						'SELECT * FROM users WHERE user_name = ? AND password = ?',
 						[req.body.userName, req.body.newPasswordOne],
 						function (error, results, fields) {
 							if (results.length > 0) {

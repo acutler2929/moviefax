@@ -83,8 +83,8 @@ app.post('/auth', async (req, res) => {
 	if (loginResponse.loginStatus === true) {
 		// Validate the user:
 		req.session.loggedin = loginResponse.loginStatus;
-		req.session.userid = loginResponse.userInfo.userID;
-		req.session.username = loginResponse.userInfo.userName;
+		req.session.userid = loginResponse.userInfo.user_id;
+		req.session.username = loginResponse.userInfo.user_name;
 		req.session.userEmail = loginResponse.userInfo.email;
 		console.log('req.session object on following line:');
 		console.log(req.session);
@@ -153,6 +153,8 @@ app.get('/logout', (req, res) => {
 
 	req.session.loggedin = false;
 	req.session.username = '';
+	req.session.userid = '';
+	req.session.userEmail = '';
 
 	res.redirect('/');
 });
@@ -451,9 +453,7 @@ app.post('/add-movie', (req, res) => {
 			let movieArr = [];
 
 			for (let i in movieData) movieArr.push(movieData[i]);
-			const movieInfoArr = movieArr
-				.slice(0, -3)
-				.concat(req.session.userid);
+			const movieInfoArr = movieArr.slice(0, -3);
 
 			return movieInfoArr;
 		}
@@ -505,9 +505,9 @@ app.post('/add-movie', (req, res) => {
 		console.dir(movieInfoArr);
 
 		const movieInfoQuery =
-			'INSERT INTO user_movies (imdbID, movie_title, release_year, content_rating, movie_poster, movie_summary, imdb_rating, metacritic_rating, movie_budget, movie_gross, users_selected) VALUES (?);';
+			'INSERT INTO user_movies (imdb_id, movie_title, release_year, content_rating, movie_poster, movie_summary, imdb_rating, metacritic_rating, movie_budget, movie_gross) VALUES (?);';
 		const movieSourcesQuery =
-			'INSERT INTO movie_sources (imdbID, source_id, source_name, source_type, region, web_url, format, price) VALUES ?;';
+			'INSERT INTO movie_sources (imdb_id, source_id, source_name, source_type, region, web_url, format, price) VALUES ?;';
 
 		//////////// pushing movie info to MYSQL table user_movies:
 		connection.query(
@@ -556,9 +556,11 @@ app.post('/add-movie', (req, res) => {
 	}
 
 	/////////////// building function to add userid to MYSQL movie row
-	function addUserId(imdbid, userid) {
+	function addUserId(userid, imdbid) {
+		console.log('adding to addUserID() userid and imdbid:');
+		console.log([userid, imdbid]);
 		connection.query(
-			'UPDATE user_movies SET users_selected = CONCAT(users_selected, ?) WHERE imdbID = ?;',
+			'INSERT INTO selected_movies (user_id, imdb_id) VALUES (?, ?);',
 			[userid, imdbid],
 			function (error, results, fields) {
 				if (error) {
@@ -571,18 +573,19 @@ app.post('/add-movie', (req, res) => {
 
 	////////////////// see if this movie is stored in user_movies already
 	connection.query(
-		'SELECT * FROM user_movies WHERE imdbID = ?',
+		'SELECT * FROM user_movies WHERE imdb_id = ?',
 		movieData.imdbID,
 		function (error, results, fields) {
-			///////////// if it is, just add the current user's userid to it
+			///////////// if it is, just add the current user's userid and imdb_id to selected_movies
 			if (results && results.length > 0) {
 				console.log(results);
 
-				addUserId(movieData.imdbID, req.body.userid);
+				addUserId(req.session.userid, movieData.imdbID);
 
-				//////////////// if NOT, add the MOVIE and SOURCES info, with current user's id, to MYSQL tables: user_movies and movie_sources
+				//////////////// if NOT, add the MOVIE and SOURCES info, with current user's id, to MYSQL tables: user_movies and movie_sources, then add user_id and imdb_id to selected_movies
 			} else if (!results || results.length == 0) {
 				addMovie(movieData);
+				addUserId(req.session.userid, movieData.imdbID);
 			}
 		}
 	);

@@ -46,7 +46,7 @@ USE MovieFax;
 
 -- DELETE FROM users WHERE userID = 15;
 
--- DELETE FROM user_movies;
+DELETE FROM movie_sources;
 
 -- ALTER TABLE user_movies MODIFY metacritic_rating INT;
 
@@ -70,7 +70,7 @@ USE MovieFax;
 --     imdb_id varchar(55),
 --     PRIMARY KEY(user_id, imdb_id),
 --     FOREIGN KEY(user_id)
---         REFERENCES users(user_id,),
+--         REFERENCES users(user_id),
 --     FOREIGN KEY(imdb_id)
 --         REFERENCES user_movies(imdb_id)
 >>>>>>> building-user-movie-list
