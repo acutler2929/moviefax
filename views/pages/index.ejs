@@ -128,11 +128,16 @@
 						detailsLink, imdbSearchData: imdbSearchData }) :
 						include('../partials/storage') %>
 					</ul>
-					<div id="user-movies-wrapper" class="hidden">
-						<ul>
-							<p>Login to build your own list!</p>
-						</ul>
-					</div>
+					<ul id="user-movies-wrapper" class="hidden">
+						<% if (req.session.loggedin) { %>
+						<p>
+							You are logged in, but I still need to build your
+							list...
+						</p>
+						<% } else{ %>
+						<p>Login to build your own list!</p>
+						<% } %>
+					</ul>
 				</div>
 				<div class="col-10" id="movie-data-wrapper">
 					<div id="poster-data-wrapper">
