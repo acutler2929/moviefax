@@ -52,11 +52,22 @@ app.get('/', (req, res) => {
 	console.log('welcome to homepage');
 	console.log(`req.url: ${req.url}`);
 
-	////////// check if user is logged in
+	//////// check if user is logged in
 	if (req.session.loggedin == true) {
 		/////////// if they are, send their list of movies
-		movieDBHandler.getMovieList(req, connection);
+		let savedList = movieDBHandler.getMovieList(req, connection);
+		console.dir(savedList);
+
+		res.render('pages/index', {
+			savedList: savedList,
+			req: req,
+		});
 	}
+
+	/////////// loading movie-list state from temporary files:
+	// let imdbSearchData = JSON.parse(
+	// 	fs.readFileSync('./tmp/movie-list-state.json')
+	// );
 
 	res.render('pages/index', {
 		req: req,

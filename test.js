@@ -46,4 +46,4 @@ function makeSourcesArr(movieData) {
 
 // console.log(makeMovieArr(movieState));
 
-console.log(makeSourcesArr(movieState));
+// console.log(makeSourcesArr(movieState));

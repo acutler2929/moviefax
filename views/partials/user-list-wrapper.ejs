@@ -1,0 +1,13 @@
+<% savedList.forEach((result) => { %>
+<li class="container-fluid list-group-item movie-wrapper">
+	<a class="movie-link" href="<%= detailsLink %>?id=<%= result.id %>">
+		<div id="<%= result.id %>" class="data-wrapper text-center">
+			<h6 class="search-title align-middle"><%= result.title %></h6>
+			<img class="img-fluid search-images" src="<%= result.image %>" />
+			<p class="search-description align-middle">
+				<small><%= result.description %></small>
+			</p>
+		</div>
+	</a>
+</li>
+<% }) %>

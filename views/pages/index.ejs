@@ -126,17 +126,12 @@
 						|| req.url.includes('/details') ?
 						include('../partials/movie-wrapper', { detailsLink:
 						detailsLink, imdbSearchData: imdbSearchData }) :
-						include('../partials/storage') %>
+						include('../partials/throwaway') %>
 					</ul>
-					<ul id="user-movies-wrapper" class="hidden">
-						<% if (req.session.loggedin) { %>
-						<p>
-							You are logged in, but I still need to build your
-							list...
-						</p>
-						<% } else{ %>
-						<p>Login to build your own list!</p>
-						<% } %>
+					<ul id="user-movies-wrapper" class="list-group hidden">
+						<%- req.session.loggedin ?
+						include('../partials/user-list-wrapper, savedList') :
+						include('../partials/throwaway') %>
 					</ul>
 				</div>
 				<div class="col-10" id="movie-data-wrapper">
@@ -144,13 +139,13 @@
 						<%- req.url.includes('/sample-details') ||
 						req.url.includes('/details') ?
 						include('../partials/poster-data', movieData) :
-						include('../partials/storage') %>
+						include('../partials/throwaway') %>
 					</div>
 					<div id="data-sources-wrapper" class="hidden">
 						<%- req.url.includes('/sample-details') ||
 						req.url.includes('/details') ?
 						include('../partials/sources-wrapper', movieData) :
-						include('../partials/storage') %>
+						include('../partials/throwaway') %>
 					</div>
 				</div>
 			</div>
