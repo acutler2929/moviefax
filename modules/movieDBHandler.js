@@ -94,24 +94,26 @@ exports.getMovieDetails = function (req, connection) {
 };
 
 //////////////// grabbing the user's list of selected movies:
-exports.getMovieList = function (req, connection) {
+exports.getMovieList = async function (req, connection) {
 	console.log('movieDBHandler.getMovieList() fired...');
 
 	let query =
 		'SELECT * FROM selected_movies RIGHT JOIN user_movies ON selected_movies.imdb_id = user_movies.imdb_id WHERE user_id = ?;';
 
-	connection.query(
-		query,
-		[req.session.userid],
-		function (error, results, fields) {
-			if (error) {
-				console.log(JSON.stringify(error));
-				return JSON.stringify(error);
+	await new Promise((resolve, reject) => {
+		connection.query(
+			query,
+			[req.session.userid],
+			function (error, results, fields) {
+				if (error) {
+					console.log(JSON.stringify(error));
+					reject(JSON.stringify(error));
+				}
+				console.log(JSON.stringify(results));
+				resolve(JSON.stringify(results));
 			}
-			console.log(JSON.stringify(results));
-			return JSON.stringify(results);
-		}
-	);
+		);
+	});
 };
 
 /////////////// building function to add userid to MYSQL movie row
