@@ -97,6 +97,7 @@ exports.getMovieDetails = function (req, connection) {
 exports.getMovieList = async function (req, connection) {
 	console.log('movieDBHandler.getMovieList() fired...');
 
+	let output;
 	let query =
 		'SELECT * FROM selected_movies RIGHT JOIN user_movies ON selected_movies.imdb_id = user_movies.imdb_id WHERE user_id = ?;';
 
@@ -109,11 +110,27 @@ exports.getMovieList = async function (req, connection) {
 					console.log(JSON.stringify(error));
 					reject(JSON.stringify(error));
 				}
-				console.log(JSON.stringify(results));
+				// console.log(JSON.stringify(results));
 				resolve(JSON.stringify(results));
 			}
 		);
-	});
+	})
+		.then((res) => {
+			console.log('movieDBHandler.getMovieList() Promise success!');
+			// console.log(res);
+			output = res;
+
+			return output;
+		})
+		.catch((err) => {
+			console.log('movieDBHandler.getMovieList() Promise failed :(');
+			console.log(err);
+			output = err;
+
+			return output;
+		});
+
+	return output;
 };
 
 /////////////// building function to add userid to MYSQL movie row
