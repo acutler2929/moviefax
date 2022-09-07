@@ -128,7 +128,7 @@
 						detailsLink, imdbSearchData: imdbSearchData }) :
 						include('../partials/throwaway') %>
 					</ul>
-					<ul id="user-movies-wrapper" class="list-group hidden">
+					<ul class="list-group hidden" id="user-movies-wrapper">
 						<%- req.session.loggedin ?
 						include('../partials/user-list-wrapper', savedList) :
 						include('../partials/throwaway') %>

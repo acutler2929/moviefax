@@ -55,21 +55,19 @@ app.get('/', async (req, res) => {
 	//////// check if user is logged in
 	if (req.session.loggedin == true) {
 		/////////// if they are, send their list of movies
-
-		// (async () => {
-		// 	const meta = await getUserList('test.png');
-		// 	console.log(meta); // {"metadata": "for: test.png"}
-		// })();
+		let savedListObject;
+		const sampleData = new Boolean(false);
 
 		await new Promise((resolve, reject) => {
-			async function go() {
-				let results = JSON.stringify(
-					await movieDBHandler.getMovieList(req, connection)
+			async function getUserMovies() {
+				let results = await movieDBHandler.getMovieList(
+					req,
+					connection
 				);
 				return results;
 			}
 
-			let savedList = go();
+			let savedList = getUserMovies();
 
 			console.log(
 				`savedList is a ${typeof savedList}, here it is: ${savedList}`
@@ -81,9 +79,9 @@ app.get('/', async (req, res) => {
 			});
 		})
 			.then((savedList) => {
-				console.log(
-					`savedList is a ${typeof savedList}, here it is: ${savedList}`
-				);
+				// console.log(
+				// 	`savedList is a ${typeof savedList}, here it is: ${savedList}`
+				// );
 				(function saveListState() {
 					fs.writeFile(
 						'./tmp/user-list-state.json',
@@ -93,21 +91,28 @@ app.get('/', async (req, res) => {
 						}
 					);
 				})();
+
+				return savedList;
 			})
 			.then((savedList) => {
+				console.log(`savedList is a ${typeof savedList}`);
+				savedListObject = JSON.parse(savedList);
 				console.log(
-					`savedList is a ${typeof savedList} and here is the first user_id: ${
-						savedList[0].user_id
-					}`
+					`savedListObject is a ${typeof savedListObject} and here is the first entry:`
 				);
-				res.render('pages/index', {
-					savedList: savedList,
-					req: req,
-				});
+				console.dir(savedListObject[0]);
+
+				return savedListObject;
 			})
 			.catch((error) => {
 				console.log(error);
 			});
+
+		res.render('pages/index', {
+			detailsLink: sampleData == true ? '/sample-details' : '/details',
+			savedList: savedListObject,
+			req: req,
+		});
 	} else {
 		res.render('pages/index', {
 			req: req,
