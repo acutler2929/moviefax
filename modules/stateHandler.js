@@ -1,67 +1,77 @@
 'use strict';
 
-/////////////////////////// maybe I'll use this or maybe not...
-let State = class {
-	constructor(userId, userName, searchState, movieList, selectedMovie) {
-		this.userId = userId;
-		this.userName = userName;
-		this.searchState = [];
-		this.movieList = [];
-		this.selectedMovie = selectedMovie;
+const fs = require('fs');
 
-		console.log(
-			`New State class created for name: ${this.userName}, id: ${this.userId}`
+/////////////////// SAVING state
+exports.saveMovieDataState = function (data) {
+	try {
+		fs.writeFile(
+			'./tmp/movie-data-state.json',
+			JSON.stringify(data),
+			(err) => {
+				console.log(err);
+			}
 		);
-	}
-	///////// GET stuff
-	getUserId() {
-		return this.userId;
-	}
-
-	getUserName() {
-		return this.userName;
-	}
-
-	getSearchState() {
-		return this.searchState;
-	}
-
-	getMovieList() {
-		return this.movieList;
-	}
-
-	getSelectedMovie() {
-		return this.selectedMovie;
-	}
-	////////////// SET stuff
-	setUserId(id) {
-		this.userId = id;
-		return this;
-	}
-
-	setUserName(name) {
-		this.userName = name;
-		return this;
-	}
-
-	setSearchState(searchArr) {
-		this.searchState = searchArr;
-		return this;
-	}
-
-	addMovie(movieObj) {
-		this.movieList.push(movieObj);
-		return this;
-	}
-
-	deleteMovie(movieObj) {
-		this.movieList.splice();
-	}
-
-	setCurrentMovie(movieObj) {
-		this.selectedMovie = movieObj;
-		return this;
+		console.log('stateHandler.js: saved movie data state');
+	} catch (error) {
+		console.log(error);
 	}
 };
 
-module.exports = stateHandler;
+exports.saveSearchState = function (data) {
+	try {
+		fs.writeFile(
+			'./tmp/movie-search-state.json',
+			JSON.stringify(data),
+			(err) => {
+				console.log(err);
+			}
+		);
+		console.log('stateHandler.js: saved movie search state');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+exports.saveUserListState = function (data) {
+	try {
+		fs.writeFile(
+			'./tmp/user-list-state.json',
+			JSON.stringify(data),
+			(err) => {
+				console.log(err);
+			}
+		);
+		console.log('stateHandler.js: saved user list state');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+///////////////// LOADING state
+exports.loadMovieDataState = function () {
+	try {
+		fs.readFileSync('./tmp/movie-data-state.json');
+		console.log('stateHandler.js: loaded movie data state');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+exports.loadSearchState = function () {
+	try {
+		fs.readFileSync('./tmp/movie-search-state.json');
+		console.log('stateHandler.js: loaded search state');
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+exports.loadUserListState = function () {
+	try {
+		fs.readFileSync('./tmp/user-list-state.json');
+		console.log('stateHandler.js: loaded user list state');
+	} catch (error) {
+		console.log(error);
+	}
+};

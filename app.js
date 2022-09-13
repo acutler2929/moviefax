@@ -4,7 +4,6 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const url = require('url');
-const fs = require('fs');
 const mysql = require('mysql');
 // const path = require('path');
 const nodemailer = require('nodemailer');
@@ -14,6 +13,7 @@ const apiHandler = require('./modules/apiHandler');
 const movieDBHandler = require('./modules/movieDBHandler');
 const loginHandler = require('./modules/loginHandler');
 const sourceHandler = require('./modules/sourceHandler');
+const stateHandler = require('./modules/stateHandler');
 const { doesNotMatch } = require('assert');
 const { callbackPromise } = require('nodemailer/lib/shared');
 
@@ -79,18 +79,7 @@ app.get('/', async (req, res) => {
 			});
 		})
 			.then((savedList) => {
-				// console.log(
-				// 	`savedList is a ${typeof savedList}, here it is: ${savedList}`
-				// );
-				(function saveListState() {
-					fs.writeFile(
-						'./tmp/user-list-state.json',
-						savedList,
-						(err) => {
-							console.log(err);
-						}
-					);
-				})();
+				stateHandler.saveUserListState(savedList);
 
 				return savedList;
 			})
@@ -312,15 +301,7 @@ app.post('/sample-search', (req, res) => {
 	const imdbSearchData = require('./tmp/imdb-search-sample.json');
 	// const tmdbSearchData = require('./json/tmdb-search-sample.json');
 
-	(function saveListState() {
-		fs.writeFile(
-			'./tmp/movie-list-state.json',
-			JSON.stringify(imdbSearchData),
-			(err) => {
-				console.log(err);
-			}
-		);
-	})();
+	stateHandler.saveSearchState(imdbSearchData);
 
 	console.log('req.session on following line:');
 	console.dir(req.session);
@@ -356,15 +337,7 @@ app.post('/query-search', async (req, res) => {
 
 		const imdbSearchData = imdbResponse;
 
-		(function saveListState() {
-			fs.writeFile(
-				'./tmp/movie-list-state.json',
-				JSON.stringify(imdbSearchData),
-				(err) => {
-					console.log(err);
-				}
-			);
-		})();
+		stateHandler.saveSearchState(imdbSearchData);
 
 		res.render('pages/index.ejs', {
 			searchQuery: imdbResponse.expression,
@@ -411,20 +384,9 @@ app.get('/sample-details', async (req, res) => {
 	// console.log('movieData on following line:');
 	// console.dir(movieData);
 
-	let imdbSearchData = JSON.parse(
-		fs.readFileSync('./tmp/movie-list-state.json')
-	);
-	// console.log(`imdbSearchData: ${imdbSearchData}`);
+	let imdbSearchData = stateHandler.loadSearchState();
 
-	(function saveState() {
-		fs.writeFile(
-			'./tmp/movie-data-state.json',
-			JSON.stringify(movieData),
-			(err) => {
-				console.log(err);
-			}
-		);
-	})();
+	// stateHandler.saveMovieDataState(movieData);
 
 	console.log('req.session on following line:');
 	console.dir(req.session);
@@ -478,19 +440,9 @@ app.get('/details', async (req, res) => {
 		};
 
 		/////////// loading movie-list state from temporary files:
-		let imdbSearchData = JSON.parse(
-			fs.readFileSync('./tmp/movie-list-state.json')
-		);
+		let imdbSearchData = stateHandler.loadSearchState();
 
-		(function saveState() {
-			fs.writeFile(
-				'./tmp/movie-data-state.json',
-				JSON.stringify(movieData),
-				(err) => {
-					console.log(err);
-				}
-			);
-		})();
+		// stateHandler.saveMovieDataState(movieData);
 
 		res.render('pages/index.ejs', {
 			imdbSearchData: imdbSearchData,
