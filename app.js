@@ -14,8 +14,8 @@ const movieDBHandler = require('./modules/movieDBHandler');
 const loginHandler = require('./modules/loginHandler');
 const sourceHandler = require('./modules/sourceHandler');
 const stateHandler = require('./modules/stateHandler');
-const { doesNotMatch } = require('assert');
-const { callbackPromise } = require('nodemailer/lib/shared');
+// const { doesNotMatch } = require('assert');
+// const { callbackPromise } = require('nodemailer/lib/shared');
 
 ///////// Connecting to MYSQL
 
@@ -417,11 +417,22 @@ app.post('/query-search', async (req, res) => {
 ///////////////////////////////////////////// Getting movie details
 
 app.get('/details', async (req, res) => {
-	const savedData = new Boolean(false);
+	let savedData = new Boolean(false);
 	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
 	const { query, pathname } = url.parse(req.url, true);
 	const imdbID = query.id;
 	console.log(`/details: receiving query for imdbID ${imdbID}`);
+
+	/////////// loading movie-list state from temporary files:
+	let imdbSearchData = stateHandler.loadSearchState();
+	let savedList = stateHandler.loadUserListState();
+
+	///////// using a loop to check if this movie is included in the user's saved list
+	if (savedList) {
+		/////////// if it is, get the data from MYSQL
+	} else {
+		/////////// if it isn't, then get the data from an api call
+	}
 
 	// movieDataResponse comes back from api Handler...
 	const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
@@ -454,12 +465,6 @@ app.get('/details', async (req, res) => {
 			movieStreamingArray: movieSources.streamingSources,
 		};
 
-		/////////// loading movie-list state from temporary files:
-		let imdbSearchData = stateHandler.loadSearchState();
-		let savedList = stateHandler.loadUserListState();
-
-		// stateHandler.saveMovieDataState(movieData);
-
 		res.render('pages/index.ejs', {
 			imdbSearchData: imdbSearchData,
 			movieData: movieData,
@@ -478,7 +483,8 @@ app.post('/add-movie', (req, res) => {
 	console.dir(req.session);
 
 	//////////////// read the movie data state from TMP folder
-	let movieData = JSON.parse(fs.readFileSync('./tmp/movie-data-state.json'));
+	// let movieData = JSON.parse(fs.readFileSync('./tmp/movie-data-state.json'));
+	let movieData = stateHandler.loadMovieDataState();
 
 	////////////////// see if this movie is stored in user_movies already
 	connection.query(
@@ -514,6 +520,20 @@ app.post('/add-movie', (req, res) => {
 
 ////////////////////////// Dropping a movie from a user's list:
 
-app.delete('/drop-movie', (req, res) => {});
+app.delete('/drop-movie', (req, res) => {
+	console.log(req.url);
+	console.log('req.session on following line:');
+	console.dir(req.session);
+
+	let movieData = stateHandler.loadMovieDataState();
+
+	movieDBHandler.deleteSelection(
+		req.session.userid,
+		movieData.imdbID,
+		connection
+	);
+
+	res.redirect('/');
+});
 
 module.exports = app;
