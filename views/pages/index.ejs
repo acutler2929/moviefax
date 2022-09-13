@@ -47,10 +47,10 @@
 						id="nav-buttons"
 					>
 						<div class="col-4">
-							<form action="/sample-search" method="post">
+							<form action="/saved-state-data" method="get">
 								<input
 									type="submit"
-									value="Use Sample Data"
+									value="Use Stored State Data"
 									class="btn btn-primary"
 								/>
 							</form>
@@ -121,9 +121,10 @@
 			>
 				<div class="col-2" id="lists-wrapper">
 					<ul class="list-group" id="search-results-wrapper">
-						<%- req.url === '/sample-search' || req.url ===
-						'/query-search' || req.url.includes('/sample-details')
-						|| req.url.includes('/details') ?
+						<%- req.session.loggedin || req.url === '/saved-search'
+						|| req.url === '/query-search' ||
+						req.url.includes('/saved-state-data') ||
+						req.url.includes('/details') ?
 						include('../partials/movie-wrapper', { detailsLink:
 						detailsLink, imdbSearchData: imdbSearchData }) :
 						include('../partials/throwaway') %>
@@ -136,13 +137,15 @@
 				</div>
 				<div class="col-10" id="movie-data-wrapper">
 					<div id="poster-data-wrapper">
-						<%- req.url.includes('/sample-details') ||
+						<%- req.session.loggedin ||
+						req.url.includes('/saved-state-data') ||
 						req.url.includes('/details') ?
 						include('../partials/poster-data', movieData) :
 						include('../partials/throwaway') %>
 					</div>
 					<div id="data-sources-wrapper" class="hidden">
-						<%- req.url.includes('/sample-details') ||
+						<%- req.session.loggedin ||
+						req.url.includes('/saved-state-data') ||
 						req.url.includes('/details') ?
 						include('../partials/sources-wrapper', movieData) :
 						include('../partials/throwaway') %>

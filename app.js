@@ -56,7 +56,7 @@ app.get('/', async (req, res) => {
 	if (req.session.loggedin == true) {
 		/////////// if they are, send their list of movies
 		let savedListObject;
-		const sampleData = new Boolean(false);
+		const savedData = new Boolean(false);
 
 		await new Promise((resolve, reject) => {
 			async function getUserMovies() {
@@ -79,6 +79,7 @@ app.get('/', async (req, res) => {
 			});
 		})
 			.then((savedList) => {
+				/////////////// saving the current user's movies to the state:
 				stateHandler.saveUserListState(savedList);
 
 				return savedList;
@@ -97,8 +98,14 @@ app.get('/', async (req, res) => {
 				console.log(error);
 			});
 
+		///////////// handling state:
+		let imdbSearchData = stateHandler.loadSearchState();
+		let movieData = stateHandler.loadMovieDataState();
+
 		res.render('pages/index', {
-			detailsLink: sampleData == true ? '/sample-details' : '/details',
+			detailsLink: savedData == true ? '/saved-details' : '/details',
+			imdbSearchData: imdbSearchData,
+			movieData: movieData,
 			savedList: savedListObject,
 			req: req,
 		});
@@ -289,27 +296,30 @@ app.post('/change-password', async (req, res) => {
 
 ///////////////////////////////////////////////////////// Searching movies with SAMPLE data...
 
-app.post('/sample-search', (req, res) => {
-	console.log('app.js receiving query for SAMPLE data');
-	const sampleData = new Boolean(true);
-	// console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
+app.get('/saved-state-data', (req, res) => {
+	console.log('app.js receiving query for STATE data');
+	const savedData = new Boolean(true);
+	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
 
 	console.log(`req.url: ${req.url}`);
 
-	// using sample data for now...
-
-	const imdbSearchData = require('./tmp/imdb-search-sample.json');
-	// const tmdbSearchData = require('./json/tmdb-search-sample.json');
-
-	stateHandler.saveSearchState(imdbSearchData);
+	// using saved data for now...
 
 	console.log('req.session on following line:');
 	console.dir(req.session);
 
+	let imdbSearchData = stateHandler.loadSearchState();
+	let movieData = stateHandler.loadMovieDataState();
+	let savedList = stateHandler.loadUserListState();
+	// console.log(`savedList is a ${typeof savedList}, here it is:`);
+	// console.dir(savedList);
+
 	res.render('pages/index.ejs', {
 		searchQuery: imdbSearchData.expression,
-		detailsLink: sampleData == true ? '/sample-details' : '/details',
+		detailsLink: savedData == true ? '/saved-details' : '/details',
 		imdbSearchData: imdbSearchData,
+		movieData: movieData,
+		savedList: savedList,
 		req: req,
 	});
 });
@@ -321,8 +331,8 @@ app.post('/query-search', async (req, res) => {
 	console.log('req.body on next line:');
 	console.dir(req.body);
 	console.log(`app.js: receiving query for movie name ${query}`);
-	const sampleData = new Boolean(false);
-	// console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
+	const savedData = new Boolean(false);
+	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
 
 	// imdbResponse comes back from api Handler...
 	const imdbResponse = await apiHandler.searchMovieData(query);
@@ -337,73 +347,78 @@ app.post('/query-search', async (req, res) => {
 
 		const imdbSearchData = imdbResponse;
 
+		////////// handling state:
 		stateHandler.saveSearchState(imdbSearchData);
+		let movieData = stateHandler.loadMovieDataState();
+		let savedList = stateHandler.loadUserListState();
 
 		res.render('pages/index.ejs', {
 			searchQuery: imdbResponse.expression,
-			detailsLink: sampleData == true ? '/sample-details' : '/details',
+			detailsLink: savedData == true ? '/saved-details' : '/details',
 			imdbSearchData: imdbSearchData,
+			movieData: movieData,
+			savedList: savedList,
 			req: req,
 		});
 	}
 });
 
-///////////////////////////////////////////// Getting movie details using SAMPLE data
+///////////////////////////////////////////// Getting movie details using SAVED data
 
-app.get('/sample-details', async (req, res) => {
-	console.log('app.js: /sampleDetails accessed!');
-	const sampleData = new Boolean(true);
-	// console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
+// app.get('/saved-details', async (req, res) => {
+// 	console.log('app.js: /savedDetails accessed!');
+// 	const savedData = new Boolean(true);
+// 	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
 
-	const { query, pathname } = url.parse(req.url, true);
-	const imdbID = JSON.stringify(query.id);
-	console.log(`imdbID: ${imdbID}`);
+// 	const { query, pathname } = url.parse(req.url, true);
+// 	const imdbID = JSON.stringify(query.id);
+// 	console.log(`imdbID: ${imdbID}`);
 
-	/////// next we should do api calls with imdbID and watchmode, but we will use sample data for now:
-	const imdbTitleData = require('./tmp/imdb-title-sample.json');
-	const watchmodeSourcesData = require('./tmp/watchmode-sources-sample.json');
+// 	/////// next we should do api calls with imdbID and watchmode, but we will use saved data for now:
+// 	const imdbTitleData = require('./tmp/imdb-title-saved.json');
+// 	const watchmodeSourcesData = require('./tmp/watchmode-sources-saved.json');
 
-	const movieSources = sourceHandler(watchmodeSourcesData);
+// 	const movieSources = sourceHandler(watchmodeSourcesData);
 
-	let movieData = {
-		imdbID: imdbID,
-		movieTitle: imdbTitleData.title,
-		movieYear: imdbTitleData.year,
-		contentRating: imdbTitleData.contentRating,
-		moviePoster: imdbTitleData.image,
-		movieSummary: imdbTitleData.plot,
-		imdbRating: imdbTitleData.imDbRating,
-		metacriticRating: imdbTitleData.metacriticRating,
-		movieBudget: imdbTitleData.boxOffice.budget,
-		movieGross: imdbTitleData.boxOffice.cumulativeWorldwideGross,
-		moviePurchaseArray: movieSources.purchaseSources,
-		movieRentArray: movieSources.rentalSources,
-		movieStreamingArray: movieSources.streamingSources,
-	};
+// 	let movieData = {
+// 		imdbID: imdbID,
+// 		movieTitle: imdbTitleData.title,
+// 		movieYear: imdbTitleData.year,
+// 		contentRating: imdbTitleData.contentRating,
+// 		moviePoster: imdbTitleData.image,
+// 		movieSummary: imdbTitleData.plot,
+// 		imdbRating: imdbTitleData.imDbRating,
+// 		metacriticRating: imdbTitleData.metacriticRating,
+// 		movieBudget: imdbTitleData.boxOffice.budget,
+// 		movieGross: imdbTitleData.boxOffice.cumulativeWorldwideGross,
+// 		moviePurchaseArray: movieSources.purchaseSources,
+// 		movieRentArray: movieSources.rentalSources,
+// 		movieStreamingArray: movieSources.streamingSources,
+// 	};
 
-	// console.log('movieData on following line:');
-	// console.dir(movieData);
+// 	// console.log('movieData on following line:');
+// 	// console.dir(movieData);
 
-	let imdbSearchData = stateHandler.loadSearchState();
+// 	let imdbSearchData = stateHandler.loadSearchState();
 
-	// stateHandler.saveMovieDataState(movieData);
+// 	// stateHandler.saveMovieDataState(movieData);
 
-	console.log('req.session on following line:');
-	console.dir(req.session);
+// 	console.log('req.session on following line:');
+// 	console.dir(req.session);
 
-	res.render('pages/index.ejs', {
-		imdbSearchData: imdbSearchData,
-		movieData: movieData,
-		detailsLink: sampleData == true ? '/sample-details' : '/details',
-		req: req,
-	});
-});
+// 	res.render('pages/index.ejs', {
+// 		imdbSearchData: imdbSearchData,
+// 		movieData: movieData,
+// 		detailsLink: savedData == true ? '/saved-details' : '/details',
+// 		req: req,
+// 	});
+// });
 
 ///////////////////////////////////////////// Getting movie details
 
 app.get('/details', async (req, res) => {
-	const sampleData = new Boolean(false);
-	// console.log(`app.js: sample data is a ${typeof sampleData} ${sampleData}`);
+	const savedData = new Boolean(false);
+	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
 	const { query, pathname } = url.parse(req.url, true);
 	const imdbID = query.id;
 	console.log(`/details: receiving query for imdbID ${imdbID}`);
@@ -441,13 +456,15 @@ app.get('/details', async (req, res) => {
 
 		/////////// loading movie-list state from temporary files:
 		let imdbSearchData = stateHandler.loadSearchState();
+		let savedList = stateHandler.loadUserListState();
 
 		// stateHandler.saveMovieDataState(movieData);
 
 		res.render('pages/index.ejs', {
 			imdbSearchData: imdbSearchData,
 			movieData: movieData,
-			detailsLink: sampleData == true ? '/sample-details' : '/details',
+			detailsLink: savedData == true ? '/saved-details' : '/details',
+			savedList: savedList,
 			req: req,
 		});
 	}
@@ -494,5 +511,9 @@ app.post('/add-movie', (req, res) => {
 
 	res.redirect('/');
 });
+
+////////////////////////// Dropping a movie from a user's list:
+
+app.delete('/drop-movie', (req, res) => {});
 
 module.exports = app;
