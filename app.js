@@ -427,43 +427,37 @@ app.get('/details', async (req, res) => {
 	let imdbSearchData = stateHandler.loadSearchState();
 	let savedList = stateHandler.loadUserListState();
 
-	///////// using a loop to check if this movie is included in the user's saved list
-	if (savedList) {
-		/////////// if it is, get the data from MYSQL
-	} else {
-		/////////// if it isn't, then get the data from an api call
+	///////// using a function with a loop to check if this movie is included in the user's saved list
+	function isMovieSaved(imdbID, savedList) {
+		let result = new Boolean(true);
+		let imdbList = [];
+		for (let i in savedList) {
+			imdbList.push(savedList[i].imdb_id);
+		}
+		// console.log(imdbList);
+		result = imdbList.includes(imdbID) ? true : false;
+
+		if (result == true) {
+			console.log('movie data IS stored in MYSQL, retrieving it now...');
+		} else {
+			console.log(
+				'movie data IS NOT stored in MYSQL, starting an api call...'
+			);
+		}
+
+		return result;
 	}
 
-	// movieDataResponse comes back from api Handler...
-	const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
-	// console.log(movieDataResponse);
+	if (req.session.loggedin && isMovieSaved(imdbID, savedList) == true) {
+		/////////// if it is, get the data from MYSQL
 
-	if (movieDataResponse.message === 'ERROR') {
-		res.send(movieDataResponse.errorMessage);
-	} else {
-		const movieSources = sourceHandler(
-			movieDataResponse.watchmodeSourcesData
+		let movieData = await movieDBHandler.getMovieDetails(
+			imdbID,
+			connection
 		);
-		// console.log('movieDataResponse.imdbTitleData:');
-		// console.dir(movieDataResponse.imdbTitleData);
 
-		let movieData = {
-			imdbID: imdbID,
-			movieTitle: movieDataResponse.imdbTitleData.title,
-			movieYear: movieDataResponse.imdbTitleData.year,
-			contentRating: movieDataResponse.imdbTitleData.contentRating,
-			moviePoster: movieDataResponse.imdbTitleData.image,
-			movieSummary: movieDataResponse.imdbTitleData.plot,
-			imdbRating: movieDataResponse.imdbTitleData.imDbRating,
-			metacriticRating: movieDataResponse.imdbTitleData.metacriticRating,
-			movieBudget: movieDataResponse.imdbTitleData.boxOffice.budget,
-			movieGross:
-				movieDataResponse.imdbTitleData.boxOffice
-					.cumulativeWorldwideGross,
-			moviePurchaseArray: movieSources.purchaseSources,
-			movieRentArray: movieSources.rentalSources,
-			movieStreamingArray: movieSources.streamingSources,
-		};
+		console.log(`here is movieData so far:`);
+		console.log(movieData);
 
 		res.render('pages/index.ejs', {
 			imdbSearchData: imdbSearchData,
@@ -472,6 +466,48 @@ app.get('/details', async (req, res) => {
 			savedList: savedList,
 			req: req,
 		});
+	} else {
+		/////////// if it isn't, then get the data from an api call
+		// movieDataResponse comes back from api Handler...
+		const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
+		// console.log(movieDataResponse);
+
+		if (movieDataResponse.message === 'ERROR') {
+			res.send(movieDataResponse.errorMessage);
+		} else {
+			const movieSources = sourceHandler(
+				movieDataResponse.watchmodeSourcesData
+			);
+			// console.log('movieDataResponse.imdbTitleData:');
+			// console.dir(movieDataResponse.imdbTitleData);
+
+			let movieData = {
+				imdbID: imdbID,
+				movieTitle: movieDataResponse.imdbTitleData.title,
+				movieYear: movieDataResponse.imdbTitleData.year,
+				contentRating: movieDataResponse.imdbTitleData.contentRating,
+				moviePoster: movieDataResponse.imdbTitleData.image,
+				movieSummary: movieDataResponse.imdbTitleData.plot,
+				imdbRating: movieDataResponse.imdbTitleData.imDbRating,
+				metacriticRating:
+					movieDataResponse.imdbTitleData.metacriticRating,
+				movieBudget: movieDataResponse.imdbTitleData.boxOffice.budget,
+				movieGross:
+					movieDataResponse.imdbTitleData.boxOffice
+						.cumulativeWorldwideGross,
+				moviePurchaseArray: movieSources.purchaseSources,
+				movieRentArray: movieSources.rentalSources,
+				movieStreamingArray: movieSources.streamingSources,
+			};
+
+			res.render('pages/index.ejs', {
+				imdbSearchData: imdbSearchData,
+				movieData: movieData,
+				detailsLink: savedData == true ? '/saved-details' : '/details',
+				savedList: savedList,
+				req: req,
+			});
+		}
 	}
 });
 

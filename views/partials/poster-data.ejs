@@ -31,7 +31,7 @@
 				</div>
 			</div>
 			<div class="text-center">
-				<% if (req.session.loggedin &&) { %>
+				<% if (req.session.loggedin) { %>
 				<form action="/add-movie" method="post">
 					<input
 						type="submit"
@@ -39,7 +39,7 @@
 						class="btn btn-primary"
 					/>
 				</form>
-				<% } else if (req.session.loggedin &&) { %>
+				<% } else { %>
 				<form action="/drop-movie" method="delete">
 					<input
 						type="submit"

@@ -1,5 +1,7 @@
 'use strict';
 
+////////////// this module, movieDBHandler.js, gives the MovieFax app different ways to interact with the MYSQL database
+
 ///////////////////// building function to add movieData to MYSQL table user_movies
 exports.addMovie = function (movieData, connection) {
 	console.log(
@@ -89,8 +91,37 @@ exports.addMovie = function (movieData, connection) {
 };
 
 //////////////// grabbing details of a specific movie from MYSQL...
-exports.getMovieDetails = function (req, connection) {
+exports.getMovieDetails = async function (imdbID, connection) {
 	console.log('movieDBHandler.getMovieDetails() fired...');
+	let output;
+	let query = 'SELECT * FROM user_movies WHERE imdb_id = ?;';
+
+	await new Promise((resolve, reject) => {
+		connection.query(query, [imdbID], function (error, results, fields) {
+			if (error) {
+				console.log(JSON.stringify(error));
+				reject(JSON.stringify(error));
+			}
+			// console.log(JSON.stringify(results));
+			resolve(JSON.stringify(results));
+		});
+	})
+		.then((res) => {
+			console.log('movieDBHandler.getMovieDetails() Promise success!');
+			// console.log(res);
+			output = res;
+
+			return output;
+		})
+		.catch((err) => {
+			console.log('movieDBHandler.getMovieDetails() Promise failed :(');
+			console.log(err);
+			output = err;
+
+			return output;
+		});
+
+	return output;
 };
 
 //////////////// grabbing the user's list of selected movies:
