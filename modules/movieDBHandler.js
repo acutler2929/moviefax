@@ -92,19 +92,27 @@ exports.addMovie = function (movieData, connection) {
 
 //////////////// grabbing details of a specific movie from MYSQL...
 exports.getMovieDetails = async function (imdbID, connection) {
+	////////// let's use fs temporarily to make it easier to work with data
+	const fs = require('fs');
 	console.log('movieDBHandler.getMovieDetails() fired...');
 	let output;
-	let query = 'SELECT * FROM user_movies WHERE imdb_id = ?;';
+	let detailsQuery = 'SELECT * FROM user_movies WHERE imdb_id = ?;';
+	let sourcesQuery = 'SELECT * FROM movie_sources WHERE imdb_id = ?';
 
-	await new Promise((resolve, reject) => {
-		connection.query(query, [imdbID], function (error, results, fields) {
-			if (error) {
-				console.log(JSON.stringify(error));
-				reject(JSON.stringify(error));
+	///////////// first, grab movie info from user_movies...
+	let detailsObj = await new Promise((resolve, reject) => {
+		connection.query(
+			detailsQuery,
+			[imdbID],
+			function (error, results, fields) {
+				if (error) {
+					console.log(JSON.stringify(error));
+					reject(JSON.stringify(error));
+				}
+				// console.log(JSON.stringify(results));
+				resolve(JSON.stringify(results));
 			}
-			// console.log(JSON.stringify(results));
-			resolve(JSON.stringify(results));
-		});
+		);
 	})
 		.then((res) => {
 			console.log('movieDBHandler.getMovieDetails() Promise success!');
@@ -120,6 +128,49 @@ exports.getMovieDetails = async function (imdbID, connection) {
 
 			return output;
 		});
+
+	//////// then, grab sources from movie_sources
+	let sourcesObj = await new Promise((resolve, reject) => {
+		connection.query(
+			sourcesQuery,
+			[imdbID],
+			function (error, results, fields) {
+				if (error) {
+					console.log(JSON.stringify(error));
+					reject(JSON.stringify(error));
+				}
+				// console.log(JSON.stringify(results));
+				resolve(JSON.stringify(results));
+			}
+		);
+	})
+		.then((res) => {
+			console.log('movieDBHandler.getMovieDetails() Promise success!');
+			// console.log(res);
+			output = res;
+
+			return output;
+		})
+		.catch((err) => {
+			console.log('movieDBHandler.getMovieDetails() Promise failed :(');
+			console.log(err);
+			output = err;
+
+			return output;
+		});
+
+	fs.writeFile('./tmp/detailsObj.json', detailsObj, (err) => {
+		console.log(err);
+	});
+
+	fs.writeFile('./tmp/sourcesObj.json', sourcesObj, (err) => {
+		console.log(err);
+	});
+
+	output = {
+		detailsObj,
+		sourcesObj,
+	};
 
 	return output;
 };

@@ -448,15 +448,23 @@ app.get('/details', async (req, res) => {
 		return result;
 	}
 
+	/////////// if it is, get the data from MYSQL
 	if (req.session.loggedin && isMovieSaved(imdbID, savedList) == true) {
-		/////////// if it is, get the data from MYSQL
-
-		let movieData = await movieDBHandler.getMovieDetails(
+		let movieDBData = await movieDBHandler.getMovieDetails(
 			imdbID,
 			connection
 		);
 
-		console.log(`here is movieData so far:`);
+		JSON.parse(movieDBData);
+
+		let movieSources = sourceHandler(movieDBData.sourcesObj);
+
+		let movieData = {
+			...movieDBData.detailsObj,
+			movieSources,
+		};
+
+		console.log(`movieData is a ${typeof movieData}:`);
 		console.log(movieData);
 
 		res.render('pages/index.ejs', {
@@ -469,13 +477,13 @@ app.get('/details', async (req, res) => {
 	} else {
 		/////////// if it isn't, then get the data from an api call
 		// movieDataResponse comes back from api Handler...
-		const movieDataResponse = await apiHandler.selectedMovieData(imdbID);
+		let movieDataResponse = await apiHandler.selectedMovieData(imdbID);
 		// console.log(movieDataResponse);
 
 		if (movieDataResponse.message === 'ERROR') {
 			res.send(movieDataResponse.errorMessage);
 		} else {
-			const movieSources = sourceHandler(
+			let movieSources = sourceHandler(
 				movieDataResponse.watchmodeSourcesData
 			);
 			// console.log('movieDataResponse.imdbTitleData:');
