@@ -100,7 +100,7 @@ exports.getMovieDetails = async function (imdbID, connection) {
 	let sourcesQuery = 'SELECT * FROM movie_sources WHERE imdb_id = ?';
 
 	///////////// first, grab movie info from user_movies...
-	let detailsObj = await new Promise((resolve, reject) => {
+	let detailsJSON = await new Promise((resolve, reject) => {
 		connection.query(
 			detailsQuery,
 			[imdbID],
@@ -130,7 +130,7 @@ exports.getMovieDetails = async function (imdbID, connection) {
 		});
 
 	//////// then, grab sources from movie_sources
-	let sourcesObj = await new Promise((resolve, reject) => {
+	let sourcesJSON = await new Promise((resolve, reject) => {
 		connection.query(
 			sourcesQuery,
 			[imdbID],
@@ -159,17 +159,20 @@ exports.getMovieDetails = async function (imdbID, connection) {
 			return output;
 		});
 
-	fs.writeFile('./tmp/detailsObj.json', detailsObj, (err) => {
+	fs.writeFileSync('./tmp/detailsObj.json', detailsJSON, (err) => {
 		console.log(err);
 	});
 
-	fs.writeFile('./tmp/sourcesObj.json', sourcesObj, (err) => {
+	fs.writeFileSync('./tmp/sourcesObj.json', sourcesJSON, (err) => {
 		console.log(err);
 	});
+
+	let detailsObj = JSON.parse(detailsJSON);
+	let movieSourcesArray = JSON.parse(sourcesJSON);
 
 	output = {
-		detailsObj,
-		sourcesObj,
+		...detailsObj[0],
+		movieSourcesArray,
 	};
 
 	return output;

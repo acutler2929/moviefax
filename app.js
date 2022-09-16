@@ -455,17 +455,30 @@ app.get('/details', async (req, res) => {
 			connection
 		);
 
-		JSON.parse(movieDBData);
-
-		let movieSources = sourceHandler(movieDBData.sourcesObj);
+		let movieSources = sourceHandler.sortSavedData(
+			movieDBData.movieSourcesArray
+		);
+		// console.log('movieDataResponse.imdbTitleData:');
+		// console.dir(movieDataResponse.imdbTitleData);
 
 		let movieData = {
-			...movieDBData.detailsObj,
-			movieSources,
+			imdbID: imdbID,
+			movieTitle: movieDBData.movie_title,
+			movieYear: movieDBData.release_year,
+			contentRating: movieDBData.content_rating,
+			moviePoster: movieDBData.movie_poster,
+			movieSummary: movieDBData.movie_summary,
+			imdbRating: movieDBData.imdb_rating,
+			metacriticRating: movieDBData.metacritic_rating,
+			movieBudget: movieDBData.movie_budget,
+			movieGross: movieDBData.movie_gross,
+			moviePurchaseArray: movieSources.purchaseSources,
+			movieRentArray: movieSources.rentalSources,
+			movieStreamingArray: movieSources.streamingSources,
 		};
 
 		console.log(`movieData is a ${typeof movieData}:`);
-		console.log(movieData);
+		console.dir(movieData);
 
 		res.render('pages/index.ejs', {
 			imdbSearchData: imdbSearchData,
@@ -483,7 +496,7 @@ app.get('/details', async (req, res) => {
 		if (movieDataResponse.message === 'ERROR') {
 			res.send(movieDataResponse.errorMessage);
 		} else {
-			let movieSources = sourceHandler(
+			let movieSources = sourceHandler.replaceDetailData(
 				movieDataResponse.watchmodeSourcesData
 			);
 			// console.log('movieDataResponse.imdbTitleData:');
