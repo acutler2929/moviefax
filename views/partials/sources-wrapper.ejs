@@ -4,7 +4,7 @@
 		<% movieData.moviePurchaseArray.forEach((source) => { %>
 		<li class="source-li">
 			<a href="<%= source.web_url %>"
-				><%= source.name %> from <%= source.price %></a
+				><%= source.name || source.source_name %> from <%= source.price %></a
 			>
 			</li>
 		<% }) %>
@@ -16,7 +16,7 @@
 		<% movieData.movieRentArray.forEach((source) => { %>
 		<li class="source-li">
 			<a href="<%= source.web_url %>"
-				><%= source.name %> from <%= source.price %></a
+				><%= source.name || source.source_name %> from <%= source.price %></a
 			>
 		</li>
 		<% }) %>
@@ -27,7 +27,7 @@
 	<ul  class="source-ul">
 		<% movieData.movieStreamingArray.forEach((source) => { %>
 		<li class="source-li">
-			<a href="<%= source.web_url %>"><%= source.name %></a>
+			<a href="<%= source.web_url %>"><%= source.name || source.source_name %></a>
 		</li>
 		<% }) %>
 	</ul>

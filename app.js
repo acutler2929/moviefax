@@ -363,57 +363,6 @@ app.post('/query-search', async (req, res) => {
 	}
 });
 
-///////////////////////////////////////////// Getting movie details using SAVED data
-
-// app.get('/saved-details', async (req, res) => {
-// 	console.log('app.js: /savedDetails accessed!');
-// 	const savedData = new Boolean(true);
-// 	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
-
-// 	const { query, pathname } = url.parse(req.url, true);
-// 	const imdbID = JSON.stringify(query.id);
-// 	console.log(`imdbID: ${imdbID}`);
-
-// 	/////// next we should do api calls with imdbID and watchmode, but we will use saved data for now:
-// 	const imdbTitleData = require('./tmp/imdb-title-saved.json');
-// 	const watchmodeSourcesData = require('./tmp/watchmode-sources-saved.json');
-
-// 	const movieSources = sourceHandler(watchmodeSourcesData);
-
-// 	let movieData = {
-// 		imdbID: imdbID,
-// 		movieTitle: imdbTitleData.title,
-// 		movieYear: imdbTitleData.year,
-// 		contentRating: imdbTitleData.contentRating,
-// 		moviePoster: imdbTitleData.image,
-// 		movieSummary: imdbTitleData.plot,
-// 		imdbRating: imdbTitleData.imDbRating,
-// 		metacriticRating: imdbTitleData.metacriticRating,
-// 		movieBudget: imdbTitleData.boxOffice.budget,
-// 		movieGross: imdbTitleData.boxOffice.cumulativeWorldwideGross,
-// 		moviePurchaseArray: movieSources.purchaseSources,
-// 		movieRentArray: movieSources.rentalSources,
-// 		movieStreamingArray: movieSources.streamingSources,
-// 	};
-
-// 	// console.log('movieData on following line:');
-// 	// console.dir(movieData);
-
-// 	let imdbSearchData = stateHandler.loadSearchState();
-
-// 	// stateHandler.saveMovieDataState(movieData);
-
-// 	console.log('req.session on following line:');
-// 	console.dir(req.session);
-
-// 	res.render('pages/index.ejs', {
-// 		imdbSearchData: imdbSearchData,
-// 		movieData: movieData,
-// 		detailsLink: savedData == true ? '/saved-details' : '/details',
-// 		req: req,
-// 	});
-// });
-
 ///////////////////////////////////////////// Getting movie details
 
 app.get('/details', async (req, res) => {
@@ -477,8 +426,8 @@ app.get('/details', async (req, res) => {
 			movieStreamingArray: movieSources.streamingSources,
 		};
 
-		console.log(`movieData is a ${typeof movieData}:`);
-		console.dir(movieData);
+		// console.log(`movieData is a ${typeof movieData}:`);
+		// console.dir(movieData);
 
 		res.render('pages/index.ejs', {
 			imdbSearchData: imdbSearchData,

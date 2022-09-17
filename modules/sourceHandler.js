@@ -26,8 +26,8 @@ function replaceDetailData(data) {
 
 	const output = { purchaseSources, rentalSources, streamingSources };
 
-	console.log('sourceHandler.js replaceDetailData() data on next line:');
-	console.dir(output);
+	// console.log('sourceHandler.js replaceDetailData() data on next line:');
+	// console.dir(output);
 
 	return output;
 }
@@ -59,8 +59,8 @@ function sortSavedData(data) {
 
 	const output = { purchaseSources, rentalSources, streamingSources };
 
-	console.log('sourceHandler.js sortSavedData() data on next line:');
-	console.dir(output);
+	// console.log('sourceHandler.js sortSavedData() data on next line:');
+	// console.dir(output);
 
 	return output;
 }
