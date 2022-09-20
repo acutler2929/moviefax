@@ -31,19 +31,19 @@
 				</div>
 			</div>
 			<div class="text-center">
-				<% if (req.session.loggedin) { %>
+				<% if (req.session.loggedin && isSaved == false) { %>
 				<form action="/add-movie" method="post">
 					<input
 						type="submit"
-						value="ADD me to your list!"
+						value="ADD me to your list"
 						class="btn btn-primary"
 					/>
 				</form>
-				<% } else { %>
-				<form action="/drop-movie" method="delete">
+				<% } else if (req.session.loggedin && isSaved == true) { %>
+				<form action="/drop-movie" method="get">
 					<input
 						type="submit"
-						value="DROP me from your list!"
+						value="DROP me from your list"
 						class="btn btn-danger"
 					/>
 				</form>

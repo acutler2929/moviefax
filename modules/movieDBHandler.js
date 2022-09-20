@@ -241,5 +241,21 @@ exports.addSelection = function (userid, imdbid, connection) {
 
 ////////////////// and this function DROPS a user's selected movie...
 exports.deleteSelection = function (userid, imdbid, connection) {
-	console.log('movieDBHandler.deleteMovie() fired...');
+	console.log(
+		`movieDBHandler.addUserId() fired with userid and imdbid: ${[
+			userid,
+			imdbid,
+		]}`
+	);
+
+	connection.query(
+		'DELETE FROM selected_movies WHERE user_id = ? AND imdb_id = ?;',
+		[userid, imdbid],
+		function (error, results, fields) {
+			if (error) {
+				console.log(JSON.stringify(error));
+			}
+			console.log(JSON.stringify(results));
+		}
+	);
 };

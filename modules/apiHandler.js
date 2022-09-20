@@ -11,11 +11,12 @@ let imdbTitleData;
 let watchmodeSourcesData;
 
 exports.searchMovieData = async function (query) {
-	console.log(`apiHandler.js: searching query ${query}`);
+	console.log(`apiHandler.js: searchMovieData() query ${query}`);
 	await axios
 		.get(`https://imdb-api.com/en/API/SearchMovie/${imdbApiKey}/${query}`)
 		.then((res) => {
 			// handle success
+			console.log('apiHandler.js: searchMovieData() calling imdb api...');
 			searchData = res.data;
 			return searchData;
 		})
@@ -29,10 +30,14 @@ exports.searchMovieData = async function (query) {
 };
 
 exports.selectedMovieData = async function (imdbID) {
+	console.log(`apiHandler.js: selectedMovieData() query ${imdbID}`);
 	await axios
 		.get(`https://imdb-api.com/en/API/Title/${imdbApiKey}/${imdbID}`)
 		.then((res) => {
 			// handle success
+			console.log(
+				'apiHandler.js: selectedMovieData() calling imdb api...'
+			);
 			imdbTitleData = res.data;
 			return imdbTitleData;
 		})
@@ -48,6 +53,9 @@ exports.selectedMovieData = async function (imdbID) {
 		)
 		.then((res) => {
 			// handle success
+			console.log(
+				'apiHandler.js: selectedMovieData() calling watchmode api...'
+			);
 			watchmodeSourcesData = res.data;
 			return watchmodeSourcesData;
 		})

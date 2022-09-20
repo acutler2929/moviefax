@@ -87,10 +87,10 @@ app.get('/', async (req, res) => {
 			.then((savedList) => {
 				console.log(`savedList is a ${typeof savedList}`);
 				savedListObject = JSON.parse(savedList);
-				console.log(
-					`savedListObject is a ${typeof savedListObject} and here is the first entry:`
-				);
-				console.dir(savedListObject[0]);
+				// console.log(
+				// 	`savedListObject is a ${typeof savedListObject} and here is the first entry:`
+				// );
+				// console.dir(savedListObject[0]);
 
 				return savedListObject;
 			})
@@ -376,17 +376,17 @@ app.get('/details', async (req, res) => {
 	let imdbSearchData = stateHandler.loadSearchState();
 	let savedList = stateHandler.loadUserListState();
 
-	///////// using a function with a loop to check if this movie is included in the user's saved list
+	///////// using a function with a loop to check if this movie is included in the user's saved MYSQL list
+	let isSaved = new Boolean(true);
 	function isMovieSaved(imdbID, savedList) {
-		let result = new Boolean(true);
 		let imdbList = [];
 		for (let i in savedList) {
 			imdbList.push(savedList[i].imdb_id);
 		}
 		// console.log(imdbList);
-		result = imdbList.includes(imdbID) ? true : false;
+		isSaved = imdbList.includes(imdbID) ? true : false;
 
-		if (result == true) {
+		if (isSaved == true) {
 			console.log('movie data IS stored in MYSQL, retrieving it now...');
 		} else {
 			console.log(
@@ -394,11 +394,13 @@ app.get('/details', async (req, res) => {
 			);
 		}
 
-		return result;
+		return isSaved;
 	}
 
+	isSaved = isMovieSaved(imdbID, savedList); // <-- should be a boolean reflecting whether movie is saved to the user or not
+
 	/////////// if it is, get the data from MYSQL
-	if (req.session.loggedin && isMovieSaved(imdbID, savedList) == true) {
+	if (req.session.loggedin && isSaved == true) {
 		let movieDBData = await movieDBHandler.getMovieDetails(
 			imdbID,
 			connection
@@ -434,6 +436,7 @@ app.get('/details', async (req, res) => {
 			movieData: movieData,
 			detailsLink: savedData == true ? '/saved-details' : '/details',
 			savedList: savedList,
+			isSaved: isSaved,
 			req: req,
 		});
 	} else {
@@ -470,11 +473,15 @@ app.get('/details', async (req, res) => {
 				movieStreamingArray: movieSources.streamingSources,
 			};
 
+			///////////// saving the selected movie details to tmp folder state:
+			stateHandler.saveMovieDataState(movieData);
+
 			res.render('pages/index.ejs', {
 				imdbSearchData: imdbSearchData,
 				movieData: movieData,
 				detailsLink: savedData == true ? '/saved-details' : '/details',
 				savedList: savedList,
+				isSaved: isSaved,
 				req: req,
 			});
 		}
@@ -489,7 +496,6 @@ app.post('/add-movie', (req, res) => {
 	console.dir(req.session);
 
 	//////////////// read the movie data state from TMP folder
-	// let movieData = JSON.parse(fs.readFileSync('./tmp/movie-data-state.json'));
 	let movieData = stateHandler.loadMovieDataState();
 
 	////////////////// see if this movie is stored in user_movies already
@@ -499,6 +505,9 @@ app.post('/add-movie', (req, res) => {
 		function (error, results, fields) {
 			///////////// if it is, just add the current user's userid and imdb_id to selected_movies
 			if (results && results.length > 0) {
+				console.log(
+					'movie IS SAVED, adding userid and imdb_id to table selected_movies'
+				);
 				console.log(results);
 
 				movieDBHandler.addSelection(
@@ -509,6 +518,7 @@ app.post('/add-movie', (req, res) => {
 
 				//////////////// if NOT, add the MOVIE and SOURCES info, with current user's id, to MYSQL tables: user_movies and movie_sources, then add user_id and imdb_id to selected_movies
 			} else if (!results || results.length == 0) {
+				console.log('movie is NOT saved, adding it to MYSQL now');
 				movieDBHandler.addMovie(movieData, connection);
 				movieDBHandler.addSelection(
 					req.session.userid,
@@ -526,18 +536,16 @@ app.post('/add-movie', (req, res) => {
 
 ////////////////////////// Dropping a movie from a user's list:
 
-app.delete('/drop-movie', (req, res) => {
+app.get('/drop-movie', (req, res) => {
 	console.log(req.url);
 	console.log('req.session on following line:');
 	console.dir(req.session);
 
-	let movieData = stateHandler.loadMovieDataState();
+	const { query, pathname } = url.parse(req.url, true);
+	const imdbID = query.id;
+	console.log(`/drop-movie: receiving DELETE query for imdbID ${imdbID}`);
 
-	movieDBHandler.deleteSelection(
-		req.session.userid,
-		movieData.imdbID,
-		connection
-	);
+	movieDBHandler.deleteSelection(req.session.userid, imdbID, connection);
 
 	res.redirect('/');
 });
