@@ -80,7 +80,7 @@ app.get('/', async (req, res) => {
 		})
 			.then((savedList) => {
 				/////////////// saving the current user's movies to the state:
-				stateHandler.saveUserListState(savedList);
+				stateHandler.saveUserListState(req.session.userid, savedList);
 
 				return savedList;
 			})
@@ -99,8 +99,8 @@ app.get('/', async (req, res) => {
 			});
 
 		///////////// handling state:
-		let imdbSearchData = stateHandler.loadSearchState();
-		let movieData = stateHandler.loadMovieDataState();
+		let imdbSearchData = stateHandler.loadSearchState(req.session.userid);
+		let movieData = stateHandler.loadMovieDataState(req.session.userid);
 
 		res.render('pages/index', {
 			detailsLink: savedData == true ? '/saved-details' : '/details',
@@ -308,9 +308,9 @@ app.get('/saved-state-data', (req, res) => {
 	console.log('req.session on following line:');
 	console.dir(req.session);
 
-	let imdbSearchData = stateHandler.loadSearchState();
-	let movieData = stateHandler.loadMovieDataState();
-	let savedList = stateHandler.loadUserListState();
+	let imdbSearchData = stateHandler.loadSearchState(req.session.userid);
+	let movieData = stateHandler.loadMovieDataState(req.session.userid);
+	let savedList = stateHandler.loadUserListState(req.session.userid);
 	// console.log(`savedList is a ${typeof savedList}, here it is:`);
 	// console.dir(savedList);
 
@@ -331,6 +331,8 @@ app.post('/query-search', async (req, res) => {
 	console.log('req.body on next line:');
 	console.dir(req.body);
 	console.log(`app.js: receiving query for movie name ${query}`);
+	console.log('and here is req.params:');
+	console.dir(req.params);
 	const savedData = new Boolean(false);
 	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
 
@@ -348,9 +350,9 @@ app.post('/query-search', async (req, res) => {
 		const imdbSearchData = imdbResponse;
 
 		////////// handling state:
-		stateHandler.saveSearchState(imdbSearchData);
-		let movieData = stateHandler.loadMovieDataState();
-		let savedList = stateHandler.loadUserListState();
+		stateHandler.saveSearchState(req.session.userid, imdbSearchData);
+		let movieData = stateHandler.loadMovieDataState(req.session.userid);
+		let savedList = stateHandler.loadUserListState(req.session.userid);
 
 		res.render('pages/index.ejs', {
 			searchQuery: imdbResponse.expression,
@@ -367,14 +369,16 @@ app.post('/query-search', async (req, res) => {
 
 app.get('/details', async (req, res) => {
 	let savedData = new Boolean(false);
+	console.log('req.body on next line:');
+	console.dir(req.body);
 	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
 	const { query, pathname } = url.parse(req.url, true);
 	const imdbID = query.id;
 	console.log(`/details: receiving query for imdbID ${imdbID}`);
 
 	/////////// loading movie-list state from temporary files:
-	let imdbSearchData = stateHandler.loadSearchState();
-	let savedList = stateHandler.loadUserListState();
+	let imdbSearchData = stateHandler.loadSearchState(req.session.userid);
+	let savedList = stateHandler.loadUserListState(req.session.userid);
 
 	///////// using a function with a loop to check if this movie is included in the user's saved MYSQL list
 	let isSaved = new Boolean(true);
@@ -429,7 +433,7 @@ app.get('/details', async (req, res) => {
 		};
 
 		///////////// saving the selected movie details to tmp folder state:
-		stateHandler.saveMovieDataState(movieData);
+		stateHandler.saveMovieDataState(req.session.userid, movieData);
 		// console.log(`movieData is a ${typeof movieData}:`);
 		// console.dir(movieData);
 
@@ -476,7 +480,7 @@ app.get('/details', async (req, res) => {
 			};
 
 			///////////// saving the selected movie details to tmp folder state:
-			stateHandler.saveMovieDataState(movieData);
+			stateHandler.saveMovieDataState(req.session.userid, movieData);
 
 			res.render('pages/index.ejs', {
 				imdbSearchData: imdbSearchData,
@@ -498,7 +502,7 @@ app.post('/add-movie', (req, res) => {
 	console.dir(req.session);
 
 	//////////////// read the movie data state from TMP folder
-	let movieData = stateHandler.loadMovieDataState();
+	let movieData = stateHandler.loadMovieDataState(req.session.userid);
 
 	////////////////// see if this movie is stored in user_movies already
 	connection.query(
@@ -544,7 +548,7 @@ app.get('/drop-movie', async (req, res) => {
 	console.dir(req.session);
 
 	///////////// loading movieData from tmp folder state:
-	const movieData = await stateHandler.loadMovieDataState();
+	const movieData = await stateHandler.loadMovieDataState(req.session.userid);
 	const imdbID = movieData.imdbID;
 
 	console.log(`/drop-movie: receiving DELETE query for imdbID ${imdbID}`);

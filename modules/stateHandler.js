@@ -2,11 +2,39 @@
 
 const fs = require('fs');
 
+////////////////// checking if user dir exists, and creating it if it doesn't
+
+const checkDir = function (userID) {
+	const userDir = fs.existsSync(`./tmp/user-${userID}`);
+
+	if (userDir == true) {
+		return;
+	} else if (userDir == false) {
+		fs.mkdirSync(`./tmp/user-${userID}`);
+		return;
+	}
+};
+
+/////////////// checking if user dir exists, and NOT LOADING it if it doesn't
+
+// const checkReadDir = function (userID) {
+// 	const userDir = fs.existsSync(`./tmp/user-${userID}`);
+
+// 	if (userDir == true) {
+// 		return;
+// 	} else if (userDir == false) {
+// 		fs.mkdirSync(`./tmp/user-${userID}`);
+// 		return;
+// 	}
+// };
+
 /////////////////// SAVING state to tmp folder
-exports.saveMovieDataState = function (data) {
+exports.saveMovieDataState = function (userID, data) {
+	checkDir(userID);
+
 	try {
 		fs.writeFile(
-			'./tmp/movie-data-state.json',
+			`./tmp/user-${userID}/movie-data-state.json`,
 			JSON.stringify(data),
 			(err) => {
 				console.log(err);
@@ -18,10 +46,12 @@ exports.saveMovieDataState = function (data) {
 	}
 };
 
-exports.saveSearchState = function (data) {
+exports.saveSearchState = function (userID, data) {
+	checkDir(userID);
+
 	try {
 		fs.writeFile(
-			'./tmp/movie-search-state.json',
+			`./tmp/user-${userID}/movie-search-state.json`,
 			JSON.stringify(data),
 			(err) => {
 				console.log(err);
@@ -33,10 +63,12 @@ exports.saveSearchState = function (data) {
 	}
 };
 
-exports.saveUserListState = function (data) {
+exports.saveUserListState = function (userID, data) {
+	checkDir(userID);
+
 	try {
 		fs.writeFile(
-			'./tmp/user-list-state.json',
+			`./tmp/user-${userID}/user-list-state.json`,
 			JSON.stringify(data),
 			(err) => {
 				console.log(err);
@@ -49,10 +81,15 @@ exports.saveUserListState = function (data) {
 };
 
 ///////////////// LOADING state from tmp folder
-exports.loadMovieDataState = function () {
+exports.loadMovieDataState = function (userID) {
+	checkDir(userID);
+
 	try {
 		let results = JSON.parse(
-			fs.readFileSync('./tmp/movie-data-state.json', 'utf-8')
+			fs.readFileSync(
+				`./tmp/user-${userID}/movie-data-state.json`,
+				'utf-8'
+			)
 		);
 		console.log('stateHandler.js: loaded movie data state');
 		return results;
@@ -62,10 +99,15 @@ exports.loadMovieDataState = function () {
 	return results;
 };
 
-exports.loadSearchState = function () {
+exports.loadSearchState = function (userID) {
+	checkDir(userID);
+
 	try {
 		let results = JSON.parse(
-			fs.readFileSync('./tmp/movie-search-state.json', 'utf-8')
+			fs.readFileSync(
+				`./tmp/user-${userID}/movie-search-state.json`,
+				'utf-8'
+			)
 		);
 		console.log('stateHandler.js: loaded search state');
 		return results;
@@ -75,10 +117,17 @@ exports.loadSearchState = function () {
 	return results;
 };
 
-exports.loadUserListState = function () {
+exports.loadUserListState = function (userID) {
+	checkDir(userID);
+
 	try {
 		let results = JSON.parse(
-			JSON.parse(fs.readFileSync('./tmp/user-list-state.json', 'utf-8'))
+			JSON.parse(
+				fs.readFileSync(
+					`./tmp/user-${userID}/user-list-state.json`,
+					'utf-8'
+				)
+			)
 		);
 		console.log('stateHandler.js: loaded user list state');
 		return results;
