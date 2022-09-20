@@ -221,10 +221,7 @@ exports.getMovieList = async function (req, connection) {
 /////////////// building function to add userid to MYSQL movie row
 exports.addSelection = function (userid, imdbid, connection) {
 	console.log(
-		`movieDBHandler.addUserId() fired with userid and imdbid: ${[
-			userid,
-			imdbid,
-		]}`
+		`movieDBHandler.addUserId() fired with userid: ${userid}, and imdbid: ${imdbid}`
 	);
 
 	connection.query(
@@ -242,10 +239,7 @@ exports.addSelection = function (userid, imdbid, connection) {
 ////////////////// and this function DROPS a user's selected movie...
 exports.deleteSelection = function (userid, imdbid, connection) {
 	console.log(
-		`movieDBHandler.addUserId() fired with userid and imdbid: ${[
-			userid,
-			imdbid,
-		]}`
+		`movieDBHandler.deleteSelection() fired with userid: ${userid}, and imdbid: ${imdbid}`
 	);
 
 	connection.query(

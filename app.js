@@ -428,6 +428,8 @@ app.get('/details', async (req, res) => {
 			movieStreamingArray: movieSources.streamingSources,
 		};
 
+		///////////// saving the selected movie details to tmp folder state:
+		stateHandler.saveMovieDataState(movieData);
 		// console.log(`movieData is a ${typeof movieData}:`);
 		// console.dir(movieData);
 
@@ -536,13 +538,15 @@ app.post('/add-movie', (req, res) => {
 
 ////////////////////////// Dropping a movie from a user's list:
 
-app.get('/drop-movie', (req, res) => {
+app.get('/drop-movie', async (req, res) => {
 	console.log(req.url);
 	console.log('req.session on following line:');
 	console.dir(req.session);
 
-	const { query, pathname } = url.parse(req.url, true);
-	const imdbID = query.id;
+	///////////// loading movieData from tmp folder state:
+	const movieData = await stateHandler.loadMovieDataState();
+	const imdbID = movieData.imdbID;
+
 	console.log(`/drop-movie: receiving DELETE query for imdbID ${imdbID}`);
 
 	movieDBHandler.deleteSelection(req.session.userid, imdbID, connection);
