@@ -88,62 +88,71 @@ exports.saveUserListState = function (userID, data) {
 
 ///////////////// LOADING state from tmp folder
 exports.loadMovieDataState = function (userID) {
+	let results;
 	let stateFile = `./tmp/user-${userID}/movie-data-state.json`;
 	/////// checking if directory exists, and creaing it if it doesn't
 	checkDir(userID);
 	///////////// checking if file exists, and exiting if it doesn't
-	if (fs.existsSync(stateFile) == false) return;
-
-	try {
-		let results = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
-		console.log(
-			`stateHandler.js: loaded movie DATA state for userID ${userID}`
-		);
+	if (fs.existsSync(stateFile) == false) {
+		return;
+	} else {
+		try {
+			results = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+			console.log(
+				`stateHandler.js: loaded movie DATA state for userID: ${userID}`
+			);
+			return results;
+		} catch (error) {
+			console.log(error);
+		}
 		return results;
-	} catch (error) {
-		console.log(error);
 	}
-	return results;
 };
 
 exports.loadSearchState = function (userID) {
+	let results;
 	let stateFile = `./tmp/user-${userID}/movie-data-state.json`;
 	/////// checking if directory exists, and creaing it if it doesn't
 	checkDir(userID);
 	///////////// checking if file exists, and exiting if it doesn't
-	if (fs.existsSync(stateFile) == false) return;
-
-	try {
-		let results = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
-		console.log(
-			`stateHandler.js: loaded SEARCH state for userID ${userID}`
-		);
+	if (fs.existsSync(stateFile) == false) {
+		return;
+	} else {
+		try {
+			results = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+			console.log(
+				`stateHandler.js: loaded SEARCH state for userID: ${userID}`
+			);
+			return results;
+		} catch (error) {
+			console.log(error);
+		}
 		return results;
-	} catch (error) {
-		console.log(error);
 	}
-	return results;
 };
 
 exports.loadUserListState = function (userID) {
+	let results;
 	let stateFile = `./tmp/user-${userID}/movie-data-state.json`;
 	/////// checking if directory exists, and creaing it if it doesn't
 	checkDir(userID);
 	///////////// checking if file exists, and exiting if it doesn't
-	if (fs.existsSync(stateFile) == false) return;
-
-	try {
-		let results = JSON.parse(
-			JSON.parse(fs.readFileSync(stateFile, 'utf-8'))
-		);
-		console.log(
-			`stateHandler.js: loaded user LIST state for userID: ${userID}`
-		);
+	if (fs.existsSync(stateFile) == false) {
+		return;
+	} else {
+		try {
+			let results = JSON.parse(
+				JSON.parse(fs.readFileSync(stateFile, 'utf-8'))
+			);
+			console.log(
+				`stateHandler.js: loaded user LIST state for userID: ${userID}`
+			);
+			return results;
+		} catch (error) {
+			console.log(error);
+		}
 		return results;
-	} catch (error) {
-		console.log(error);
 	}
-	return results;
 };
 
 /////////////////////// Building classes to store movie data and lists...
