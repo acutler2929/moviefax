@@ -40,7 +40,9 @@ exports.saveMovieDataState = function (userID, data) {
 				console.log(err);
 			}
 		);
-		console.log('stateHandler.js: saved movie data state');
+		console.log(
+			`stateHandler.js: saved movie DATA state for userID: ${userID}`
+		);
 	} catch (error) {
 		console.log(error);
 	}
@@ -57,7 +59,9 @@ exports.saveSearchState = function (userID, data) {
 				console.log(err);
 			}
 		);
-		console.log('stateHandler.js: saved movie search state');
+		console.log(
+			`stateHandler.js: saved movie SEARCH state for userID: ${userID}`
+		);
 	} catch (error) {
 		console.log(error);
 	}
@@ -74,7 +78,9 @@ exports.saveUserListState = function (userID, data) {
 				console.log(err);
 			}
 		);
-		console.log('stateHandler.js: saved user list state');
+		console.log(
+			`stateHandler.js: saved user LIST state for userID: ${userID}`
+		);
 	} catch (error) {
 		console.log(error);
 	}
@@ -82,16 +88,17 @@ exports.saveUserListState = function (userID, data) {
 
 ///////////////// LOADING state from tmp folder
 exports.loadMovieDataState = function (userID) {
+	let stateFile = `./tmp/user-${userID}/movie-data-state.json`;
+	/////// checking if directory exists, and creaing it if it doesn't
 	checkDir(userID);
+	///////////// checking if file exists, and exiting if it doesn't
+	if (fs.existsSync(stateFile) == false) return;
 
 	try {
-		let results = JSON.parse(
-			fs.readFileSync(
-				`./tmp/user-${userID}/movie-data-state.json`,
-				'utf-8'
-			)
+		let results = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+		console.log(
+			`stateHandler.js: loaded movie DATA state for userID ${userID}`
 		);
-		console.log('stateHandler.js: loaded movie data state');
 		return results;
 	} catch (error) {
 		console.log(error);
@@ -100,16 +107,17 @@ exports.loadMovieDataState = function (userID) {
 };
 
 exports.loadSearchState = function (userID) {
+	let stateFile = `./tmp/user-${userID}/movie-data-state.json`;
+	/////// checking if directory exists, and creaing it if it doesn't
 	checkDir(userID);
+	///////////// checking if file exists, and exiting if it doesn't
+	if (fs.existsSync(stateFile) == false) return;
 
 	try {
-		let results = JSON.parse(
-			fs.readFileSync(
-				`./tmp/user-${userID}/movie-search-state.json`,
-				'utf-8'
-			)
+		let results = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+		console.log(
+			`stateHandler.js: loaded SEARCH state for userID ${userID}`
 		);
-		console.log('stateHandler.js: loaded search state');
 		return results;
 	} catch (error) {
 		console.log(error);
@@ -118,18 +126,19 @@ exports.loadSearchState = function (userID) {
 };
 
 exports.loadUserListState = function (userID) {
+	let stateFile = `./tmp/user-${userID}/movie-data-state.json`;
+	/////// checking if directory exists, and creaing it if it doesn't
 	checkDir(userID);
+	///////////// checking if file exists, and exiting if it doesn't
+	if (fs.existsSync(stateFile) == false) return;
 
 	try {
 		let results = JSON.parse(
-			JSON.parse(
-				fs.readFileSync(
-					`./tmp/user-${userID}/user-list-state.json`,
-					'utf-8'
-				)
-			)
+			JSON.parse(fs.readFileSync(stateFile, 'utf-8'))
 		);
-		console.log('stateHandler.js: loaded user list state');
+		console.log(
+			`stateHandler.js: loaded user LIST state for userID: ${userID}`
+		);
 		return results;
 	} catch (error) {
 		console.log(error);

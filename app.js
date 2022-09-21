@@ -110,6 +110,10 @@ app.get('/', async (req, res) => {
 			req: req,
 		});
 	} else {
+		req.session.username = 'guest';
+		req.session.userid = '0';
+		req.session.userEmail = '';
+
 		res.render('pages/index', {
 			req: req,
 		});
@@ -214,8 +218,8 @@ app.get('/logout', (req, res) => {
 	console.log('Logout button fired');
 
 	req.session.loggedin = false;
-	req.session.username = '';
-	req.session.userid = '';
+	req.session.username = 'guest';
+	req.session.userid = '0';
 	req.session.userEmail = '';
 
 	res.redirect('/');
@@ -328,13 +332,10 @@ app.get('/saved-state-data', (req, res) => {
 
 app.post('/query-search', async (req, res) => {
 	const query = req.body.query;
-	console.log('req.body on next line:');
-	console.dir(req.body);
+
 	console.log(`app.js: receiving query for movie name ${query}`);
-	console.log('and here is req.params:');
-	console.dir(req.params);
+
 	const savedData = new Boolean(false);
-	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
 
 	// imdbResponse comes back from api Handler...
 	const imdbResponse = await apiHandler.searchMovieData(query);
