@@ -4,16 +4,16 @@ const fs = require('fs');
 
 ////////////////// checking if user dir exists, and creating it if it doesn't
 
-const checkDir = function (userID) {
-	const userDir = fs.existsSync(`./tmp/user-${userID}`);
+// const checkDir = function (userID) {
+// 	const userDir = fs.existsSync(`./tmp/user-${userID}`);
 
-	if (userDir == true) {
-		return;
-	} else if (userDir == false) {
-		fs.mkdirSync(`./tmp/user-${userID}`);
-		return;
-	}
-};
+// 	if (userDir == true) {
+// 		return;
+// 	} else if (userDir == false) {
+// 		fs.mkdirSync(`./tmp/user-${userID}`);
+// 		return;
+// 	}
+// };
 
 /////////////// checking if user dir exists, and NOT LOADING it if it doesn't
 
@@ -27,6 +27,7 @@ const checkDir = function (userID) {
 // 		return;
 // 	}
 // };
+/*
 
 /////////////////// SAVING state to tmp folder
 exports.saveMovieDataState = function (userID, data) {
@@ -154,31 +155,53 @@ exports.loadUserListState = function (userID) {
 		return results;
 	}
 };
-
-/////////////////////// Building classes to store movie data and lists...
-//////////// still haven't made up my mind about using this...
-/*
-export class movieData {
-	constructor(imdbId, name, salary) {
-		this.imdbId = imdbId;
-		this.name = name;
-		this.salary = salary;
-	}
-
-	addToList() {
-		this.salary += 100;
-	}
-}
-
-export class movieList {
-	constructor(id, name, salary) {
-		this.id = id;
-		this.name = name;
-		this.salary = salary;
-	}
-
-	increaseSalary() {
-		this.salary += 100;
-	}
-}
 */
+
+/////////////////////// Building classes to store movie data and lists... ///////////////////////////////////////////////////
+//////////// still haven't made up my mind about using this... //////////////////////////////////////////////////////////////
+
+class MovieDataState {
+	constructor(movieData) {
+		this.movieData = movieData;
+	}
+
+	overWrite(newData) {
+		this.movieData = {};
+		this.movieData = newData;
+	}
+}
+
+class MovieSearchState {
+	constructor(searchData) {
+		this.searchData = searchData;
+	}
+
+	overWrite(newData) {
+		this.searchData = {};
+		this.searchData = newData;
+	}
+}
+
+class MovieListState {
+	constructor(listData) {
+		this.listData = listData;
+	}
+
+	addMovie(movieData) {
+		this.listData.push(movieData);
+	}
+
+	dropMovie(imdbID) {
+		const index = this.listData.indexOf(imdbID);
+		if (index > -1) {
+			// only splice array when item is found
+			array.splice(index, 1); // 2nd parameter means remove one item only
+		}
+	}
+}
+
+module.exports = {
+	MovieDataState: MovieDataState,
+	MovieSearchState: MovieSearchState,
+	MovieListState: MovieListState,
+};

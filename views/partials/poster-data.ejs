@@ -2,7 +2,7 @@
 	<div class="d-flex col-5" id="movie-data-left">
 		<div class="flex-grow-1">
 			<img
-				src="<%= movieData.moviePoster %>"
+				src="<%= movieDataState.moviePoster %>"
 				class="img-fluid"
 				id="movie-data-poster"
 			/>
@@ -10,24 +10,24 @@
 	</div>
 	<div class="col-7" id="movie-data-right">
 		<div id="data-summary-wrapper">
-			<h3 class="text-center"><%= movieData.movieTitle %></h3>
-			<p><%= movieData.movieSummary %></p>
+			<h3 class="text-center"><%= movieDataState.movieTitle %></h3>
+			<p><%= movieDataState.movieSummary %></p>
 		</div>
 		<div class="row flex-grow-1" id="data-rating-wrapper">
 			<div class="row justify-content-around">
 				<div class="col-3">
-					<p>IMDB: <%= movieData.imdbRating %></p>
+					<p>IMDB: <%= movieDataState.imdbRating %></p>
 				</div>
 				<div class="col-3">
-					<p>Metacritic: <%= movieData.metacriticRating %></p>
+					<p>Metacritic: <%= movieDataState.metacriticRating %></p>
 				</div>
 			</div>
 			<div class="row justify-content-around">
 				<div class="col-3">
-					<p>Budget: <%= movieData.movieBudget %></p>
+					<p>Budget: <%= movieDataState.movieBudget %></p>
 				</div>
 				<div class="col-3">
-					<p>Gross: <%= movieData.movieGross %></p>
+					<p>Gross: <%= movieDataState.movieGross %></p>
 				</div>
 			</div>
 			<div class="text-center">
