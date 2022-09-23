@@ -161,13 +161,16 @@ exports.loadUserListState = function (userID) {
 //////////// still haven't made up my mind about using this... //////////////////////////////////////////////////////////////
 
 class MovieDataState {
-	constructor(movieData) {
+	constructor(movieData, movieSources) {
 		this.movieData = movieData;
+		this.movieSources = movieSources;
 	}
 
-	overWrite(newData) {
+	overWrite(newData, newSources) {
 		this.movieData = {};
+		this.movieSources = [];
 		this.movieData = newData;
+		this.movieSources = newSources;
 	}
 }
 
@@ -182,7 +185,7 @@ class MovieSearchState {
 	}
 }
 
-class MovieListState {
+class UserListState {
 	constructor(listData) {
 		this.listData = listData;
 	}
@@ -203,5 +206,5 @@ class MovieListState {
 module.exports = {
 	MovieDataState: MovieDataState,
 	MovieSearchState: MovieSearchState,
-	MovieListState: MovieListState,
+	UserListState: UserListState,
 };

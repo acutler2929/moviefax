@@ -14,6 +14,7 @@ const movieDBHandler = require('./modules/movieDBHandler');
 const loginHandler = require('./modules/loginHandler');
 const sourceHandler = require('./modules/sourceHandler');
 const stateHandler = require('./modules/stateHandler');
+const { MovieSearchState } = require('./modules/stateHandler');
 // const { doesNotMatch } = require('assert');
 // const { callbackPromise } = require('nodemailer/lib/shared');
 
@@ -52,6 +53,8 @@ app.get('/', async (req, res) => {
 	console.log('welcome to homepage');
 	console.log(`req.url: ${req.url}`);
 
+	localStorage.setItem();
+
 	//////// check if user is logged in
 	if (req.session.loggedin == true) {
 		/////////// if they are, send their list of movies
@@ -82,7 +85,7 @@ app.get('/', async (req, res) => {
 				/////////////// saving the current user's movies to the state:
 				// stateHandler.saveUserListState(req.session.userid, savedList);
 
-				savedListState = new stateHandler.MovieListState(
+				savedListState = new stateHandler.UserListState(
 					JSON.parse(savedList)
 				);
 
@@ -95,7 +98,9 @@ app.get('/', async (req, res) => {
 		///////////// handling state:
 		// let imdbSearchData = stateHandler.loadSearchState(req.session.userid);
 		// let movieData = stateHandler.loadMovieDataState(req.session.userid);
-		// somehow pass imdbSearchState and movieDataState
+		// somehow pass movieSearchState and movieDataState
+		console.log('here is savedListState:');
+		console.dir(savedListState);
 
 		res.render('pages/index', {
 			detailsLink: savedData == true ? '/saved-details' : '/details',
@@ -103,19 +108,10 @@ app.get('/', async (req, res) => {
 			req: req,
 		});
 	} else {
-		req.session.username = 'guest';
-		req.session.userid = '0';
-		req.session.userEmail = '';
-
 		res.render('pages/index', {
 			req: req,
 		});
 	}
-
-	/////////// loading movie-list state from temporary files:
-	// let imdbSearchData = JSON.parse(
-	// 	fs.readFileSync('./tmp/movie-list-state.json')
-	// );
 });
 
 ///////////////////////////////////////////////////// Login module
@@ -292,7 +288,7 @@ app.post('/change-password', async (req, res) => {
 });
 
 ///////////////////////////////////////////////////////// Searching movies with SAMPLE data...
-
+/*
 app.get('/saved-state-data', (req, res) => {
 	console.log('app.js receiving query for STATE data');
 	const savedData = new Boolean(true);
@@ -320,7 +316,7 @@ app.get('/saved-state-data', (req, res) => {
 		req: req,
 	});
 });
-
+*/
 ///////////////////////////////////////////////////////// Searching movies...
 
 app.post('/query-search', async (req, res) => {
@@ -341,9 +337,18 @@ app.post('/query-search', async (req, res) => {
 			`app.js: received imdbResponse for movie ${imdbResponse.results[0].title}`
 		);
 
-		const imdbSearchData = imdbResponse;
-
+		// const imdbSearchData = imdbResponse;
+		// let movieSearchState = new stateHandler.MovieSearchState(
+		// 	JSON.parse(imdbResponse)
+		// );
 		////////// handling state:
+		localStorage.setItem(
+			'movieSearchState',
+			JSON.stringify(
+				new stateHandler.MovieSearchState(JSON.parse(imdbResponse))
+			)
+		);
+
 		// stateHandler.saveSearchState(req.session.userid, imdbSearchData);
 		// let movieData = stateHandler.loadMovieDataState(req.session.userid);
 		// let savedList = stateHandler.loadUserListState(req.session.userid);
@@ -351,9 +356,9 @@ app.post('/query-search', async (req, res) => {
 		res.render('pages/index.ejs', {
 			searchQuery: imdbResponse.expression,
 			detailsLink: savedData == true ? '/saved-details' : '/details',
-			imdbSearchData: imdbSearchData,
-			movieData: movieData,
-			savedList: savedList,
+			movieSearchState: localStorage.getItem('movieSearchState'),
+			movieDataState: localStorage.getItem('movieDataState'),
+			savedListState: savedListState,
 			req: req,
 		});
 	}
@@ -376,6 +381,7 @@ app.get('/details', async (req, res) => {
 
 	///////// using a function with a loop to check if this movie is included in the user's saved MYSQL list
 	let isSaved = new Boolean(true);
+	////////// check imdbID against the imdb_id in savedList
 	function isMovieSaved(imdbID, savedList) {
 		let imdbList = [];
 		for (let i in savedList) {
@@ -404,12 +410,6 @@ app.get('/details', async (req, res) => {
 			connection
 		);
 
-		let movieSources = sourceHandler.sortSavedData(
-			movieDBData.movieSourcesArray
-		);
-		// console.log('movieDataResponse.imdbTitleData:');
-		// console.dir(movieDataResponse.imdbTitleData);
-
 		let movieData = {
 			imdbID: imdbID,
 			movieTitle: movieDBData.movie_title,
@@ -421,10 +421,37 @@ app.get('/details', async (req, res) => {
 			metacriticRating: movieDBData.metacritic_rating,
 			movieBudget: movieDBData.movie_budget,
 			movieGross: movieDBData.movie_gross,
-			moviePurchaseArray: movieSources.purchaseSources,
-			movieRentArray: movieSources.rentalSources,
-			movieStreamingArray: movieSources.streamingSources,
 		};
+
+		let movieSources = sourceHandler.sortSavedData(
+			movieDBData.movieSourcesArray
+		);
+
+		localStorage.setItem(
+			'movieDataState',
+			JSON.stringify(
+				new stateHandler.MovieDataState(movieData, movieSources)
+			)
+		);
+
+		// console.log('movieDataResponse.imdbTitleData:');
+		// console.dir(movieDataResponse.imdbTitleData);
+
+		// let movieData = {
+		// 	imdbID: imdbID,
+		// 	movieTitle: movieDBData.movie_title,
+		// 	movieYear: movieDBData.release_year,
+		// 	contentRating: movieDBData.content_rating,
+		// 	moviePoster: movieDBData.movie_poster,
+		// 	movieSummary: movieDBData.movie_summary,
+		// 	imdbRating: movieDBData.imdb_rating,
+		// 	metacriticRating: movieDBData.metacritic_rating,
+		// 	movieBudget: movieDBData.movie_budget,
+		// 	movieGross: movieDBData.movie_gross,
+		// 	moviePurchaseArray: movieSources.purchaseSources,
+		// 	movieRentArray: movieSources.rentalSources,
+		// 	movieStreamingArray: movieSources.streamingSources,
+		// };
 
 		///////////// saving the selected movie details to tmp folder state:
 		// stateHandler.saveMovieDataState(req.session.userid, movieData);
@@ -432,10 +459,10 @@ app.get('/details', async (req, res) => {
 		// console.dir(movieData);
 
 		res.render('pages/index.ejs', {
-			imdbSearchData: imdbSearchData,
-			movieData: movieData,
+			movieSearchState: localStorage.getItem('movieSearchState'),
+			movieDataState: localStorage.getItem('movieDataState'),
 			detailsLink: savedData == true ? '/saved-details' : '/details',
-			savedList: savedList,
+			savedListState: savedListState,
 			isSaved: isSaved,
 			req: req,
 		});
@@ -448,12 +475,6 @@ app.get('/details', async (req, res) => {
 		if (movieDataResponse.message === 'ERROR') {
 			res.send(movieDataResponse.errorMessage);
 		} else {
-			let movieSources = sourceHandler.replaceDetailData(
-				movieDataResponse.watchmodeSourcesData
-			);
-			// console.log('movieDataResponse.imdbTitleData:');
-			// console.dir(movieDataResponse.imdbTitleData);
-
 			let movieData = {
 				imdbID: imdbID,
 				movieTitle: movieDataResponse.imdbTitleData.title,
@@ -468,19 +489,46 @@ app.get('/details', async (req, res) => {
 				movieGross:
 					movieDataResponse.imdbTitleData.boxOffice
 						.cumulativeWorldwideGross,
-				moviePurchaseArray: movieSources.purchaseSources,
-				movieRentArray: movieSources.rentalSources,
-				movieStreamingArray: movieSources.streamingSources,
 			};
+
+			let movieSources = sourceHandler.replaceDetailData(
+				movieDataResponse.watchmodeSourcesData
+			);
+
+			localStorage.setItem(
+				'movieDataState',
+				JSON.stringify(
+					new stateHandler.MovieDataState(movieData, movieSources)
+				)
+			);
+
+			// let movieData = {
+			// 	imdbID: imdbID,
+			// 	movieTitle: movieDataResponse.imdbTitleData.title,
+			// 	movieYear: movieDataResponse.imdbTitleData.year,
+			// 	contentRating: movieDataResponse.imdbTitleData.contentRating,
+			// 	moviePoster: movieDataResponse.imdbTitleData.image,
+			// 	movieSummary: movieDataResponse.imdbTitleData.plot,
+			// 	imdbRating: movieDataResponse.imdbTitleData.imDbRating,
+			// 	metacriticRating:
+			// 		movieDataResponse.imdbTitleData.metacriticRating,
+			// 	movieBudget: movieDataResponse.imdbTitleData.boxOffice.budget,
+			// 	movieGross:
+			// 		movieDataResponse.imdbTitleData.boxOffice
+			// 			.cumulativeWorldwideGross,
+			// 	moviePurchaseArray: movieSources.purchaseSources,
+			// 	movieRentArray: movieSources.rentalSources,
+			// 	movieStreamingArray: movieSources.streamingSources,
+			// };
 
 			///////////// saving the selected movie details to tmp folder state:
 			// stateHandler.saveMovieDataState(req.session.userid, movieData);
 
 			res.render('pages/index.ejs', {
-				imdbSearchData: imdbSearchData,
-				movieData: movieData,
+				movieSearchState: localStorage.getItem('movieSearchState'),
+				movieDataState: localStorage.getItem('movieDataState'),
 				detailsLink: savedData == true ? '/saved-details' : '/details',
-				savedList: savedList,
+				savedListState: savedListState,
 				isSaved: isSaved,
 				req: req,
 			});
