@@ -53,13 +53,17 @@ app.get('/', async (req, res) => {
 	console.log('welcome to homepage');
 	console.log(`req.url: ${req.url}`);
 
-	localStorage.setItem();
+	////////////// DEFAULT telling the client not to expect search, movie or list state data:
+	req.session.containsSearchState = new Boolean(false);
+	req.session.containsMovieState = new Boolean(false);
+	req.session.containsListState = new Boolean(false);
 
 	//////// check if user is logged in
 	if (req.session.loggedin == true) {
 		/////////// if they are, send their list of movies
 		let savedListState;
-		const savedData = new Boolean(false);
+		//////////// telling client to expect list state data:
+		req.session.containsListState = true;
 
 		await new Promise((resolve, reject) => {
 			async function getUserMovies() {
@@ -70,10 +74,16 @@ app.get('/', async (req, res) => {
 				return results;
 			}
 
-			let savedList = getUserMovies();
+			let savedList;
+			(async function pleaseWait() {
+				savedList = await getUserMovies();
+				return savedList;
+			})();
 
 			console.log(
-				`savedList is a ${typeof savedList}, here it is: ${savedList}`
+				`savedList is a ${typeof savedList}, here is the first entry: ${
+					savedList.listData[0]
+				}`
 			);
 
 			resolve(savedList);
@@ -103,7 +113,6 @@ app.get('/', async (req, res) => {
 		console.dir(savedListState);
 
 		res.render('pages/index', {
-			detailsLink: savedData == true ? '/saved-details' : '/details',
 			savedListState: savedListState,
 			req: req,
 		});
@@ -287,44 +296,11 @@ app.post('/change-password', async (req, res) => {
 	res.redirect('/');
 });
 
-///////////////////////////////////////////////////////// Searching movies with SAMPLE data...
-/*
-app.get('/saved-state-data', (req, res) => {
-	console.log('app.js receiving query for STATE data');
-	const savedData = new Boolean(true);
-	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
-
-	console.log(`req.url: ${req.url}`);
-
-	// using saved data for now...
-
-	console.log('req.session on following line:');
-	console.dir(req.session);
-
-	// let imdbSearchData = stateHandler.loadSearchState(req.session.userid);
-	// let movieData = stateHandler.loadMovieDataState(req.session.userid);
-	// let savedList = stateHandler.loadUserListState(req.session.userid);
-	// console.log(`savedList is a ${typeof savedList}, here it is:`);
-	// console.dir(savedList);
-
-	res.render('pages/index.ejs', {
-		searchQuery: imdbSearchData.expression,
-		detailsLink: savedData == true ? '/saved-details' : '/details',
-		imdbSearchData: imdbSearchData,
-		movieData: movieData,
-		savedList: savedList,
-		req: req,
-	});
-});
-*/
 ///////////////////////////////////////////////////////// Searching movies...
 
 app.post('/query-search', async (req, res) => {
 	const query = req.body.query;
-
 	console.log(`app.js: receiving query for movie name ${query}`);
-
-	const savedData = new Boolean(false);
 
 	// imdbResponse comes back from api Handler...
 	const imdbResponse = await apiHandler.searchMovieData(query);
@@ -355,7 +331,6 @@ app.post('/query-search', async (req, res) => {
 
 		res.render('pages/index.ejs', {
 			searchQuery: imdbResponse.expression,
-			detailsLink: savedData == true ? '/saved-details' : '/details',
 			movieSearchState: localStorage.getItem('movieSearchState'),
 			movieDataState: localStorage.getItem('movieDataState'),
 			savedListState: savedListState,
@@ -367,7 +342,6 @@ app.post('/query-search', async (req, res) => {
 ///////////////////////////////////////////// Getting movie details
 
 app.get('/details', async (req, res) => {
-	let savedData = new Boolean(false);
 	console.log('req.body on next line:');
 	console.dir(req.body);
 	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
@@ -461,7 +435,6 @@ app.get('/details', async (req, res) => {
 		res.render('pages/index.ejs', {
 			movieSearchState: localStorage.getItem('movieSearchState'),
 			movieDataState: localStorage.getItem('movieDataState'),
-			detailsLink: savedData == true ? '/saved-details' : '/details',
 			savedListState: savedListState,
 			isSaved: isSaved,
 			req: req,
@@ -527,7 +500,6 @@ app.get('/details', async (req, res) => {
 			res.render('pages/index.ejs', {
 				movieSearchState: localStorage.getItem('movieSearchState'),
 				movieDataState: localStorage.getItem('movieDataState'),
-				detailsLink: savedData == true ? '/saved-details' : '/details',
 				savedListState: savedListState,
 				isSaved: isSaved,
 				req: req,

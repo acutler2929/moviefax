@@ -3,7 +3,7 @@
 	<head>
 		<%- include('../partials/head'); %>
 	</head>
-	<body>
+	<body id="index">
 		<div id="content-wrapper">
 			<header class="row">
 				<div class="col-4" id="greeting-wrapper">
@@ -121,27 +121,26 @@
 			>
 				<div class="col-2" id="lists-wrapper">
 					<ul class="list-group" id="search-results-wrapper">
-						<%- req.session.loggedin || req.url === '/query-search'
-						|| req.url.includes('/details') ?
+						<%- req.session.containsSearchState == true ?
 						include('../partials/movie-wrapper', { detailsLink:
 						detailsLink, imdbSearchState: imdbSearchState }) :
 						include('../partials/throwaway') %>
 					</ul>
 					<ul class="list-group hidden" id="user-movies-wrapper">
-						<%- req.session.loggedin ?
+						<%- req.session.containsListState == true ?
 						include('../partials/user-list-wrapper', savedListState)
 						: include('../partials/throwaway') %>
 					</ul>
 				</div>
 				<div class="col-10" id="movie-data-wrapper">
 					<div id="poster-data-wrapper">
-						<%- req.session.loggedin && req.url.includes('/details')
-						? include('../partials/poster-data', movieData) :
+						<%- req.session.containsMovieState == true ?
+						include('../partials/poster-data', movieData) :
 						include('../partials/throwaway') %>
 					</div>
 					<div id="data-sources-wrapper" class="hidden">
-						<%- req.session.loggedin && req.url.includes('/details')
-						? include('../partials/sources-wrapper', movieData) :
+						<%- req.session.containsMovieState == true ?
+						include('../partials/sources-wrapper', movieData) :
 						include('../partials/throwaway') %>
 					</div>
 				</div>
