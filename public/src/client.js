@@ -36,6 +36,6 @@ if (document.body.id === 'index') {
 
 // console.log(fromServer);
 
-fetch('http://localhost:8888/')
-	.then((data) => data.json())
-	.catch((error) => console.log(error));
+// fetch('http://localhost:8888/')
+// 	.then((data) => data.json())
+// 	.catch((error) => console.log(error));

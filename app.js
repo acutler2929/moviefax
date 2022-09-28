@@ -5,7 +5,6 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const url = require('url');
 const mysql = require('mysql');
-// const path = require('path');
 const nodemailer = require('nodemailer');
 
 /////////////////// Modules
@@ -15,8 +14,6 @@ const loginHandler = require('./modules/loginHandler');
 const sourceHandler = require('./modules/sourceHandler');
 const stateHandler = require('./modules/stateHandler');
 const { MovieSearchState } = require('./modules/stateHandler');
-// const { doesNotMatch } = require('assert');
-// const { callbackPromise } = require('nodemailer/lib/shared');
 
 ///////// Connecting to MYSQL
 
@@ -40,6 +37,10 @@ app.use(
 		secret: sessionSecret,
 		resave: true,
 		saveUninitialized: true,
+		// DEFAULT telling client not to expect any state:
+		containsMovieState: new Boolean(false),
+		containsSearchState: new Boolean(false),
+		containsListState: new Boolean(false),
 	})
 );
 
@@ -53,17 +54,9 @@ app.get('/', async (req, res) => {
 	console.log('welcome to homepage');
 	console.log(`req.url: ${req.url}`);
 
-	////////////// DEFAULT telling the client not to expect search, movie or list state data:
-	req.session.containsSearchState = new Boolean(false);
-	req.session.containsMovieState = new Boolean(false);
-	req.session.containsListState = new Boolean(false);
-
 	//////// check if user is logged in
 	if (req.session.loggedin == true) {
 		/////////// if they are, send their list of movies
-		let savedListState;
-		//////////// telling client to expect list state data:
-		req.session.containsListState = true;
 
 		await new Promise(async (resolve, reject) => {
 			async function getUserMovies() {
@@ -85,19 +78,18 @@ app.get('/', async (req, res) => {
 				/////////////// saving the current user's movies to the state:
 				// stateHandler.saveUserListState(req.session.userid, savedList);
 
-				savedListState = new stateHandler.UserListState(
-					JSON.parse(savedList)
-				);
+				///////////// handling state by taking userListState from stateHandler.js:
+				stateHandler.userListState.overWrite(JSON.parse(savedList));
+				/////// telling client to expect userListState:
+				req.session.containsListState = true;
 
-				///////////// handling state:
-				// let imdbSearchData = stateHandler.loadSearchState(req.session.userid);
-				// let movieData = stateHandler.loadMovieDataState(req.session.userid);
-				// somehow pass movieSearchState and movieDataState
-				console.log('here is the first entry of savedListState:');
-				console.dir(savedListState.listData[0]);
+				console.log(
+					'and here is the first entry of userListState.listData from stateHandler.js:'
+				);
+				console.dir(stateHandler.userListState.listData[0]);
 
 				res.render('pages/index', {
-					savedListState: savedListState,
+					userListState: stateHandler.userListState,
 					req: req,
 				});
 			})
@@ -301,17 +293,10 @@ app.post('/query-search', async (req, res) => {
 			`app.js: received imdbResponse for movie ${imdbResponse.results[0].title}`
 		);
 
-		// const imdbSearchData = imdbResponse;
-		// let movieSearchState = new stateHandler.MovieSearchState(
-		// 	JSON.parse(imdbResponse)
-		// );
-		////////// handling state:
-		localStorage.setItem(
-			'movieSearchState',
-			JSON.stringify(
-				new stateHandler.MovieSearchState(JSON.parse(imdbResponse))
-			)
-		);
+		///////////// handling state by taking movieSearchState from stateHandler.js:
+		stateHandler.movieSearchState.overWrite(JSON.parse(imdbResponse));
+		/////// telling client to expect movieSearchState:
+		req.session.containsSearchState = true;
 
 		// stateHandler.saveSearchState(req.session.userid, imdbSearchData);
 		// let movieData = stateHandler.loadMovieDataState(req.session.userid);
@@ -319,9 +304,9 @@ app.post('/query-search', async (req, res) => {
 
 		res.render('pages/index.ejs', {
 			searchQuery: imdbResponse.expression,
-			movieSearchState: localStorage.getItem('movieSearchState'),
-			movieDataState: localStorage.getItem('movieDataState'),
-			savedListState: savedListState,
+			movieSearchState: stateHandler.movieSearchState,
+			movieDataState: stateHandler.movieDataState,
+			savedListState: stateHandler.userListState,
 			req: req,
 		});
 	}
@@ -336,10 +321,6 @@ app.get('/details', async (req, res) => {
 	const { query, pathname } = url.parse(req.url, true);
 	const imdbID = query.id;
 	console.log(`/details: receiving query for imdbID ${imdbID}`);
-
-	/////////// loading movie-list state from temporary files:
-	// let imdbSearchData = stateHandler.loadSearchState(req.session.userid);
-	// let savedList = stateHandler.loadUserListState(req.session.userid);
 
 	///////// using a function with a loop to check if this movie is included in the user's saved MYSQL list
 	let isSaved = new Boolean(true);
@@ -363,7 +344,7 @@ app.get('/details', async (req, res) => {
 		return isSaved;
 	}
 
-	isSaved = isMovieSaved(imdbID, savedList); // <-- should be a boolean reflecting whether movie is saved to the user or not
+	isSaved = isMovieSaved(imdbID, stateHandler.userListState.listData); // <-- should be a boolean reflecting whether movie is saved to the user or not
 
 	/////////// if it is, get the data from MYSQL
 	if (req.session.loggedin && isSaved == true) {
@@ -389,41 +370,20 @@ app.get('/details', async (req, res) => {
 			movieDBData.movieSourcesArray
 		);
 
-		localStorage.setItem(
-			'movieDataState',
-			JSON.stringify(
-				new stateHandler.MovieDataState(movieData, movieSources)
-			)
+		///////////// handling state by overwriting movieDataState from stateHandler.js:
+		stateHandler.movieDataState.overWrite(
+			JSON.parse(movieData, movieSources)
 		);
+		/////// telling client to expect movieDataState:
+		req.session.containsDataState = true;
 
-		// console.log('movieDataResponse.imdbTitleData:');
-		// console.dir(movieDataResponse.imdbTitleData);
-
-		// let movieData = {
-		// 	imdbID: imdbID,
-		// 	movieTitle: movieDBData.movie_title,
-		// 	movieYear: movieDBData.release_year,
-		// 	contentRating: movieDBData.content_rating,
-		// 	moviePoster: movieDBData.movie_poster,
-		// 	movieSummary: movieDBData.movie_summary,
-		// 	imdbRating: movieDBData.imdb_rating,
-		// 	metacriticRating: movieDBData.metacritic_rating,
-		// 	movieBudget: movieDBData.movie_budget,
-		// 	movieGross: movieDBData.movie_gross,
-		// 	moviePurchaseArray: movieSources.purchaseSources,
-		// 	movieRentArray: movieSources.rentalSources,
-		// 	movieStreamingArray: movieSources.streamingSources,
-		// };
-
-		///////////// saving the selected movie details to tmp folder state:
-		// stateHandler.saveMovieDataState(req.session.userid, movieData);
-		// console.log(`movieData is a ${typeof movieData}:`);
-		// console.dir(movieData);
+		console.log('now, here is the movieDataState object:');
+		console.dir(stateHandler.movieDataState);
 
 		res.render('pages/index.ejs', {
-			movieSearchState: localStorage.getItem('movieSearchState'),
-			movieDataState: localStorage.getItem('movieDataState'),
-			savedListState: savedListState,
+			movieSearchState: stateHandler.movieSearchState,
+			movieDataState: stateHandler.movieDataState,
+			savedListState: stateHandler.userListState,
 			isSaved: isSaved,
 			req: req,
 		});
@@ -456,39 +416,20 @@ app.get('/details', async (req, res) => {
 				movieDataResponse.watchmodeSourcesData
 			);
 
-			localStorage.setItem(
-				'movieDataState',
-				JSON.stringify(
-					new stateHandler.MovieDataState(movieData, movieSources)
-				)
+			///////////// handling state by overwriting movieDataState from stateHandler.js:
+			stateHandler.movieDataState.overWrite(
+				JSON.parse(movieData, movieSources)
 			);
+			/////// telling client to expect movieDataState:
+			req.session.containsDataState = true;
 
-			// let movieData = {
-			// 	imdbID: imdbID,
-			// 	movieTitle: movieDataResponse.imdbTitleData.title,
-			// 	movieYear: movieDataResponse.imdbTitleData.year,
-			// 	contentRating: movieDataResponse.imdbTitleData.contentRating,
-			// 	moviePoster: movieDataResponse.imdbTitleData.image,
-			// 	movieSummary: movieDataResponse.imdbTitleData.plot,
-			// 	imdbRating: movieDataResponse.imdbTitleData.imDbRating,
-			// 	metacriticRating:
-			// 		movieDataResponse.imdbTitleData.metacriticRating,
-			// 	movieBudget: movieDataResponse.imdbTitleData.boxOffice.budget,
-			// 	movieGross:
-			// 		movieDataResponse.imdbTitleData.boxOffice
-			// 			.cumulativeWorldwideGross,
-			// 	moviePurchaseArray: movieSources.purchaseSources,
-			// 	movieRentArray: movieSources.rentalSources,
-			// 	movieStreamingArray: movieSources.streamingSources,
-			// };
-
-			///////////// saving the selected movie details to tmp folder state:
-			// stateHandler.saveMovieDataState(req.session.userid, movieData);
+			console.log('now, here is the movieDataState object:');
+			console.dir(stateHandler.movieDataState);
 
 			res.render('pages/index.ejs', {
-				movieSearchState: localStorage.getItem('movieSearchState'),
-				movieDataState: localStorage.getItem('movieDataState'),
-				savedListState: savedListState,
+				movieSearchState: stateHandler.movieSearchState,
+				movieDataState: stateHandler.movieDataState,
+				savedListState: stateHandler.userListState,
 				isSaved: isSaved,
 				req: req,
 			});
@@ -502,9 +443,6 @@ app.post('/add-movie', (req, res) => {
 	console.log(req.url);
 	console.log('req.session on following line:');
 	console.dir(req.session);
-
-	//////////////// read the movie data state from TMP folder
-	// let movieData = stateHandler.loadMovieDataState(req.session.userid);
 
 	////////////////// see if this movie is stored in user_movies already
 	connection.query(
@@ -559,5 +497,17 @@ app.get('/drop-movie', async (req, res) => {
 
 	res.redirect('/');
 });
+
+// app.get('/test-data', (req, res) => {
+// 	console.log(req.url);
+// 	console.log('req.session on following line:');
+// 	console.dir(req.session);
+
+// 	const testData = {
+// 		greeting: 'hello from the backend!',
+// 	};
+
+// 	res.send(testData);
+// });
 
 module.exports = app;

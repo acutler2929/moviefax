@@ -170,7 +170,7 @@ class MovieDataState {
 		this.movieData = {};
 		this.movieSources = [];
 		this.movieData = newData;
-		this.movieSources = newSources;
+		newSources.forEach((source) => this.movieSources.push(source));
 	}
 }
 
@@ -180,8 +180,8 @@ class MovieSearchState {
 	}
 
 	overWrite(newData) {
-		this.searchData = {};
-		this.searchData = newData;
+		this.searchData = [];
+		newData.forEach((movie) => this.searchData.push(movie));
 	}
 }
 
@@ -201,10 +201,21 @@ class UserListState {
 			array.splice(index, 1); // 2nd parameter means remove one item only
 		}
 	}
+
+	overWrite(newData) {
+		this.listData = [];
+		newData.forEach((movie) => this.listData.push(movie));
+	}
 }
 
+///////////// DEFAULT starting off with empty state variables:
+
+let movieDataState = new MovieDataState();
+let movieSearchState = new MovieSearchState();
+let userListState = new UserListState();
+
 module.exports = {
-	MovieDataState: MovieDataState,
-	MovieSearchState: MovieSearchState,
-	UserListState: UserListState,
+	movieDataState: movieDataState,
+	movieSearchState: movieSearchState,
+	userListState: userListState,
 };

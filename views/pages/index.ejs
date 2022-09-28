@@ -47,10 +47,10 @@
 						id="nav-buttons"
 					>
 						<div class="col-4">
-							<form action="/saved-state-data" method="get">
+							<form action="/test-data" method="get">
 								<input
 									type="submit"
-									value="Use Stored State Data BROKEN"
+									value="Send Test Data"
 									class="btn btn-primary"
 								/>
 							</form>
@@ -127,8 +127,8 @@
 						include('../partials/throwaway') %>
 					</ul>
 					<ul class="list-group hidden" id="user-movies-wrapper">
-						<%- req.session.containsListState == true ?
-						include('../partials/user-list-wrapper', savedListState)
+						<%- req.session.loggedin == true ?
+						include('../partials/user-list-wrapper', userListState)
 						: include('../partials/throwaway') %>
 					</ul>
 				</div>
