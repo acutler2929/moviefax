@@ -1,6 +1,6 @@
-<% imdbSearchState.results.forEach((result) => { %>
+<% movieSearchState.searchData.results.forEach((result) => { %>
 <li class="container-fluid list-group-item movie-wrapper">
-	<a class="movie-link" href="<%= detailsLink %>?id=<%= result.id %>">
+	<a class="movie-link" href="/details?id=<%= result.id %>">
 		<div id="<%= result.id %>" class="data-wrapper text-center">
 			<h6 class="search-title align-middle"><%= result.title %></h6>
 			<img class="img-fluid search-images" src="<%= result.image %>" />

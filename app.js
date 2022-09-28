@@ -37,10 +37,6 @@ app.use(
 		secret: sessionSecret,
 		resave: true,
 		saveUninitialized: true,
-		// DEFAULT telling client not to expect any state:
-		containsMovieState: new Boolean(false),
-		containsSearchState: new Boolean(false),
-		containsListState: new Boolean(false),
 	})
 );
 
@@ -75,20 +71,19 @@ app.get('/', async (req, res) => {
 			});
 		})
 			.then((savedList) => {
-				/////////////// saving the current user's movies to the state:
-				// stateHandler.saveUserListState(req.session.userid, savedList);
-
 				///////////// handling state by taking userListState from stateHandler.js:
 				stateHandler.userListState.overWrite(JSON.parse(savedList));
 				/////// telling client to expect userListState:
 				req.session.containsListState = true;
 
-				console.log(
-					'and here is the first entry of userListState.listData from stateHandler.js:'
-				);
-				console.dir(stateHandler.userListState.listData[0]);
+				// console.log(
+				// 	'and here is the first entry of userListState.listData from stateHandler.js:'
+				// );
+				// console.dir(stateHandler.userListState.listData[0]);
 
 				res.render('pages/index', {
+					movieSearchState: stateHandler.movieSearchState,
+					movieDataState: stateHandler.movieDataState,
 					userListState: stateHandler.userListState,
 					req: req,
 				});
@@ -97,6 +92,11 @@ app.get('/', async (req, res) => {
 				console.log(error);
 			});
 	} else {
+		// DEFAULT telling client not to expect any state:
+		req.session.containsMovieState = new Boolean(false);
+		req.session.containsSearchState = new Boolean(false);
+		req.session.containsListState = new Boolean(false);
+
 		res.render('pages/index', {
 			req: req,
 		});
@@ -292,9 +292,11 @@ app.post('/query-search', async (req, res) => {
 		console.log(
 			`app.js: received imdbResponse for movie ${imdbResponse.results[0].title}`
 		);
+		// console.log('and here are the full results:');
+		// console.dir(imdbResponse);
 
 		///////////// handling state by taking movieSearchState from stateHandler.js:
-		stateHandler.movieSearchState.overWrite(JSON.parse(imdbResponse));
+		stateHandler.movieSearchState.overWrite(imdbResponse);
 		/////// telling client to expect movieSearchState:
 		req.session.containsSearchState = true;
 
@@ -306,7 +308,7 @@ app.post('/query-search', async (req, res) => {
 			searchQuery: imdbResponse.expression,
 			movieSearchState: stateHandler.movieSearchState,
 			movieDataState: stateHandler.movieDataState,
-			savedListState: stateHandler.userListState,
+			userListState: stateHandler.userListState,
 			req: req,
 		});
 	}
@@ -317,10 +319,12 @@ app.post('/query-search', async (req, res) => {
 app.get('/details', async (req, res) => {
 	console.log('req.body on next line:');
 	console.dir(req.body);
+	console.log('here is the req.session object:');
+	console.dir(req.session);
 	// console.log(`app.js: saved data is a ${typeof savedData} ${savedData}`);
 	const { query, pathname } = url.parse(req.url, true);
 	const imdbID = query.id;
-	console.log(`/details: receiving query for imdbID ${imdbID}`);
+	console.log(`${req.url}: receiving query for imdbID ${imdbID}`);
 
 	///////// using a function with a loop to check if this movie is included in the user's saved MYSQL list
 	let isSaved = new Boolean(true);
@@ -345,6 +349,7 @@ app.get('/details', async (req, res) => {
 	}
 
 	isSaved = isMovieSaved(imdbID, stateHandler.userListState.listData); // <-- should be a boolean reflecting whether movie is saved to the user or not
+	console.log(`isSaved is a ${typeof isSaved} ${isSaved}`);
 
 	/////////// if it is, get the data from MYSQL
 	if (req.session.loggedin && isSaved == true) {
@@ -371,20 +376,17 @@ app.get('/details', async (req, res) => {
 		);
 
 		///////////// handling state by overwriting movieDataState from stateHandler.js:
-		stateHandler.movieDataState.overWrite(
-			JSON.parse(movieData, movieSources)
-		);
+		stateHandler.movieDataState.overWrite(isSaved, movieData, movieSources);
 		/////// telling client to expect movieDataState:
-		req.session.containsDataState = true;
+		req.session.containsMovieState = true;
 
-		console.log('now, here is the movieDataState object:');
-		console.dir(stateHandler.movieDataState);
+		// console.log('now, here is the movieDataState.movieSources object:');
+		// console.dir(stateHandler.movieDataState.movieSources);
 
 		res.render('pages/index.ejs', {
 			movieSearchState: stateHandler.movieSearchState,
 			movieDataState: stateHandler.movieDataState,
-			savedListState: stateHandler.userListState,
-			isSaved: isSaved,
+			userListState: stateHandler.userListState,
 			req: req,
 		});
 	} else {
@@ -418,19 +420,20 @@ app.get('/details', async (req, res) => {
 
 			///////////// handling state by overwriting movieDataState from stateHandler.js:
 			stateHandler.movieDataState.overWrite(
-				JSON.parse(movieData, movieSources)
+				isSaved,
+				movieData,
+				movieSources
 			);
 			/////// telling client to expect movieDataState:
-			req.session.containsDataState = true;
+			req.session.containsMovieState = true;
 
-			console.log('now, here is the movieDataState object:');
-			console.dir(stateHandler.movieDataState);
+			// console.log('now, here is the movieDataState object:');
+			// console.dir(stateHandler.movieDataState);
 
 			res.render('pages/index.ejs', {
 				movieSearchState: stateHandler.movieSearchState,
 				movieDataState: stateHandler.movieDataState,
-				savedListState: stateHandler.userListState,
-				isSaved: isSaved,
+				userListState: stateHandler.userListState,
 				req: req,
 			});
 		}

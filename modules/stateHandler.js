@@ -161,16 +161,23 @@ exports.loadUserListState = function (userID) {
 //////////// still haven't made up my mind about using this... //////////////////////////////////////////////////////////////
 
 class MovieDataState {
-	constructor(movieData, movieSources) {
+	constructor(isSaved, movieData, movieSources) {
+		this.isSaved = isSaved;
 		this.movieData = movieData;
 		this.movieSources = movieSources;
 	}
 
-	overWrite(newData, newSources) {
+	overWrite(newSaveStatus, newData, newSources) {
+		this.isSaved = newSaveStatus;
 		this.movieData = {};
 		this.movieSources = [];
 		this.movieData = newData;
-		newSources.forEach((source) => this.movieSources.push(source));
+		this.movieSources = newSources;
+		// console.log(
+		// 	'stateHandler.movieDataState.overWrite: here are the new sources:'
+		// );
+		// console.dir(newSources);
+		// newSources.forEach((source) => this.movieSources.push(source));
 	}
 }
 
@@ -180,8 +187,8 @@ class MovieSearchState {
 	}
 
 	overWrite(newData) {
-		this.searchData = [];
-		newData.forEach((movie) => this.searchData.push(movie));
+		this.searchData = {};
+		this.searchData = newData;
 	}
 }
 

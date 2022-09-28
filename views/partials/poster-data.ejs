@@ -2,7 +2,7 @@
 	<div class="d-flex col-5" id="movie-data-left">
 		<div class="flex-grow-1">
 			<img
-				src="<%= movieDataState.moviePoster %>"
+				src="<%= movieDataState.movieData.moviePoster %>"
 				class="img-fluid"
 				id="movie-data-poster"
 			/>
@@ -10,28 +10,34 @@
 	</div>
 	<div class="col-7" id="movie-data-right">
 		<div id="data-summary-wrapper">
-			<h3 class="text-center"><%= movieDataState.movieTitle %></h3>
-			<p><%= movieDataState.movieSummary %></p>
+			<h3 class="text-center">
+				<%= movieDataState.movieData.movieTitle %>
+			</h3>
+			<p><%= movieDataState.movieData.movieSummary %></p>
 		</div>
 		<div class="row flex-grow-1" id="data-rating-wrapper">
 			<div class="row justify-content-around">
 				<div class="col-3">
-					<p>IMDB: <%= movieDataState.imdbRating %></p>
+					<p>IMDB: <%= movieDataState.movieData.imdbRating %></p>
 				</div>
 				<div class="col-3">
-					<p>Metacritic: <%= movieDataState.metacriticRating %></p>
+					<p>
+						Metacritic: <%=
+						movieDataState.movieData.metacriticRating %>
+					</p>
 				</div>
 			</div>
 			<div class="row justify-content-around">
 				<div class="col-3">
-					<p>Budget: <%= movieDataState.movieBudget %></p>
+					<p>Budget: <%= movieDataState.movieData.movieBudget %></p>
 				</div>
 				<div class="col-3">
-					<p>Gross: <%= movieDataState.movieGross %></p>
+					<p>Gross: <%= movieDataState.movieData.movieGross %></p>
 				</div>
 			</div>
 			<div class="text-center">
-				<% if (req.session.loggedin && isSaved == false) { %>
+				<% if (req.session.loggedin && movieDataState.isSaved == false)
+				{ %>
 				<form action="/add-movie" method="post">
 					<input
 						type="submit"
@@ -39,7 +45,8 @@
 						class="btn btn-primary"
 					/>
 				</form>
-				<% } else if (req.session.loggedin && isSaved == true) { %>
+				<% } else if (req.session.loggedin && movieDataState.isSaved ==
+				true) { %>
 				<form action="/drop-movie" method="get">
 					<input
 						type="submit"

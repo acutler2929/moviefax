@@ -122,12 +122,13 @@
 				<div class="col-2" id="lists-wrapper">
 					<ul class="list-group" id="search-results-wrapper">
 						<%- req.session.containsSearchState == true ?
-						include('../partials/movie-wrapper', { detailsLink:
-						detailsLink, imdbSearchState: imdbSearchState }) :
-						include('../partials/throwaway') %>
+						include('../partials/movie-wrapper', { movieSearchState:
+						movieSearchState }) : include('../partials/throwaway')
+						%>
 					</ul>
 					<ul class="list-group hidden" id="user-movies-wrapper">
-						<%- req.session.loggedin == true ?
+						<%- req.session.loggedin == true &&
+						req.session.containsListState == true ?
 						include('../partials/user-list-wrapper', userListState)
 						: include('../partials/throwaway') %>
 					</ul>
@@ -135,12 +136,12 @@
 				<div class="col-10" id="movie-data-wrapper">
 					<div id="poster-data-wrapper">
 						<%- req.session.containsMovieState == true ?
-						include('../partials/poster-data', movieData) :
+						include('../partials/poster-data', movieDataState) :
 						include('../partials/throwaway') %>
 					</div>
 					<div id="data-sources-wrapper" class="hidden">
 						<%- req.session.containsMovieState == true ?
-						include('../partials/sources-wrapper', movieData) :
+						include('../partials/sources-wrapper', movieDataState) :
 						include('../partials/throwaway') %>
 					</div>
 				</div>
