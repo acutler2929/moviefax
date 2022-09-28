@@ -65,7 +65,7 @@ app.get('/', async (req, res) => {
 		//////////// telling client to expect list state data:
 		req.session.containsListState = true;
 
-		await new Promise((resolve, reject) => {
+		await new Promise(async (resolve, reject) => {
 			async function getUserMovies() {
 				let results = await movieDBHandler.getMovieList(
 					req,
@@ -74,17 +74,7 @@ app.get('/', async (req, res) => {
 				return results;
 			}
 
-			let savedList;
-			(async function pleaseWait() {
-				savedList = await getUserMovies();
-				return savedList;
-			})();
-
-			console.log(
-				`savedList is a ${typeof savedList}, here is the first entry: ${
-					savedList.listData[0]
-				}`
-			);
+			let savedList = await getUserMovies();
 
 			resolve(savedList);
 			reject((err) => {
@@ -99,23 +89,21 @@ app.get('/', async (req, res) => {
 					JSON.parse(savedList)
 				);
 
-				return savedListState;
+				///////////// handling state:
+				// let imdbSearchData = stateHandler.loadSearchState(req.session.userid);
+				// let movieData = stateHandler.loadMovieDataState(req.session.userid);
+				// somehow pass movieSearchState and movieDataState
+				console.log('here is the first entry of savedListState:');
+				console.dir(savedListState.listData[0]);
+
+				res.render('pages/index', {
+					savedListState: savedListState,
+					req: req,
+				});
 			})
 			.catch((error) => {
 				console.log(error);
 			});
-
-		///////////// handling state:
-		// let imdbSearchData = stateHandler.loadSearchState(req.session.userid);
-		// let movieData = stateHandler.loadMovieDataState(req.session.userid);
-		// somehow pass movieSearchState and movieDataState
-		console.log('here is savedListState:');
-		console.dir(savedListState);
-
-		res.render('pages/index', {
-			savedListState: savedListState,
-			req: req,
-		});
 	} else {
 		res.render('pages/index', {
 			req: req,

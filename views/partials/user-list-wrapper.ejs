@@ -1,6 +1,6 @@
-<% savedListState.forEach((movie) => { %>
+<% savedListState.listData.forEach((movie) => { %>
 <li class="container-fluid list-group-item movie-wrapper">
-	<a class="movie-link" href="<%= detailsLink %>?id=<%= movie.imdb_id %>">
+	<a class="movie-link" href="?id=<%= movie.imdb_id %>">
 		<div id="<%= movie.imdb_id %>" class="data-wrapper text-center">
 			<h6 class="search-title align-middle"><%= movie.movie_title %></h6>
 			<img
