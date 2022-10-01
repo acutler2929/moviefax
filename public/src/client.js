@@ -28,14 +28,3 @@ if (document.body.id === 'index') {
 } else if (document.body.id === 'login') {
 	console.log('we are on the login page');
 }
-
-///////////////// listening to the server:
-// const fromServer = fetch('http://localhost:8888/', {}).then((res) => {
-// 	return res.body;
-// });
-
-// console.log(fromServer);
-
-// fetch('http://localhost:8888/')
-// 	.then((data) => data.json())
-// 	.catch((error) => console.log(error));

@@ -159,14 +159,6 @@ exports.getMovieDetails = async function (imdbID, connection) {
 			return output;
 		});
 
-	// fs.writeFileSync('./tmp/detailsObj.json', detailsJSON, (err) => {
-	// 	console.log(err);
-	// });
-
-	// fs.writeFileSync('./tmp/sourcesObj.json', sourcesJSON, (err) => {
-	// 	console.log(err);
-	// });
-
 	let detailsObj = JSON.parse(detailsJSON);
 	let movieSourcesArray = JSON.parse(sourcesJSON);
 
