@@ -454,7 +454,7 @@ app.post('/add-movie', (req, res) => {
 				//////////////// if NOT, add the MOVIE and SOURCES info, with current user's id, to MYSQL tables: user_movies and movie_sources, then add user_id and imdb_id to selected_movies
 			} else if (!results || results.length == 0) {
 				console.log('movie is NOT saved, adding it to MYSQL now');
-				movieDBHandler.addMovie(movieData, connection);
+				movieDBHandler.addMovie(movieState, connection);
 				movieDBHandler.addSelection(
 					req.session.userid,
 					movieState.movieData.imdbID,

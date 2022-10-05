@@ -2,49 +2,53 @@
 
 ////////////// this module, movieDBHandler.js, gives the MovieFax app different ways to interact with the MYSQL database
 
-///////////////////// building function to add movieData to MYSQL table user_movies
-exports.addMovie = function (movieData, connection) {
+///////////////////// building function to add movieState to MYSQL table user_movies
+exports.addMovie = function (movieState, connection) {
 	console.log(
-		`movieDBHandler.addMovie() fired, movieData.imdbID = ${movieData.imdbID}`
+		`movieDBHandler.addMovie() fired, movieState.imdbID = ${movieState.movieData.imdbID}, ${movieState.movieData.movieTitle}`
 	);
 
-	//////////// taking movieData object, and cutting it into an array that contains just the movie's info without source data
+	//////////// taking movieState.movieData object, and cutting it into an array that contains just the movie's info without source data
 	function makeMovieArr(movieData) {
 		let movieArr = [];
 
 		for (let i in movieData) movieArr.push(movieData[i]);
-		const movieInfoArr = movieArr.slice(0, -3);
 
-		return movieInfoArr;
+		return movieArr;
 	}
 
-	///////////// taking movieData object, and cutting it into an array that contains only the SOURCES info, without any other movie data...
-	function makeSourcesArr(movieData) {
-		// let sourcesArr = [];
-		let purchaseArr = [];
-		let rentalArr = [];
-		let streamingArr = [];
+	///////////// taking movieState.movieSources object, and cutting it into just one array that contains only the SOURCES info, without any other movie data...
+	function makeSourcesArr(movieSources) {
+		// let purchaseArr = [];
+		// let rentalArr = [];
+		// let streamingArr = [];
 		let finalArr = [];
 
-		for (let i in movieData.moviePurchaseArray)
-			purchaseArr.push(Object.values(movieData.moviePurchaseArray[i]));
+		// for (let i in movieSources.moviePurchaseArray)
+		// 	purchaseArr.push(Object.values(movieSources.moviePurchaseArray[i]));
 
-		for (let i in movieData.movieRentArray)
-			rentalArr.push(Object.values(movieData.movieRentArray[i]));
+		// for (let i in movieSources.movieRentArray)
+		// 	rentalArr.push(Object.values(movieSources.movieRentArray[i]));
 
-		for (let i in movieData.movieStreamingArray)
-			streamingArr.push(Object.values(movieData.movieStreamingArray[i]));
+		// for (let i in movieSources.movieStreamingArray)
+		// 	streamingArr.push(Object.values(movieSources.movieStreamingArray[i]));
 
-		const sourcesArr = purchaseArr.concat(rentalArr).concat(streamingArr);
+		// const sourcesArr = purchaseArr.concat(rentalArr).concat(streamingArr);
+		const sourcesArr = Object.entries(movieSources);
+		console.log('sourcesArr:');
+		console.dir(sourcesArr);
+		const flatSourcesArr = sourcesArr.flatMap((source) => source);
+		console.log('flatSourcesArr:');
+		console.dir(flatSourcesArr);
 
-		for (let i in sourcesArr) {
-			let source = sourcesArr[i]
+		for (let i in flatSourcesArr) {
+			let source = flatSourcesArr[i]
 				.filter(
 					(entry) =>
 						entry !== 'Deeplinks available for paid plans only.'
 				)
 				.slice(0, -2);
-			source.unshift(movieData.imdbID);
+			// source.unshift(movieState.imdbID);
 
 			finalArr.push(source);
 		}
@@ -52,8 +56,8 @@ exports.addMovie = function (movieData, connection) {
 		return finalArr;
 	}
 
-	const movieInfoArr = makeMovieArr(movieData);
-	const movieSourcesArr = makeSourcesArr(movieData);
+	const movieInfoArr = makeMovieArr(movieState.movieData);
+	const movieSourcesArr = makeSourcesArr(movieState.movieSources);
 
 	console.log('movieInfoArr:');
 	console.dir(movieInfoArr);
