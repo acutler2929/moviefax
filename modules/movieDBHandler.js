@@ -18,37 +18,51 @@ exports.addMovie = function (movieState, connection) {
 	}
 
 	///////////// taking movieState.movieSources object, and cutting it into just one array that contains only the SOURCES info, without any other movie data...
-	function makeSourcesArr(movieSources) {
-		// let purchaseArr = [];
-		// let rentalArr = [];
-		// let streamingArr = [];
+	function makeSourcesArr(imdbID, movieSources) {
+		// let firstArr = Object.entries(movieSources);
+		// console.log('makeSourcesArr() firstArr:');
+		// console.dir(firstArr);
+
+		// let flatArr = firstArr.flatMap((entry) => entry);
+		// console.log('makeSourcesArr() flatArr:');
+		// console.dir(flatArr);
+
+		console.log('from makeSourcesArr(), here is the movieSources object:');
+		console.dir(movieSources);
+
+		let purchaseArr = [];
+		let rentalArr = [];
+		let streamingArr = [];
 		let finalArr = [];
 
-		// for (let i in movieSources.moviePurchaseArray)
-		// 	purchaseArr.push(Object.values(movieSources.moviePurchaseArray[i]));
+		for (let i in movieSources.purchaseSources)
+			purchaseArr.push(Object.values(movieSources.purchaseSources[i]));
 
-		// for (let i in movieSources.movieRentArray)
-		// 	rentalArr.push(Object.values(movieSources.movieRentArray[i]));
+		for (let i in movieSources.rentalSources)
+			rentalArr.push(Object.values(movieSources.rentalSources[i]));
 
-		// for (let i in movieSources.movieStreamingArray)
-		// 	streamingArr.push(Object.values(movieSources.movieStreamingArray[i]));
+		for (let i in movieSources.streamingSources)
+			streamingArr.push(Object.values(movieSources.streamingSources[i]));
 
-		// const sourcesArr = purchaseArr.concat(rentalArr).concat(streamingArr);
-		const sourcesArr = Object.entries(movieSources);
-		console.log('sourcesArr:');
-		console.dir(sourcesArr);
-		const flatSourcesArr = sourcesArr.flatMap((source) => source);
-		console.log('flatSourcesArr:');
-		console.dir(flatSourcesArr);
+		const sourcesArr = purchaseArr.concat(rentalArr).concat(streamingArr);
+		// const sourcesArr = Object.entries(movieSources);
+		// console.log('sourcesArr:');
+		// console.dir(sourcesArr);
+		// const flatSourcesArr = sourcesArr.flatMap((source) => source);
+		// console.log('flatSourcesArr:');
+		// console.dir(flatSourcesArr);
+		// const finalSourcesArr = Object.values(flatSourcesArr);
+		// console.log('finalSourcesArr:');
+		// console.dir(finalSourcesArr);
 
-		for (let i in flatSourcesArr) {
-			let source = flatSourcesArr[i]
+		for (let i in sourcesArr) {
+			let source = sourcesArr[i]
 				.filter(
 					(entry) =>
 						entry !== 'Deeplinks available for paid plans only.'
 				)
 				.slice(0, -2);
-			// source.unshift(movieState.imdbID);
+			source.unshift(imdbID);
 
 			finalArr.push(source);
 		}
@@ -57,7 +71,10 @@ exports.addMovie = function (movieState, connection) {
 	}
 
 	const movieInfoArr = makeMovieArr(movieState.movieData);
-	const movieSourcesArr = makeSourcesArr(movieState.movieSources);
+	const movieSourcesArr = makeSourcesArr(
+		movieState.movieData.imdbID,
+		movieState.movieSources
+	);
 
 	console.log('movieInfoArr:');
 	console.dir(movieInfoArr);
