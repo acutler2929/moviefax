@@ -70,8 +70,10 @@ app.get('/', async (req, res) => {
 			});
 		})
 			.then((savedList) => {
+				// console.log(`here is savedList, it is a ${typeof savedList}:`);
+				// console.dir(savedList);
 				///////////// handling state by taking userListState from stateHandler.js:
-				stateHandler.userListState.overWrite(JSON.parse(savedList));
+				stateHandler.userListState.newUserList = JSON.parse(savedList);
 				/////// telling client to expect userListState:
 				req.session.containsListState = true;
 
@@ -288,7 +290,7 @@ app.post('/query-search', async (req, res) => {
 		);
 
 		///////////// handling state by taking movieSearchState from stateHandler.js:
-		stateHandler.movieSearchState.overWrite(imdbResponse);
+		stateHandler.movieSearchState.newSearchData = imdbResponse;
 		/////// telling client to expect movieSearchState:
 		req.session.containsSearchState = true;
 
@@ -335,7 +337,8 @@ app.get('/details', async (req, res) => {
 		return isSaved;
 	}
 
-	isSaved = isMovieSaved(imdbID, stateHandler.userListState.listData); // <-- should be a boolean reflecting whether movie is saved to the user or not
+	let currUserList = stateHandler.userListState.currUserList;
+	isSaved = isMovieSaved(imdbID, currUserList); // <-- should be a boolean reflecting whether movie is saved to the user or not
 	console.log(`isSaved is a ${typeof isSaved} ${isSaved}`);
 
 	/////////// if it is, get the data from MYSQL
@@ -363,7 +366,11 @@ app.get('/details', async (req, res) => {
 		);
 
 		///////////// handling state by overwriting movieDataState from stateHandler.js:
-		stateHandler.movieDataState.overWrite(isSaved, movieData, movieSources);
+		// stateHandler.movieDataState.overWrite(isSaved, movieData, movieSources);
+		stateHandler.movieDataState.newSavedStatus = isSaved;
+		stateHandler.movieDataState.newMovieData = movieData;
+		stateHandler.movieDataState.newSources = movieSources;
+
 		/////// telling client to expect movieDataState:
 		req.session.containsMovieState = true;
 
@@ -402,14 +409,13 @@ app.get('/details', async (req, res) => {
 				movieDataResponse.watchmodeSourcesData
 			);
 
-			///////////// handling state by overwriting movieDataState from stateHandler.js:
-			stateHandler.movieDataState.overWrite(
-				isSaved,
-				movieData,
-				movieSources
-			);
-			console.log('here is the resulting movieDataState:');
-			console.dir(stateHandler.movieDataState);
+			stateHandler.movieDataState.newSavedStatus = isSaved;
+			stateHandler.movieDataState.newMovieData = movieData;
+			stateHandler.movieDataState.newSources = movieSources;
+
+			// console.log('here is the resulting movieDataState:');
+			// console.dir(stateHandler.movieDataState);
+
 			/////// telling client to expect movieDataState:
 			req.session.containsMovieState = true;
 
@@ -429,14 +435,15 @@ app.post('/add-movie', (req, res) => {
 	console.log(req.url);
 	console.log('req.session on following line:');
 	console.dir(req.session);
-	const movieState = stateHandler.movieDataState;
-	console.log('here is the movieState object:');
-	console.dir(movieState);
+	const movieData = stateHandler.movieDataState.currMovieData;
+	const movieSources = stateHandler.movieDataState.currMovieSources;
+	console.log('here is the movieData object:');
+	console.dir(movieData);
 
 	////////////////// see if this movie is stored in user_movies already
 	connection.query(
 		'SELECT * FROM user_movies WHERE imdb_id = ?',
-		movieState.movieData.imdbID,
+		movieData.imdbID,
 		function (error, results, fields) {
 			///////////// if it is, just add the current user's userid and imdb_id to selected_movies
 			if (results && results.length > 0) {
@@ -447,17 +454,17 @@ app.post('/add-movie', (req, res) => {
 
 				movieDBHandler.addSelection(
 					req.session.userid,
-					movieState.movieData.imdbID,
+					movieData.imdbID,
 					connection
 				);
 
 				//////////////// if NOT, add the MOVIE and SOURCES info, with current user's id, to MYSQL tables: user_movies and movie_sources, then add user_id and imdb_id to selected_movies
 			} else if (!results || results.length == 0) {
 				console.log('movie is NOT saved, adding it to MYSQL now');
-				movieDBHandler.addMovie(movieState, connection);
+				movieDBHandler.addMovie(movieData, movieSources, connection);
 				movieDBHandler.addSelection(
 					req.session.userid,
-					movieState.movieData.imdbID,
+					movieData.imdbID,
 					connection
 				);
 			}
@@ -465,6 +472,7 @@ app.post('/add-movie', (req, res) => {
 	);
 
 	// console.log(movieData);
+	stateHandler.movieDataState.newSavedStatus = true;
 
 	res.redirect('/');
 });
@@ -476,11 +484,13 @@ app.get('/drop-movie', async (req, res) => {
 	console.log('req.session on following line:');
 	console.dir(req.session);
 
-	const imdbID = stateHandler.movieDataState.movieData.imdbID;
+	const imdbID = stateHandler.movieDataState.currMovieData.imdbID;
 
 	console.log(`/drop-movie: receiving DELETE query for imdbID ${imdbID}`);
 
 	movieDBHandler.deleteSelection(req.session.userid, imdbID, connection);
+
+	stateHandler.movieDataState.newSavedStatus = false;
 
 	res.redirect('/');
 });

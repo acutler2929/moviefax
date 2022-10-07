@@ -3,30 +3,13 @@
 ////////////// this module, movieDBHandler.js, gives the MovieFax app different ways to interact with the MYSQL database
 
 ///////////////////// building function to add movieState to MYSQL table user_movies
-exports.addMovie = function (movieState, connection) {
+exports.addMovie = function (movieData, movieSources, connection) {
 	console.log(
-		`movieDBHandler.addMovie() fired, movieState.imdbID = ${movieState.movieData.imdbID}, ${movieState.movieData.movieTitle}`
+		`movieDBHandler.addMovie() fired, movieState.imdbID = ${movieData.imdbID}, ${movieData.movieTitle}`
 	);
 
-	//////////// taking movieState.movieData object, and cutting it into an array that contains just the movie's info without source data
-	function makeMovieArr(movieData) {
-		let movieArr = [];
-
-		for (let i in movieData) movieArr.push(movieData[i]);
-
-		return movieArr;
-	}
-
-	///////////// taking movieState.movieSources object, and cutting it into just one array that contains only the SOURCES info, without any other movie data...
+	///////////// taking movieSources object, and cutting it into just one array...
 	function makeSourcesArr(imdbID, movieSources) {
-		// let firstArr = Object.entries(movieSources);
-		// console.log('makeSourcesArr() firstArr:');
-		// console.dir(firstArr);
-
-		// let flatArr = firstArr.flatMap((entry) => entry);
-		// console.log('makeSourcesArr() flatArr:');
-		// console.dir(flatArr);
-
 		console.log('from makeSourcesArr(), here is the movieSources object:');
 		console.dir(movieSources);
 
@@ -45,15 +28,6 @@ exports.addMovie = function (movieState, connection) {
 			streamingArr.push(Object.values(movieSources.streamingSources[i]));
 
 		const sourcesArr = purchaseArr.concat(rentalArr).concat(streamingArr);
-		// const sourcesArr = Object.entries(movieSources);
-		// console.log('sourcesArr:');
-		// console.dir(sourcesArr);
-		// const flatSourcesArr = sourcesArr.flatMap((source) => source);
-		// console.log('flatSourcesArr:');
-		// console.dir(flatSourcesArr);
-		// const finalSourcesArr = Object.values(flatSourcesArr);
-		// console.log('finalSourcesArr:');
-		// console.dir(finalSourcesArr);
 
 		for (let i in sourcesArr) {
 			let source = sourcesArr[i]
@@ -70,16 +44,15 @@ exports.addMovie = function (movieState, connection) {
 		return finalArr;
 	}
 
-	const movieInfoArr = makeMovieArr(movieState.movieData);
-	const movieSourcesArr = makeSourcesArr(
-		movieState.movieData.imdbID,
-		movieState.movieSources
-	);
+	// const movieInfoArr = makeMovieArr(movieState.movieData);
+	const movieSourcesArr = makeSourcesArr(movieData.imdbID, movieSources);
+	const movieInfoArr = Object.values(movieData);
+	// const movieSourcesArr = Object.entries(movieSources);
 
-	console.log('movieInfoArr:');
-	console.dir(movieInfoArr);
-	console.log('movieSourcesArr:');
-	console.dir(movieSourcesArr);
+	// console.log('movieInfoArr:');
+	// console.dir(movieInfoArr);
+	// console.log('movieSourcesArr:');
+	// console.dir(movieSourcesArr);
 
 	const movieInfoQuery =
 		'INSERT INTO user_movies (imdb_id, movie_title, release_year, content_rating, movie_poster, movie_summary, imdb_rating, metacritic_rating, movie_budget, movie_gross) VALUES (?);';

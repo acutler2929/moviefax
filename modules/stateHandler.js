@@ -9,11 +9,25 @@ class MovieDataState {
 		this.movieSources = movieSources;
 	}
 
-	overWrite(newSaveStatus, newData, newSources) {
-		this.isSaved = newSaveStatus;
-		this.movieData = {};
-		this.movieSources = [];
+	///////////////////// Getters
+	get saveStatus() {
+		return this.isSaved;
+	}
+	get currMovieData() {
+		return this.movieData;
+	}
+	get currMovieSources() {
+		return this.movieSources;
+	}
+
+	///////////// Setters
+	set newSavedStatus(savedStatus) {
+		this.isSaved = savedStatus;
+	}
+	set newMovieData(newData) {
 		this.movieData = newData;
+	}
+	set newSources(newSources) {
 		this.movieSources = newSources;
 	}
 }
@@ -23,8 +37,11 @@ class MovieSearchState {
 		this.searchData = searchData;
 	}
 
-	overWrite(newData) {
-		this.searchData = {};
+	get currSearchData() {
+		return this.searchData;
+	}
+
+	set newSearchData(newData) {
 		this.searchData = newData;
 	}
 }
@@ -34,21 +51,27 @@ class UserListState {
 		this.listData = listData;
 	}
 
-	addMovie(movieData) {
-		this.listData.push(movieData);
+	get currUserList() {
+		return this.listData;
 	}
 
-	dropMovie(imdbID) {
+	set addMovie(movieData) {
+		this.listData.push(movieData);
+	}
+	set dropMovie(imdbID) {
 		const index = this.listData.indexOf(imdbID);
 		if (index > -1) {
 			// only splice array when item is found
 			array.splice(index, 1); // 2nd parameter means remove one item only
 		}
 	}
-
-	overWrite(newData) {
+	set newUserList(newData) {
 		this.listData = [];
-		newData.forEach((movie) => this.listData.push(movie));
+
+		let newDataArr = Object.values(newData);
+		// console.log('here is newDataArr:');
+		// console.dir(newDataArr);
+		newDataArr.forEach((movie) => this.listData.push(movie));
 	}
 }
 
