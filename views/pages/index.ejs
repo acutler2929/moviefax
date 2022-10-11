@@ -7,7 +7,7 @@
 		<div id="content-wrapper">
 			<header class="row">
 				<div class="col-4" id="greeting-wrapper">
-					<h1>Welcome to MovieFax!</h1>
+					<h1>Welcome to MovieFax</h1>
 					<% if (req.session.loggedin) { %>
 					<p>Welcome back, <%= req.session.username %>!</p>
 					<% } else{ %>
@@ -46,17 +46,26 @@
 						class="row d-flex justify-content-around"
 						id="nav-buttons"
 					>
+						<% if (req.session.loggedin) { %>
 						<div class="col-4">
-							<form action="/test-data" method="get">
+							<form action="/suggest-movie" method="get">
 								<input
 									type="submit"
-									value="Send Test Data"
+									value="Suggest a movie"
 									class="btn btn-primary"
 								/>
 							</form>
 						</div>
 						<div class="col-4">
-							<% if (req.session.loggedin) { %>
+							<form action="/my-stats" method="get">
+								<input
+									type="submit"
+									value="View movie stats"
+									class="btn btn-primary"
+								/>
+							</form>
+						</div>
+						<div class="col-4">
 							<form action="/logout" method="get">
 								<input
 									type="submit"
@@ -64,17 +73,25 @@
 									class="btn btn-primary"
 								/>
 							</form>
-							<% } else{ %>
-							<form action="/login-form" method="get">
-								<input
-									type="submit"
-									value="Login to build list"
-									class="btn btn-primary"
-								/>
-							</form>
-							<% } %>
 						</div>
 					</div>
+					<% } else{ %>
+					<div class="col-8">
+						<p>
+							Login to build a favorite movies collection, and
+							enable "suggest a movie" functionality...
+						</p>
+					</div>
+					<div class="col-4">
+						<form action="/login-form" method="get">
+							<input
+								type="submit"
+								value="Login/Register"
+								class="btn btn-primary"
+							/>
+						</form>
+					</div>
+					<% } %>
 				</nav>
 			</header>
 			<div class="text-center" id="sub-header">

@@ -82,6 +82,7 @@ body #content-wrapper #sub-header {
 }
 
 body #content-wrapper #toggle-button-section {
+  background-color: #99738e;
   height: 10%;
   padding: 0.5rem;
 }
@@ -106,19 +107,7 @@ body #content-wrapper #movies-content-wrapper #lists-wrapper {
 }
 
 body #content-wrapper #movies-content-wrapper #lists-wrapper .movie-wrapper {
-  background-color: #99738e;
-  max-height: 35vh;
-  padding: 1rem;
-}
-
-body #content-wrapper #movies-content-wrapper #lists-wrapper .movie-wrapper .movie-link {
-  max-height: 35vh;
-  padding: 0;
-}
-
-body #content-wrapper #movies-content-wrapper #lists-wrapper .movie-wrapper .movie-link .data-wrapper {
-  max-height: 35vh;
-  padding: 0;
+  background-color: #2f2fa2;
 }
 
 body #content-wrapper #movies-content-wrapper #lists-wrapper .movie-wrapper .movie-link .data-wrapper .search-title {
@@ -127,8 +116,6 @@ body #content-wrapper #movies-content-wrapper #lists-wrapper .movie-wrapper .mov
 }
 
 body #content-wrapper #movies-content-wrapper #lists-wrapper .movie-wrapper .movie-link .data-wrapper .search-images {
-  height: 8rem;
-  width: auto;
   overflow: visible;
 }
 

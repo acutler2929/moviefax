@@ -8,6 +8,14 @@ $color-bright-accent: gold;
 
 $bright-border: 1px solid $color-bright-accent;
 
+// $color-primary: #553d67;
+// $color-secondary: gold;
+// $color-tertiary: lime;
+// $color-accent: #99738e;
+// $color-bright-accent: grey;
+
+// $bright-border: 1px solid $color-bright-accent;
+
 div {
 	border: $bright-border;
 	color: $color-secondary;
@@ -78,6 +86,7 @@ body {
 		}
 
 		#toggle-button-section {
+			background-color: $color-accent;
 			height: 10%;
 			padding: 0.5rem;
 
@@ -100,18 +109,17 @@ body {
 				padding: 0;
 
 				.movie-wrapper {
-					background-color: $color-accent;
-
-					max-height: 35vh;
-					padding: 1rem;
+					background-color: $color-primary;
+					// max-height: 35vh;
+					// padding: 1rem;
 
 					.movie-link {
-						max-height: 35vh;
-						padding: 0;
+						// max-height: 35vh;
+						// padding: 0;
 
 						.data-wrapper {
-							max-height: 35vh;
-							padding: 0;
+							// max-height: 35vh;
+							// padding: 0;
 
 							.search-title {
 								height: 1rem;
@@ -119,8 +127,8 @@ body {
 							}
 
 							.search-images {
-								height: 8rem;
-								width: auto;
+								// height: 8rem;
+								// width: auto;
 								overflow: visible;
 							}
 

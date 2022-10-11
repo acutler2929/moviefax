@@ -495,4 +495,24 @@ app.get('/drop-movie', async (req, res) => {
 	res.redirect('/');
 });
 
+//////////////////////// View statistics about your movie collection:
+
+app.get('/my-stats', (req, res) => {
+	console.log(req.url);
+	console.log('req.session on following line:');
+	console.dir(req.session);
+
+	res.send('Stats feature coming soon!');
+});
+
+/////////////////////// Suggest a new movie based on your collection:
+
+app.get('/suggest-movie', (req, res) => {
+	console.log(req.url);
+	console.log('req.session on following line:');
+	console.dir(req.session);
+
+	res.send('Suggestion feature coming soon!');
+});
+
 module.exports = app;
