@@ -1,19 +1,6 @@
 div {
   border: 1px solid gold;
-  color: #f64c72;
-}
-
-h1 {
-  font-size: 2em;
-  color: #f64c72;
-}
-
-h2 {
-  color: #f64c72;
-}
-
-p {
-  color: #f64c72;
+  color: white;
 }
 
 a {
@@ -22,7 +9,7 @@ a {
 }
 
 body {
-  background-color: #2f2fa2;
+  background-color: #1e1e40;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -33,23 +20,12 @@ body {
 }
 
 body #content-wrapper {
-  padding: 2.5%;
-}
-
-body #content-wrapper header {
-  height: 20vh;
-  width: auto;
-}
-
-body #content-wrapper header #greeting-wrapper {
-  height: 100%;
+  padding: 2%;
 }
 
 body #content-wrapper header nav {
-  height: 100%;
   background-color: #553d67;
   border: 1px solid gold;
-  color: #f64c72;
 }
 
 body #content-wrapper header nav > * {
@@ -63,7 +39,7 @@ body #content-wrapper header nav #search-form {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  height: 50%;
+  height: 40%;
 }
 
 body #content-wrapper header nav #nav-buttons {
@@ -73,7 +49,7 @@ body #content-wrapper header nav #nav-buttons {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  height: 50%;
+  height: 40%;
 }
 
 body #content-wrapper #sub-header {
@@ -100,26 +76,34 @@ body #content-wrapper #movies-content-wrapper {
   padding: 0;
 }
 
-body #content-wrapper #movies-content-wrapper #lists-wrapper {
+body #content-wrapper #movies-content-wrapper .list-y-axis {
   height: 100vh;
   overflow-y: scroll;
   padding: 0;
 }
 
-body #content-wrapper #movies-content-wrapper #lists-wrapper .movie-wrapper {
-  background-color: #2f2fa2;
+body #content-wrapper #movies-content-wrapper .list-x-axis {
+  display: block;
+  width: 100vw;
+  height: 20vh;
+  overflow-x: auto;
+  padding: 0;
 }
 
-body #content-wrapper #movies-content-wrapper #lists-wrapper .movie-wrapper .movie-link .data-wrapper .search-title {
+body #content-wrapper #movies-content-wrapper .movie-wrapper {
+  background-color: #1e1e40;
+}
+
+body #content-wrapper #movies-content-wrapper .movie-wrapper .movie-link .data-wrapper .search-title {
   height: 1rem;
   overflow: hidden;
 }
 
-body #content-wrapper #movies-content-wrapper #lists-wrapper .movie-wrapper .movie-link .data-wrapper .search-images {
+body #content-wrapper #movies-content-wrapper .movie-wrapper .movie-link .data-wrapper .search-images {
   overflow: visible;
 }
 
-body #content-wrapper #movies-content-wrapper #lists-wrapper .movie-wrapper .movie-link .data-wrapper .search-description {
+body #content-wrapper #movies-content-wrapper .movie-wrapper .movie-link .data-wrapper .search-description {
   overflow: hidden;
 }
 

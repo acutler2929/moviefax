@@ -5,7 +5,7 @@
 	</head>
 	<body id="index">
 		<div id="content-wrapper">
-			<header class="row">
+			<header class="navbar row">
 				<div class="col-4" id="greeting-wrapper">
 					<h1>Welcome to MovieFax</h1>
 					<% if (req.session.loggedin) { %>
@@ -28,7 +28,7 @@
 									name="query"
 									autocomplete="off"
 									spellcheck="false"
-									placeholder="Search for a movie to get started..."
+									placeholder="Search for a movie to get started,"
 									class="form-control"
 								/>
 							</div>
@@ -36,7 +36,7 @@
 								<input
 									type="submit"
 									id="search-button"
-									value="Search Movies"
+									value="Search"
 									class="btn btn-secondary"
 								/>
 							</div>
@@ -60,7 +60,7 @@
 							<form action="/my-stats" method="get">
 								<input
 									type="submit"
-									value="View movie stats"
+									value="View collection stats"
 									class="btn btn-primary"
 								/>
 							</form>
@@ -77,10 +77,7 @@
 					</div>
 					<% } else{ %>
 					<div class="col-8">
-						<p>
-							Login to build a favorite movies collection, and
-							enable "suggest a movie" functionality...
-						</p>
+						<p>Or login to build your collection...</p>
 					</div>
 					<div class="col-4">
 						<form action="/login-form" method="get">
@@ -136,14 +133,14 @@
 				class="container-fluid row align-items-start"
 				id="movies-content-wrapper"
 			>
-				<div class="col-2" id="lists-wrapper">
-					<ul class="list-group" id="search-results-wrapper">
+				<div class="col-2" id="list-wrapper">
+					<ul id="search-results-wrapper">
 						<%- req.session.containsSearchState == true ?
 						include('../partials/movie-wrapper', { movieSearchState:
 						movieSearchState }) : include('../partials/throwaway')
 						%>
 					</ul>
-					<ul class="list-group hidden" id="user-movies-wrapper">
+					<ul class="hidden" id="user-movies-wrapper">
 						<%- req.session.loggedin == true &&
 						req.session.containsListState == true ?
 						include('../partials/user-list-wrapper', userListState)
